@@ -49,9 +49,10 @@ class Envira_Capabilities {
 	 */
 	public function restrict_envira_gallery_access() {
 		$screen = get_current_screen();
-		if ( 'envira' !== $screen->post_type && 'post' !== $screen->base ) {
+		if ( 'envira' !== $screen->post_type ) {
 			return;
 		}
+
 		$gallery_id = isset( $_GET['post'] ) ? absint( sanitize_key( $_GET['post'] ) ) : null; // phpcs:ignore WordPress.Security.NonceVerification
 
 		if ( ! $gallery_id ) {
