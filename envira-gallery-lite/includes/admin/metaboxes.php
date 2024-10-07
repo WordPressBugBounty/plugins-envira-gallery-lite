@@ -92,6 +92,7 @@ class Envira_Gallery_Metaboxes {
 		add_action( 'envira_gallery_tab_tags', [ $this, 'lite_tags_tab' ] );
 		add_action( 'envira_gallery_tab_animations', [ $this, 'lite_animations_tab' ] );
 		add_action( 'envira_gallery_tab_pagination', [ $this, 'lite_pagination_tab' ] );
+		add_action( 'envira_gallery_tab_comments', [ $this, 'lite_comments_tab' ] );
 
 		// Save Gallery.
 		add_action( 'save_post', [ $this, 'save_meta_boxes' ], 10, 2 );
@@ -838,6 +839,12 @@ class Envira_Gallery_Metaboxes {
 											<p><?php esc_html_e( 'Polaroid', 'envira-gallery-lite' ); ?></p>
 										</div>
 									</li>
+									<li>
+										<div class="thumbnail upgrade-to-pro">
+											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/creative-layout.png' ); ?>">
+											<p><?php esc_html_e( 'Creative', 'envira-gallery-lite' ); ?></p>
+										</div>
+									</li>
 								</ul>
 							</div>
 						</td>
@@ -1293,6 +1300,7 @@ class Envira_Gallery_Metaboxes {
 		$tabs['tags']       = __( 'Tags', 'envira-gallery-lite' );
 		$tabs['animations'] = __( 'Animations', 'envira-gallery-lite' );
 		$tabs['pagination'] = __( 'Pagination', 'envira-gallery-lite' );
+		$tabs['comments']   = __( 'Comments', 'envira-gallery-lite' );
 		return $tabs;
 	}
 
@@ -1321,7 +1329,6 @@ class Envira_Gallery_Metaboxes {
 			<p>Build responsive WordPress galleries that work on mobile, tablet and desktop devices. You can even customize all aspects of your user's mobile gallery display experience to be different than desktop.</p>
 			<p><strong>Bonus:</strong> Envira Lite users get a discount code for <span class="envira-green">50% off</span> regular price.</p>
 			<div class="cta-buttons">
-				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagemobile', 'viewmobiledemo' ) ); ?>" target="_blank" class="button button-secondary">View Mobile Demo</a>
 				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( false, 'adminpagemobile', 'upgradetoenviragallerypro' ) ); ?>" target="_blank" class="button button-primary">Upgrade To Envira Pro</a>
 			</div>
 		</div>
@@ -1367,7 +1374,6 @@ class Envira_Gallery_Metaboxes {
 			</div>
 			<p><strong>Bonus:</strong> Envira Lite users get a discount code for <span class="envira-green">50% off</span> regular price.</p>
 			<div class="cta-buttons">
-				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagevideos', 'viewvideoaddondemobutton' ) ); ?>" target="_blank" class="button button-secondary">View Video Addon Demo</a>
 				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( false, 'adminpagevideos', 'upgradetoenviraprobutton' ) ); ?>" target="_blank" class="button button-primary">Upgrade To Envira Pro</a>
 			</div>
 		</div>
@@ -1413,16 +1419,12 @@ class Envira_Gallery_Metaboxes {
 			</div>
 			<p><strong>Bonus:</strong> Envira Lite users get a discount code for <span class="envira-green">50% off</span> regular price.</p>
 			<div class="cta-buttons">
-				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagesocial', 'viewsocialaddondemobutton' ) ); ?>" target="_blank" class="button button-secondary">View Social Addon Demo</a>
 				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( false, 'adminpagesocial', 'upgradetoenviraprobutton' ) ); ?>" target="_blank" class="button button-primary">Upgrade To Envira Pro</a>
 			</div>
 		</div>
 
 		<?php
 	}
-
-	// TODO CONTINUE HERE ADD ANIMATIONS ADDON.
-
 
 	/**
 	 * Lite: Callback for displaying the settings UI for the Mobile tab.
@@ -1451,7 +1453,6 @@ class Envira_Gallery_Metaboxes {
 			<p><strong>Bonus:</strong> Envira Lite users get a discount code for <span class="envira-green">50% off</span> regular price.</p>
 
 			<div class="cta-buttons">
-				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagetags', 'viewtagsaddondemobutton' ) ); ?>" target="_blank" class="button button-secondary">View Tags Addon Demo</a>
 				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( false, 'adminpagetags', 'upgradetoenviraprobutton' ) ); ?>" target="_blank" class="button button-primary">Upgrade To Envira Pro</a>
 			</div>
 		</div>
@@ -1486,7 +1487,6 @@ class Envira_Gallery_Metaboxes {
 			<p><strong>Bonus:</strong> Envira Lite users get a discount code for <span class="envira-green">50% off</span> regular price.</p>
 
 			<div class="cta-buttons">
-				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpageanimations', 'viewanimationsaddondemobutton' ) ); ?>" target="_blank" class="button button-secondary">View Animations Addon Demo</a>
 				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( false, 'adminpageanimations', 'upgradetoenviraprobutton' ) ); ?>" target="_blank" class="button button-primary">Upgrade To Envira Pro</a>
 			</div>
 		</div>
@@ -1531,8 +1531,51 @@ class Envira_Gallery_Metaboxes {
 			<p><strong>Bonus:</strong> Envira Lite users get a discount code for <span class="envira-green">50% off</span> regular price.</p>
 
 			<div class="cta-buttons">
-				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagepagination', 'viewpaginationaddondemo' ) ); ?>" target="_blank" class="button button-secondary">View Pagination Addon Demo</a>
 				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( false, 'adminpagepagination', 'upgradetoenviraprobutton' ) ); ?>" target="_blank" class="button button-primary">Upgrade To Envira Pro</a>
+			</div>
+		</div>
+
+		<?php
+	}
+
+	/**
+	 * Lite: Callback for displaying the settings UI for the Comments tab.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param object $post The current post object.
+	 */
+	public function lite_comments_tab( $post ) {
+
+		?>
+
+		<div class="upgrade-header">
+			<img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/comments-icon.png' ); ?>" width="35"  />
+			<h2 class="upgrade-to-pro">Increase user engagement with the comments addon</h2>
+		</div>
+
+		<div class="upgrade-content ">
+			<div class="hero-image-exterior">
+				<div class="interior">
+					<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagecomments', 'commentsaddonimage' ) ); ?>" target="_blank"><img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/comments-addon.png' ); ?>" /></a>
+				</div>
+			</div>
+			<p></p>
+			<p>Available comments options include:</p>
+			<div class="two-column-list">
+				<ul>
+					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagecomments', 'galleries', '#envira-comments-galleries' ) ); ?>">Galleries and Albums</a></li>
+					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagecomments', 'visibility', '#envira-comments-visibility' ) ); ?>">Show/Hide Comments Panel</a></li>
+				</ul>
+				<ul>
+					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagecomments', 'moderation' ) ); ?>">Comments Moderation</a></li>
+					<li><strong>...and more!</strong></li>
+				</ul>
+			</div>
+			<p class="upsell-comments"><strong>Bonus:</strong> Envira Lite users get a discount code for <span class="envira-green">50% off</span> regular price.</p>
+
+			<div class="cta-buttons">
+				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( false, 'adminpagecomments', 'upgradetoenviraprobutton' ) ); ?>" target="_blank" class="button button-primary">Upgrade To Envira Pro</a>
 			</div>
 		</div>
 
