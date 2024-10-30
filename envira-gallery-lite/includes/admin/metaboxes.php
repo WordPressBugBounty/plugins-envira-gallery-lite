@@ -1227,7 +1227,14 @@ class Envira_Gallery_Metaboxes {
 						</th>
 						<td>
 							<input id="envira-config-slug" type="text" name="_envira_gallery[slug]" value="<?php echo esc_attr( $this->get_config( 'slug', $this->get_config_default( 'slug' ) ) ); ?>" />
-							<p class="description"><?php esc_html_e( '<strong>Unique</strong> internal gallery slug for identification and advanced gallery queries.', 'envira-gallery-lite' ); ?></p>
+							<p class="description">
+							<?php
+							echo wp_kses(
+								__( '<strong>Unique</strong> internal gallery slug for identification and advanced gallery queries.', 'envira-gallery-lite' ),
+								[ 'strong' => [] ]
+							);
+							?>
+							</p>
 						</td>
 					</tr>
 					<tr id="envira-config-classes-box">
@@ -1236,10 +1243,23 @@ class Envira_Gallery_Metaboxes {
 						</th>
 						<td>
 							<?php
-
 							$classes        = $this->get_config( 'classes', $this->get_config_default( 'classes' ) );
-							$classes_output = ( is_array( $classes ) ) ? ( implode( "\n", $classes ) ) : $classes;
+							$classes_output = '';
+							// Check if the classes are an array and sanitize each class.
+							if ( is_array( $classes ) ) {
+								// Sanitize each class using wp_unslash before sanitization.
+								$sanitized_classes = array_map(
+									function ( $custom_class ) {
+										return sanitize_html_class( wp_unslash( $custom_class ) );
+									},
+									$classes
+								);
 
+								$classes_output = implode( "\n", $sanitized_classes ); // Join the sanitized classes.
+							} else {
+								// If not an array, apply wp_unslash and sanitize directly.
+								$classes_output = sanitize_html_class( wp_unslash( $classes ) );
+							}
 							?>
 							<textarea id="envira-config-classes" rows="5" cols="75" name="_envira_gallery[classes]" placeholder="<?php esc_html_e( 'Enter custom gallery CSS classes here, one per line.', 'envira-gallery' ); ?>"><?php echo esc_html( $classes_output ); ?></textarea>
 							<p class="description"><?php esc_html_e( 'Adds custom CSS classes to this gallery. Enter one class per line.', 'envira-gallery' ); ?></p>
@@ -1689,7 +1709,10 @@ class Envira_Gallery_Metaboxes {
 		$settings['config']['title_display']        = isset( $_POST['_envira_gallery']['title_display'] ) ? preg_replace( '#[^a-z0-9-_]#', '', sanitize_text_field( wp_unslash( $_POST['_envira_gallery']['title_display'] ) ) ) : $this->get_config_default( 'title_display' );
 
 		// Misc.
-		$settings['config']['classes'] = isset( $_POST['_envira_gallery']['classes'] ) ? explode( "\n", wp_unslash( $_POST['_envira_gallery']['classes'] ) ) : array(); // @codingStandardsIgnoreLine
+		$settings['config']['classes'] = isset( $_POST['_envira_gallery']['classes'] ) ? array_map(
+			function ( $custom_class ) {
+				return sanitize_html_class( wp_unslash( trim( $custom_class ) ) );
+}, explode("\n", $_POST['_envira_gallery']['classes'] ) ) : array(); // @codingStandardsIgnoreLine
 		$settings['config']['rtl']     = isset( $_POST['_envira_gallery']['rtl'] ) ? 1 : 0;
 		$settings['config']['title']   = isset( $_POST['_envira_gallery']['title'] ) ? trim( wp_strip_all_tags( sanitize_text_field( wp_unslash( $_POST['_envira_gallery']['title'] ) ) ) ) : '';
 		$settings['config']['slug']    = isset( $_POST['_envira_gallery']['slug'] ) ? sanitize_text_field( wp_unslash( $_POST['_envira_gallery']['slug'] ) ) : null;

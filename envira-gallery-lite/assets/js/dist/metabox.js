@@ -1171,3 +1171,20 @@ jQuery(document).ready(function($) {
 		$thumbnailsContainer.removeClass('no-click');
 	});
 });
+
+/**
+ * Display envira ai upsell modal.
+ */
+jQuery(document).ready(function($) {
+	var $btnUpsell = $('.envira-tab .button-envira-ai-tab.upsell');
+	var $upsellModalAI = $('#envira-ai-upsell-modal');
+	var $closeButton = $('#close-envira-ai-upsell');
+
+	$btnUpsell.on('click', function() {
+		$upsellModalAI.show();
+	});
+
+	$closeButton.on('click', function() {
+		$upsellModalAI.hide();
+	});
+});

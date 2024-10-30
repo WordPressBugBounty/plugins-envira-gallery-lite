@@ -466,7 +466,7 @@ form#post.envira-gallery {
                 */
 				.nav-tab {
 					display: inline-block;
-					width: 49.7%;
+					width: 33.2%;
 					margin: 0;
 					padding: 15px 0;
 					text-align: center;
@@ -489,10 +489,23 @@ form#post.envira-gallery {
 					}
 
 					/**
-                    * External Gallery Tab
-                    */
-					&.nav-tab-external-gallery {
+					 * Envira AI Tab
+					 */
+					&.nav-tab-envira-ai {
 						margin-right: -1px;
+						span {
+							display: inline-block;
+							background: url(images/icons/envira-ai-black.svg) 0 5px no-repeat;
+							background-size: 19px 18px;
+							text-indent: 24px;
+						}
+
+						&.envira-active {
+							span {
+								background: url(images/icons/envira-ai-green.svg) 0 5px no-repeat;
+								background-size: 19px 18px;
+							}
+						}
 					}
 
 					/**
@@ -849,6 +862,26 @@ form#post.envira-gallery {
                         */
 						a.button.button-x-large {
 							margin-top: 30px;
+						}
+					}
+
+					/**
+					 * Envira AI Tab Area
+					 */
+					&#envira-gallery-envira-ai {
+						text-align: center;
+						padding: 50px;
+
+						/**
+						 * AI create button.
+						 */
+						a.button.button-envira-ai-tab {
+							text-transform: none;
+							margin-top: 5px;
+							border-radius: 6px;
+							font-size: 14px;
+							height: 40px;
+							line-height: 38px;
 						}
 					}
 				}
@@ -1770,7 +1803,107 @@ form#post.envira-gallery {
 }
 
 /**
+ * Envira AI tab.
+ */
+@media screen and (min-width: 2349px) {
+	#envira-gallery {
+		h2.nav-tab-wrapper {
+			.nav-tab.nav-tab-envira-ai {
+				margin-right: -3px !important;
+			}
+		}
+	}
+}
+
+@media screen and (min-width: 1446px) {
+	#envira-gallery {
+		h2.nav-tab-wrapper {
+			.nav-tab.nav-tab-envira-ai {
+				margin-right: -3px !important;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 1445px) {
+	#envira-gallery {
+		h2.nav-tab-wrapper {
+			.nav-tab.nav-tab-envira-ai {
+				margin-right: -3px !important;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 1345px) {
+	#envira-gallery {
+		h2.nav-tab-wrapper {
+			.nav-tab.nav-tab-envira-ai {
+				margin-right: -3px !important;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 1354px) {
+	#envira-gallery {
+		h2.nav-tab-wrapper {
+			.nav-tab.nav-tab-envira-ai {
+				margin-right: -4px !important;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 768px) {
+	#envira-gallery {
+		h2.nav-tab-wrapper {
+			.nav-tab.nav-tab-envira-ai {
+				margin-right: -5px !important;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 567px) {
+	#envira-gallery {
+		h2.nav-tab-wrapper {
+			.nav-tab {
+				&.nav-tab-envira-ai span,
+				&.nav-tab-external-gallery span,
+				&.nav-tab-native-envira-gallery span {
+					white-space: normal;
+				}
+			}
+
+			.nav-tab {
+				&.nav-tab-envira-ai,
+				&.nav-tab-external-gallery,
+				&.nav-tab-native-envira-gallery {
+					height: 60px;
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 489px) {
+	#envira-gallery {
+		h2.nav-tab-wrapper {
+			.nav-tab.nav-tab-envira-ai {
+				margin-right: -6px !important;
+			}
+		}
+	}
+}
+
+/**
  * Envira Gallery Admin layout
  * - Styles for the Envira Gallery admin area
  */
 @import './image-select';
+
+/**
+ * Envira AI Upsell Modal
+ */
+@import './image-create-ai';

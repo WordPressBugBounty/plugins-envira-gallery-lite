@@ -1476,7 +1476,7 @@ class Envira_Gallery_Shortcode {
 
 		// If we have custom classes defined for this gallery, output them now.
 		foreach ( (array) $this->get_config( 'classes', $data ) as $class ) {
-			$classes[] = $class;
+			$classes[] = sanitize_html_class( wp_unslash( $class ) );
 		}
 
 		// If the gallery has RTL support, add a class for it.
