@@ -74,6 +74,9 @@ class Envira_Gallery_Common_Admin {
 		// Handle any necessary DB upgrades.
 		add_action( 'admin_init', [ $this, 'db_upgrade' ] );
 
+		// Add new section in WordPress media settings page.
+		add_action( 'admin_init', [ $this, 'envira_gallery_media_settings_add_new_section' ] );
+
 		// Load admin assets.
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_styles' ], 10, 1 );
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_scripts' ], 10, 1 );
@@ -492,6 +495,28 @@ class Envira_Gallery_Common_Admin {
 			]
 		);
 
+		// Load gallery convert script.
+		wp_register_script( $this->base->plugin_slug . '-convert-gallery-script', plugins_url( 'assets/js/min/gallery-convert-min.js', $this->base->file ), [ 'jquery' ], $this->base->version, false );
+
+		wp_enqueue_script( $this->base->plugin_slug . '-convert-gallery-script' );
+
+		wp_localize_script(
+			$this->base->plugin_slug . '-convert-gallery-script',
+			'envira_gallery_convert',
+			[
+				'bulk_convert_rest_url'      => rest_url( 'envira-convert/v1/bulk-convert' ),
+				'process_item_rest_url'      => rest_url( 'envira-convert/v1/process-gallery' ),
+				'gallery_convert_rest_nonce' => wp_create_nonce( 'wp_rest' ),
+				'bulk_confirmation_alert'    => __( 'Are you sure you want to convert? This action cannot be reversed.', 'envira-gallery-lite' ),
+				'bulk_conversion_started'    => __( 'Gallery conversion in progress... Please do not close this window or refresh the page until the process is complete.', 'envira-gallery-lite' ),
+				'found_posts_text'           => __( 'posts found containing WordPress galleries.', 'envira-gallery-lite' ),
+				'conversion_completed'       => __( 'Gallery conversion completed.', 'envira-gallery-lite' ),
+				'failed_conversion_logs'     => __( 'Failed Conversion Logs:', 'envira-gallery-lite' ),
+				'post_id_text'               => __( 'Post ID', 'envira-gallery-lite' ),
+				'edit_post_text'             => __( 'Edit Post', 'envira-gallery-lite' ),
+			]
+		);
+
 		// Fire a hook to load in custom admin scripts.
 		do_action( 'envira_gallery_admin_scripts' );
 	}
@@ -743,6 +768,103 @@ class Envira_Gallery_Common_Admin {
 		// If here, we have a ShareASale ID
 		// Return ShareASale URL with redirect.
 		return 'http://www.shareasale.com/r.cfm?u=' . $shareasale_id . '&b=566240&m=51693&afftrack=&urllink=enviragallery%2Ecom%2Flite%2F';
+	}
+
+	/**
+	 * Callback for the Envira Gallery Media Settings section.
+	 *
+	 * @return void
+	 */
+	public function envira_gallery_media_settings_add_new_section() {
+		// Register a new section in the "Media" settings page.
+		add_settings_section(
+			'envira_gallery_convert_section',
+			__( 'Envira Gallery', 'envira-gallery-lite' ),
+			[ $this, 'envira_gallery_convert_section_callback' ],
+			'media'
+		);
+	}
+
+	/**
+	 * Callback for the Envira Gallery content section.
+	 *
+	 * @return void
+	 */
+	public function envira_gallery_convert_section_callback() {
+		?>
+		<p><?php esc_html_e( 'Convert all of your existing WP Galleries to Envira Galleries. Take advantage of advanced options like drag and drop features, themes, lightboxes, and much more.', 'envira-gallery-lite' ); ?></p>
+		<?php
+			$convert_button = __( 'Convert to Envira Gallery', 'envira-gallery-lite' );
+		?>
+		<p><a href="<?php echo esc_url( admin_url( 'edit.php?post_type=envira&page=envira-gallery-settings#!envira-tab-convert_to_envira' ) ); ?>" title="<?php echo esc_attr( $convert_button ); ?>" class="button button-secondary envira-media-settings-convert-btn"><?php echo esc_attr( $convert_button ); ?></a></p>
+		<?php
+	}
+
+	/**
+	 * Renders the post types dropdown.
+	 *
+	 * @return void
+	 */
+	public function envira_render_post_types_dropdown() {
+		// Exclusions for keywords, exact names, and labels.
+		$exclusions = [
+			'keywords'    => [ 'envira', 'ngg', 'nextgen', 'photocrati', 'gallery', 'elementor' ],
+			'exact_names' => [ 'e-landing-page' ],
+			'labels'      => [ 'NextGEN', 'Gallery' ],
+		];
+
+		// Retrieve all custom post types.
+		$post_types = get_post_types( [ '_builtin' => false ], 'objects' );
+
+		// Filter post types based on exclusions.
+		$filtered_post_types = array_filter(
+			$post_types,
+			function ( $post_type ) use ( $exclusions ) {
+				// Exclude based on keywords in the post type name.
+				foreach ( $exclusions['keywords'] as $keyword ) {
+					if ( strpos( $post_type->name, $keyword ) !== false ) {
+						return false;
+					}
+				}
+
+				// Exclude based on exact post type names.
+				if ( in_array( $post_type->name, $exclusions['exact_names'], true ) ) {
+					return false;
+				}
+
+				// Exclude based on labels.
+				foreach ( $exclusions['labels'] as $label ) {
+					if ( strpos( $post_type->label, $label ) !== false ) {
+						return false;
+					}
+				}
+
+				return true; // Include post type if it passes all checks.
+			}
+		);
+
+		// Allow users to modify the post types list.
+		$filtered_post_types = apply_filters( 'envira_convert_post_types', $filtered_post_types );
+		?>
+		<div class="envira-posttype-dropdown-section">
+			<select name="envira_convert_post_types_dropdown" id="envira_convert_post_types_dropdown">
+				<option value=""><?php esc_html_e( 'Select Post Type for Conversion', 'envira-gallery-lite' ); ?></option>
+				<option value="post"><?php esc_html_e( 'Posts', 'envira-gallery-lite' ); ?></option>
+				<option value="page"><?php esc_html_e( 'Pages', 'envira-gallery-lite' ); ?></option>
+				<?php
+				foreach ( $filtered_post_types as $post_type ) {
+					?>
+					<option value="<?php echo esc_html( $post_type->name ); ?>">
+						<?php echo esc_html( $post_type->label ); ?>
+					</option>
+					<?php
+				}
+				?>
+			</select>
+			<br/>
+			<span class="envira-posttype-dropdown-error"><?php esc_html_e( 'Please select a post type for conversion.', 'envira-gallery-lite' ); ?></span>
+		</div>
+		<?php
 	}
 
 	/**

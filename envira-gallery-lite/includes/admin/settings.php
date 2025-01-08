@@ -35,6 +35,7 @@ class Envira_Settings {
 		add_action( 'envira_gallery_tab_settings_general', [ $this, 'settings_general_tab' ] );
 		add_action( 'envira_gallery_tab_settings_permissions', [ $this, 'settings_permissions_tab' ] );
 		add_action( 'envira_gallery_tab_settings_licensing', [ $this, 'settings_licensing_tab' ] );
+		add_action( 'envira_gallery_tab_settings_convert_to_envira', [ $this, 'settings_convert_to_envira_tab' ] );
 	}
 
 	/**
@@ -77,9 +78,10 @@ class Envira_Settings {
 	public function get_envira_settings_tab_nav() {
 
 		$tabs = [
-			'general'     => __( 'General', 'envira-gallery-lite' ), // This tab is required. DO NOT REMOVE VIA FILTERING.
-			'permissions' => __( 'Permissions', 'envira-gallery-lite' ),
-			'licensing'   => __( 'Image Licensing', 'envira-gallery-lite' ),
+			'general'           => __( 'General', 'envira-gallery-lite' ), // This tab is required. DO NOT REMOVE VIA FILTERING.
+			'permissions'       => __( 'Permissions', 'envira-gallery-lite' ),
+			'licensing'         => __( 'Image Licensing', 'envira-gallery-lite' ),
+			'convert_to_envira' => __( 'Convert to Envira', 'envira-gallery-lite' ),
 
 		];
 		$tabs = apply_filters( 'envira_gallery_settings_tab_nav', $tabs );
@@ -370,5 +372,37 @@ class Envira_Settings {
 		// get instance of the plugin.
 		$envira = Envira_Gallery_Lite::get_instance();
 		$envira->load_admin_partial( 'licensing' );
+	}
+
+	/**
+	 * Outputs settings screen for the convert to envira tab.
+	 *
+	 * @return void
+	 */
+	public function settings_convert_to_envira_tab() {
+		?>
+		<div class="envira-convert-to-envira-tab">
+			<div class="envira-settings-tab">
+				<table class="form-table">
+					<tbody>
+						<tr id="convert-to-envira-tab-content">
+							<th scope="row" colspan="2">
+								<h3><?php esc_html_e( 'Convert Galleries', 'envira-gallery-lite' ); ?></h3>
+								<p><?php esc_html_e( 'With a single click, easily convert all of your website’s WordPress galleries to Envira Galleries! This will let you get features like drag and drop ordering, image layouts, and much more.', 'envira-gallery-lite' ); ?></p>
+								<p class="envira-convert-important-note"><?php echo wp_kses( __( 'Important: Converting your galleries to Envira Gallery is not reversible. <em>We strongly recommend making a full backup of your website first before making changes.</em>', 'envira-gallery-lite' ), [ 'em' => [] ] ); ?></p>
+								<?php
+									Envira_Gallery_Common_Admin::get_instance()->envira_render_post_types_dropdown();
+									$convert_button = __( 'Convert Galleries', 'envira-gallery-lite' );
+								?>
+								<a href="javascript:void(0);" title="<?php echo esc_attr( $convert_button ); ?>" class="button button-primary convert-envira-gallery-tab-btn" data-converting="<?php esc_attr_e( 'Converting...', 'envira-gallery-lite' ); ?>"><?php echo esc_attr( $convert_button ); ?></a>
+								<p class="envira-convert-gallery-message"></p>
+								<div class="envira-convert-process-logs"></div>
+							</th>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<?php
 	}
 }

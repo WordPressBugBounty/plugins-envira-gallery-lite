@@ -104,7 +104,7 @@ class Envira_Gutenberg {
 
 		$current_screen = get_current_screen();
 
-		$dependencies = [ 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-components' ];
+		$dependencies = [ 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-components', 'wp-data', 'wp-api-fetch', 'wp-hooks', 'wp-block-editor', 'wp-compose' ];
 		if ( isset( $current_screen->id ) && 'widgets' !== $current_screen->id ) {
 			$dependencies[] = 'wp-editor';
 		}
@@ -116,6 +116,30 @@ class Envira_Gutenberg {
 			$this->base->version,
 			true // Enqueue the script in the footer.
 		);
+
+		$current_post_id = get_the_ID();
+
+		if ( ! $current_post_id ) {
+			$current_post_id = 0;
+		}
+
+		// Localize data to pass to the block script.
+		$localized_data = [
+			'postId'              => $current_post_id,
+			'panelTitle'          => __( 'Envira Gallery', 'envira-gallery-lite' ),
+			'contentHeading'      => __( 'Convert this gallery to an Envira Gallery', 'envira-gallery-lite' ),
+			'contentDescription'  => __( 'Make your gallery shine with awesome customizations, drag and drop management, and much more.', 'envira-gallery-lite' ),
+			'contentButtonText'   => __( 'Convert to Envira Gallery', 'envira-gallery-lite' ),
+			'convertLoading'      => __( 'Converting...', 'envira-gallery-lite' ),
+			'convertRestNonce'    => wp_create_nonce( 'wp_rest' ),
+			'convertApiUrl'       => '/envira-convert/v1/convert-gallery',
+			'errorMessage'        => __( 'Failed to convert the gallery. Please try again.', 'envira-gallery-lite' ),
+			'confirmationMessage' => __( 'Are you sure you want to convert this gallery to an Envira Gallery?', 'envira-gallery-lite' ),
+			'invalidBlockMessage' => __( 'This block is not a WordPress Gallery block.', 'envira-gallery-lite' ),
+			'noImagesMessage'     => __( 'This gallery has no images.', 'envira-gallery-lite' ),
+		];
+
+		wp_localize_script( 'envira_gutenberg-block-js', 'enviraBlockData', $localized_data );
 
 		$columns = $this->common->get_columns();
 

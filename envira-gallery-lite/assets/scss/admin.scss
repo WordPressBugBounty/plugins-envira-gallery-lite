@@ -1467,6 +1467,66 @@ div.addon-tag:after {
 				color: #3C434AB2;
 			}
 		}
+		#convert-to-envira-tab-content {
+			h3 {
+				font-size: 17px;
+			}
+			p {
+				font-size: 14px;
+				color: #3C434AB2;
+			}
+			a.convert-envira-gallery-tab-btn {
+				margin-top: 15px;
+			}
+			.envira-posttype-dropdown-error {
+				display: none;
+				color: red;
+				font-size: 13px;
+			}
+			.envira-convert-gallery-message {
+				display: none;
+				font-size: 13px;
+
+				&.success {
+					color: #2E2E2E;
+				}
+				&.error {
+					color: red;
+				}
+			}
+			.envira-convert-process-logs {
+				display: none;
+				margin-top: 15px;
+
+				p {
+					font-size: 13px;
+					color: #414a4c;
+					font-weight: 400;
+					margin-top: 5px;
+					margin-bottom: 5px;
+				}
+			}
+			.envira-convert-progress-bar-container {
+				width: 100%;
+				background-color: #f3f3f3;
+				border: 1px solid #ddd;
+				border-radius: 25px;
+				margin: 10px 0;
+				height: 10px;
+				position: relative;
+
+				.envira-convert-progress-bar {
+					width: 0;
+					height: 100%;
+					background-color: #4caf50;
+					border-radius: 25px;
+					transition: width 0.5s ease;
+				}
+			}
+			.envira-convert-important-note {
+				color: #000;
+			}
+		}
 		tr {
 			border-bottom: 1px solid #ddd;
 		}

@@ -5,7 +5,7 @@
  * Description: Envira Gallery is the best responsive WordPress gallery plugin. This is the Lite version.
  * Author:      Envira Gallery Team
  * Author URI:  http://enviragallery.com
- * Version:     1.9.0
+ * Version:     1.9.1
  * Requires at least: 5.5.0
  * Requires PHP: 7.0
  * Text Domain: envira-gallery-lite
@@ -59,7 +59,7 @@ class Envira_Gallery_Lite {
 	 *
 	 * @var string
 	 */
-	public $version = '1.9.0';
+	public $version = '1.9.1';
 
 
 	/**
@@ -258,6 +258,10 @@ class Envira_Gallery_Lite {
 		require plugin_dir_path( __FILE__ ) . 'includes/global/posttype.php';
 		require plugin_dir_path( __FILE__ ) . 'includes/global/shortcode.php';
 		require plugin_dir_path( __FILE__ ) . 'includes/global/rest.php';
+		require plugin_dir_path( __FILE__ ) . 'includes/global/convert_gallery/Convert_Gallery_Common.php';
+		require plugin_dir_path( __FILE__ ) . 'includes/global/convert_gallery/Convert_Gallery_Main.php';
+		require plugin_dir_path( __FILE__ ) . 'includes/global/convert_gallery/Convert_Gallery_CLI.php';
+		require plugin_dir_path( __FILE__ ) . 'includes/global/convert_gallery/Convert_Gallery_REST.php';
 		require plugin_dir_path( __FILE__ ) . 'includes/global/Envira_Tracking.php';
 		require plugin_dir_path( __FILE__ ) . 'includes/admin/ajax.php';
 		require plugin_dir_path( __FILE__ ) . 'includes/admin/notifications.php';
@@ -266,6 +270,8 @@ class Envira_Gallery_Lite {
 
 		$this->notifications = new Envira_Notifications();
 		$this->notifications->hooks();
+
+		( new Convert_Gallery_Main() )->hooks();
 	}
 
 	/**
