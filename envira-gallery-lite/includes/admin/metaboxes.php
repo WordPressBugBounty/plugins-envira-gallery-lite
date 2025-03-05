@@ -93,6 +93,7 @@ class Envira_Gallery_Metaboxes {
 		add_action( 'envira_gallery_tab_animations', [ $this, 'lite_animations_tab' ] );
 		add_action( 'envira_gallery_tab_pagination', [ $this, 'lite_pagination_tab' ] );
 		add_action( 'envira_gallery_tab_comments', [ $this, 'lite_comments_tab' ] );
+		add_action( 'envira_gallery_tab_search', [ $this, 'lite_search_tab' ] );
 
 		// Save Gallery.
 		add_action( 'save_post', [ $this, 'save_meta_boxes' ], 10, 2 );
@@ -845,6 +846,12 @@ class Envira_Gallery_Metaboxes {
 											<p><?php esc_html_e( 'Creative', 'envira-gallery-lite' ); ?></p>
 										</div>
 									</li>
+									<li>
+										<div class="thumbnail upgrade-to-pro">
+											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/vertical-focus-layout.png' ); ?>">
+											<p><?php esc_html_e( 'Vertical Focus', 'envira-gallery-lite' ); ?></p>
+										</div>
+									</li>
 								</ul>
 							</div>
 						</td>
@@ -1321,6 +1328,7 @@ class Envira_Gallery_Metaboxes {
 		$tabs['animations'] = __( 'Animations', 'envira-gallery-lite' );
 		$tabs['pagination'] = __( 'Pagination', 'envira-gallery-lite' );
 		$tabs['comments']   = __( 'Comments', 'envira-gallery-lite' );
+		$tabs['search']     = __( 'Search', 'envira-gallery-lite' );
 		return $tabs;
 	}
 
@@ -1596,6 +1604,47 @@ class Envira_Gallery_Metaboxes {
 
 			<div class="cta-buttons">
 				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( false, 'adminpagecomments', 'upgradetoenviraprobutton' ) ); ?>" target="_blank" class="button button-primary">Upgrade To Envira Pro</a>
+			</div>
+		</div>
+
+		<?php
+	}
+
+	/**
+	 * Lite: Callback for displaying the settings UI for the Search tab.
+	 *
+	 * @since 1.9.2
+	 *
+	 * @param object $post The current post object.
+	 */
+	public function lite_search_tab( $post ) {
+		?>
+
+		<div class="upgrade-header">
+			<img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/search-icon.png' ); ?>" width="35" />
+			<h2><?php esc_html_e( 'Search images with Envira Pro', 'envira-gallery-lite' ); ?></h2>
+		</div>
+
+		<div class="upgrade-content">
+			<div class="hero-image-exterior">
+				<div class="interior">
+				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagesearch', 'searchaddonimage' ) ); ?>" target="_blank"><img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/search-addon.png' ); ?>" /></a>
+				</div>
+			</div>
+			<p><?php esc_html_e( 'Upgrade to Envira Gallery Pro to unlock advanced search capabilities, making it effortless for users to find their favorite images in your galleries!', 'envira-gallery-lite' ); ?></p>
+
+			<?php
+				printf(
+					'<p><strong>%s</strong> %s <span class="envira-green">%s</span> %s.</p>',
+					esc_html__( 'Bonus:', 'envira-gallery-lite' ),
+					esc_html__( 'Envira Lite users get a discount code for', 'envira-gallery-lite' ),
+					esc_html__( '50% off', 'envira-gallery-lite' ),
+					esc_html__( 'regular price', 'envira-gallery-lite' )
+				);
+			?>
+
+			<div class="cta-buttons">
+				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( false, 'adminpagesearch', 'upgradetoenviraprobutton' ) ); ?>" target="_blank" class="button button-primary"><?php esc_html_e( 'Upgrade To Envira Pro', 'envira-gallery-lite' ); ?></a>
 			</div>
 		</div>
 

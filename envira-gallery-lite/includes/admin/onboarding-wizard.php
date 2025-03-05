@@ -419,7 +419,7 @@ class OnboardingWizard {
 			return;
 		}
 
-		$tags = [ 'eg-lite' ];
+		$tags = [ 'envira-lite' ];
 
 		if ( isset( $onboarding_data['_user_type'] ) ) {
 			$tags[] = $onboarding_data['_user_type'];

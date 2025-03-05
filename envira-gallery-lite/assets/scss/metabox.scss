@@ -1096,6 +1096,12 @@ form#post.envira-gallery {
 							background-size: 16px 16px;
 						}
 					}
+					&.envira-search {
+						a {
+							background-image: url(images/icons/search.svg);
+							background-size: 16px 16px;
+						}
+					}
 					&.envira-downloads {
 						a {
 							background-image: url(images/icons/downloads.svg);
