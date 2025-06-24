@@ -96,6 +96,7 @@ class Envira_Gallery_Common_Admin {
 		add_action( 'in_admin_footer', [ $this, 'footer_template' ] );
 		add_action( 'admin_footer', [ $this, 'notifications_template' ] );
 		add_action( 'admin_menu', [ $this, 'add_upgrade_menu_item' ], 99 );
+		add_action( 'admin_menu', [ $this, 'add_cdn_menu_item' ], 11 );
 		add_action( 'admin_head', [ $this, 'admin_inline_styles' ] );
 		add_action( 'admin_footer', [ $this, 'admin_sidebar_target' ] );
 	}
@@ -125,6 +126,12 @@ class Envira_Gallery_Common_Admin {
 			.envira-sidebar-upgrade-pro a {
 				color: #fff !important;
 			}
+			.cdn_new_badge {
+				color:#f18200;
+				vertical-align:super;
+				font-size:9px;
+				margin-left:3px;
+			}
 		</style>';
 	}
 
@@ -140,6 +147,7 @@ class Envira_Gallery_Common_Admin {
 		<script type="text/javascript">
 		jQuery(document).ready(function($) {
 			$('li.envira-sidebar-upgrade-pro a').attr('target','_blank');
+			$('li.cdn-menu-item-target-blank a').attr('target','_blank');
 		});
 		</script>
 		<?php
@@ -182,6 +190,27 @@ class Envira_Gallery_Common_Admin {
 			$submenu['edit.php?post_type=envira'][ $upgrade_link_position ][] = 'envira-sidebar-upgrade-pro';
 		}
 		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
+	}
+
+	/**
+	 * Add CDN menu item.
+	 *
+	 * @return void
+	 */
+	public function add_cdn_menu_item() {
+		global $submenu;
+		$utm = '?utm_source=envira-gallery-lite&utm_medium=lite-plugin&utm_campaign=admin-menu&utm_content=' . ENVIRA_LITE_VERSION;
+		// Only add if the submenu exists.
+		if ( isset( $submenu['edit.php?post_type=envira'] ) ) {
+			$submenu['edit.php?post_type=envira'][] = [
+				// Use HTML in the menu title, but be aware some WP versions may not render it.
+				'Envira CDN <span class="cdn_new_badge">NEW</span>',
+				'manage_options',
+				'https://enviragallery.com/cdn/' . $utm,
+				// Add a custom class to target with JS for opening in new tab
+				'cdn-menu-item-target-blank',
+			];
+		}
 	}
 
 	/**
