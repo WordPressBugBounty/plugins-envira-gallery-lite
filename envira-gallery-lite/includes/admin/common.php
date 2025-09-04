@@ -751,6 +751,9 @@ class Envira_Gallery_Common_Admin {
 	 * - define( 'ENVIRA_GALLERY_SHAREASALE_ID', 1234 );
 	 * - get_option( 'envira_gallery_shareasale_id' ); (with the option being in the wp_options table)
 	 *
+	 * Additionally, you can completely override the final URL using:
+	 * - add_filter( 'envira_gallery_shareasale_entire_redirect_url', function( $url, $original_url, $medium, $button, $append, $shareasale_id ) { return 'your-custom-url'; } );
+	 *
 	 * utm_source = liteplugin
 	 * utm_medium = page
 	 * utm_campaign = what button was clicked, etc.
@@ -783,6 +786,9 @@ class Envira_Gallery_Common_Admin {
 		// Whether we have an ID or not, filter the ID.
 		$shareasale_id = apply_filters( 'envira_gallery_shareasale_id', $shareasale_id );
 
+		// Build the URL first, then allow it to be completely overridden
+		$final_url = '';
+
 		// If at this point we still don't have an ID, we really don't have one!
 		// Just return the standard upgrade URL.
 		if ( empty( $shareasale_id ) ) {
@@ -790,13 +796,18 @@ class Envira_Gallery_Common_Admin {
 				// prevent a possible typo.
 				$url = false;
 			}
-			$url = ( false !== $url ) ? trailingslashit( esc_url( $url ) ) : 'https://enviragallery.com/lite/';
-			return $url . '?utm_source=liteplugin&utm_medium=' . $medium . '&utm_campaign=' . $button . $append;
+			$url       = ( false !== $url ) ? trailingslashit( esc_url( $url ) ) : 'https://enviragallery.com/lite/';
+			$final_url = $url . '?utm_source=liteplugin&utm_medium=' . $medium . '&utm_campaign=' . $button . $append;
+		} else {
+			// If here, we have a ShareASale ID
+			// Build ShareASale URL with redirect.
+			$final_url = 'http://www.shareasale.com/r.cfm?u=' . $shareasale_id . '&b=566240&m=51693&afftrack=&urllink=enviragallery%2Ecom%2Flite%2F';
 		}
 
-		// If here, we have a ShareASale ID
-		// Return ShareASale URL with redirect.
-		return 'http://www.shareasale.com/r.cfm?u=' . $shareasale_id . '&b=566240&m=51693&afftrack=&urllink=enviragallery%2Ecom%2Flite%2F';
+		// Allow complete URL override via new filter
+		$final_url = apply_filters( 'envira_gallery_shareasale_entire_redirect_url', $final_url, $url, $medium, $button, $append, $shareasale_id );
+
+		return $final_url;
 	}
 
 	/**

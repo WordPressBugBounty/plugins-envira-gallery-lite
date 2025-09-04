@@ -1188,3 +1188,54 @@ jQuery(document).ready(function($) {
 		$upsellModalAI.hide();
 	});
 });
+
+/**
+ * Display envira dribbble  upsell modal.
+*/
+jQuery(document).ready(function($) {
+	var $btnUpsell = $('.envira-tab .link-envira-dribbble-tab.upsell');
+	var $upsellModalAI = $('#envira-dribbble-upsell-modal');
+	var $closeButton = $('#close-envira-dribbble-upsell-modal');
+
+	$btnUpsell.on('click', function() {
+		$upsellModalAI.show();
+	});
+
+	$closeButton.on('click', function() {
+		$upsellModalAI.hide();
+	});
+});
+
+/**
+ * Display envira instagram  upsell modal.
+*/
+jQuery(document).ready(function($) {
+	var $btnUpsell = $('.envira-tab .link-envira-instagram-tab.upsell');
+	var $upsellModalAI = $('#envira-instagram-upsell-modal');
+	var $closeButton = $('#close-envira-instagram-upsell-modal');
+
+	$btnUpsell.on('click', function() {
+		$upsellModalAI.show();
+	});
+
+	$closeButton.on('click', function() {
+		$upsellModalAI.hide();
+	});
+});
+
+/**
+ * Display envira tiktok  upsell modal.
+*/
+jQuery(document).ready(function($) {
+	var $btnUpsell = $('.envira-tab .link-envira-tiktok-tab.upsell');
+	var $upsellModalAI = $('#envira-tiktok-upsell-modal');
+	var $closeButton = $('#close-envira-tiktok-upsell-modal');
+
+	$btnUpsell.on('click', function() {
+		$upsellModalAI.show();
+	});
+
+	$closeButton.on('click', function() {
+		$upsellModalAI.hide();
+	});
+});

@@ -852,6 +852,12 @@ class Envira_Gallery_Metaboxes {
 											<p><?php esc_html_e( 'Vertical Focus', 'envira-gallery-lite' ); ?></p>
 										</div>
 									</li>
+									<li>
+										<div class="thumbnail upgrade-to-pro">
+											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/highlight-grid-layout.png' ); ?>">
+											<p><?php esc_html_e( 'Highlight Grid', 'envira-gallery-lite' ); ?></p>
+										</div>
+									</li>
 								</ul>
 							</div>
 						</td>

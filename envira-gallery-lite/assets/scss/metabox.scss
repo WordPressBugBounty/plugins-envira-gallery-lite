@@ -854,6 +854,27 @@ form#post.envira-gallery {
 										}
 									}
 								}
+
+								/**Dribbble gallery tab icon**/
+								&#envira-gallery-type-dribbble {
+									label,
+									a {
+										div.icon {
+											background-image: url(../images/types/dribbble.png);
+										}
+									}
+								}
+
+
+								/**Tiktok gallery tab icon**/
+								&#envira-gallery-type-tiktok {
+									label,
+									a {
+										div.icon {
+											background-image: url(../images/types/tiktok.png);
+										}
+									}
+								}
 							}
 						}
 
@@ -1913,3 +1934,8 @@ form#post.envira-gallery {
  * Envira AI Upsell Modal
  */
 @import './image-create-ai';
+
+/**
+ * Envira Addon Upsell Modal
+ */
+@import './envira-addon-upsell-modal';
