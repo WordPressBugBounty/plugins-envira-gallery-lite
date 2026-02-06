@@ -64,10 +64,10 @@ class Envira_Permissions {
 		}
 
 		$permissions_labels = [
-			'envira_permissions_create'      => esc_html__( 'Create Galleries' ),
-			'envira_permissions_edit'        => esc_html__( 'Edit Galleries' ),
-			'envira_permissions_delete'      => esc_html__( 'Delete Galleries' ),
-			'envira_permissions_edit_others' => esc_html__( 'Edit Others Galleries' ),
+			'envira_permissions_create'      => esc_html__( 'Create Galleries', 'envira-gallery-lite' ),
+			'envira_permissions_edit'        => esc_html__( 'Edit Galleries', 'envira-gallery-lite' ),
+			'envira_permissions_delete'      => esc_html__( 'Delete Galleries', 'envira-gallery-lite' ),
+			'envira_permissions_edit_others' => esc_html__( 'Edit Others Galleries', 'envira-gallery-lite' ),
 		];
 
 		$map                = apply_filters( 'envira_permissions_fields_mapping', $map );

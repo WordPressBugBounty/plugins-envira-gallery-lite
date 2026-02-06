@@ -1,13 +1,13 @@
-=== Gallery Plugin for WordPress - Envira Photo Gallery ===
+=== Envira Gallery - Image Photo Gallery, Albums, Video Gallery, Slideshows & More ===
 Contributors: enviragallery
 Tags: gallery, image gallery, photo gallery, best gallery plugin, wordpress gallery plugin
-Requires at least: 5.5.0
-Tested up to: 6.8.2
+Requires at least: 5.5
+Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 1.11.0
+Stable tag: 1.12.3
 License: GNU General Public License v2.0 or later
 
-Envira Gallery is the fastest, easiest, and most powerful WordPress image gallery. Lightbox with Drag & Drop builder that helps you create beautiful galleries with just a few clicks.
+Envira Gallery is a fast, easy and powerful gallery builder with lightbox, masonry and grid layouts, albums, videos, and responsive displays and more
 
 == Description ==
 
@@ -235,9 +235,38 @@ You can get access to more features, Addons and support by <a href="http://envir
 
 = Is Envira translation ready? =
 
-Yes, Envira has full translation and localization support via the envira-gallery textdomain. To submit a translation, see https://translate.wordpress.org/projects/wp-plugins/envira-gallery-lite
+Yes, Envira has full translation and localization support via the envira-gallery-lite textdomain. To submit a translation, see https://translate.wordpress.org/projects/wp-plugins/envira-gallery-lite
 
 == Changelog ==
+
+1.12.3
+* Fixed: Added ABSPATH security checks to all admin and partial files to prevent direct file access
+* Fixed: Added missing text domain parameters to all translation strings throughout the plugin
+* Fixed: removed some submenus
+* Updated: Plugin readme title and description for clarity
+* Updated: Minimum WordPress version requirement from 5.5.0 to 5.5
+* Removed: Unused textdomain loading function
+
+1.12.2
+* Added new Pro templates in layout chooser: Grid Fixed Title and Vertical Line Grid (with new preview images).
+* Added improved Gutenberg block empty-state UX: clearer “no galleries” messaging, Create/Add New Gallery CTA, and refreshed upload/media library UI.
+* Fixed Envira CDN admin menu item to open in a new tab.
+* Fixed/updated admin licensing modal copy and refreshed brand colors/icons.
+* Fixed Gutenberg block placeholder/styling issues
+* Fixed admin review notice copy
+
+1.12.1
+* Added: Post type meta cap for better compatibility
+
+1.12.0
+* Added: Show likes text on comments tab.
+* Added: TikTok Videos as gallery source
+* Enhanced: Permission check when converting galleries in bulk.
+
+1.11.1
+* Added: New Template - Spread Harmony (Pro)
+* Fixed: Permission issue on convert gallery feature
+
 1.11.0
 * New: Easily import and showcase your Dribbble galleries with a click of a button
 * New: We've added a new Highlight Grid layout

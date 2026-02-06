@@ -7,6 +7,10 @@
  * @package Envira Gallery Lite
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 ?>
 <!-- logo -->
 <img width="339" src="<?php echo esc_attr( ENVIRA_LITE_URL . 'assets/images/envira-logo-color.svg' ); ?>" alt="Envira Gallery Lite" class="envira-onboarding-wizard-logo">

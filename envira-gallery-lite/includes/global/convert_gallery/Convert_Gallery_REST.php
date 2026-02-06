@@ -30,7 +30,7 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'envira_convert_wordpress_gallery' ],
-				'permission_callback' => [ $this, 'verify_rest_nonce' ],
+				'permission_callback' => [ $this, 'verify_convert_gallery_permission' ],
 			]
 		);
 
@@ -41,7 +41,7 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'envira_convert_bulk_galleries' ],
-				'permission_callback' => [ $this, 'verify_rest_nonce' ],
+				'permission_callback' => [ $this, 'verify_bulk_convert_permission' ],
 			]
 		);
 
@@ -52,7 +52,7 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'envira_convert_process_items' ],
-				'permission_callback' => [ $this, 'verify_rest_nonce' ],
+				'permission_callback' => [ $this, 'verify_process_gallery_permission' ],
 			]
 		);
 	}
@@ -77,14 +77,112 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 	}
 
 	/**
+	 * Permission callback for single gallery conversion.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return bool|WP_REST_Response
+	 */
+	public function verify_convert_gallery_permission( $request ) {
+
+		// Get post ID from request - support both postId and post_id for backward compatibility.
+		$post_id = absint( $request->get_param( 'post_id' ) );
+		if ( $post_id <= 0 ) {
+			$post_id = absint( $request->get_param( 'postId' ) );
+		}
+
+		if ( $post_id <= 0 ) {
+			return new WP_REST_Response( [ 'message' => __( 'A valid post ID is required.', 'envira-gallery-lite' ) ], 400 );
+		}
+
+		// Check if user can edit the post.
+		if ( ! $this->can_edit_post( $post_id ) ) {
+			return new WP_REST_Response( [ 'message' => __( 'You do not have permission to edit this post.', 'envira-gallery-lite' ) ], 403 );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Permission callback for bulk gallery conversion.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return bool|WP_REST_Response
+	 */
+	public function verify_bulk_convert_permission( $request ) {
+
+		// Check bulk conversion capability.
+		$capability = apply_filters( 'envira_convert_bulk_galleries_cap', 'manage_options' );
+		if ( ! current_user_can( $capability ) ) {
+			return new WP_REST_Response( [ 'message' => __( 'You do not have permission to access this feature.', 'envira-gallery-lite' ) ], 403 );
+		}
+
+		// Get post type from request.
+		$selected_posttype = sanitize_text_field( $request->get_param( 'selected_posttype' ) );
+
+		if ( empty( $selected_posttype ) ) {
+			return new WP_REST_Response( [ 'message' => __( 'A post type is required for conversion. Please make a selection.', 'envira-gallery-lite' ) ], 400 );
+		}
+
+		if ( ! post_type_exists( $selected_posttype ) ) {
+			return new WP_REST_Response( [ 'message' => __( 'Post type not recognized. Please check your selection and try again.', 'envira-gallery-lite' ) ], 404 );
+		}
+
+		// Check if the current user can edit the selected post type.
+		$post_type_object = get_post_type_object( $selected_posttype );
+		if ( ! current_user_can( $post_type_object->cap->edit_posts ) ) {
+			// translators: %s is the post type singular name.
+			return new WP_REST_Response( [ 'message' => sprintf( __( 'You do not have permission to edit %s item(s).', 'envira-gallery-lite' ), $post_type_object->labels->singular_name ) ], 403 );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Permission callback for processing gallery items.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return bool|WP_REST_Response
+	 */
+	public function verify_process_gallery_permission( $request ) {
+
+		// Get post ID from request - support both postId and post_id for backward compatibility.
+		$post_id = absint( $request->get_param( 'post_id' ) );
+		if ( $post_id <= 0 ) {
+			$post_id = absint( $request->get_param( 'postId' ) );
+		}
+
+		if ( $post_id <= 0 ) {
+			return new WP_REST_Response( [ 'error' => __( 'A valid post ID is required.', 'envira-gallery-lite' ) ], 400 );
+		}
+
+		// Get the post.
+		$post = get_post( $post_id );
+
+		if ( ! $post ) {
+			return new WP_REST_Response( [ 'error' => __( 'Post not found.', 'envira-gallery-lite' ) ], 400 );
+		}
+
+		// Check if user can edit the post.
+		if ( ! $this->can_edit_post( $post_id ) ) {
+			return new WP_REST_Response( [ 'error' => __( 'You do not have permission to edit this post.', 'envira-gallery-lite' ) ], 403 );
+		}
+
+		return true;
+	}
+
+	/**
 	 * Convert single WordPress Gallery to Envira Gallery.
 	 *
 	 * @param WP_REST_Request $request Request object.
 	 * @return WP_REST_Response
 	 */
 	public function envira_convert_wordpress_gallery( $request ) {
-		// Retrieve data from the request.
-		$post_id       = absint( $request->get_param( 'postId' ) );
+		// Get post ID from request - support both postId and post_id for backward compatibility.
+		$post_id = absint( $request->get_param( 'post_id' ) );
+		if ( $post_id <= 0 ) {
+			$post_id = absint( $request->get_param( 'postId' ) );
+		}
+
 		$columns       = absint( $request->get_param( 'columns' ) );
 		$size_slug     = sanitize_text_field( $request->get_param( 'sizeSlug' ) );
 		$link_target   = sanitize_text_field( $request->get_param( 'linkTarget' ) );
@@ -158,14 +256,6 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 		// Get form data from the request.
 		$selected_posttype = sanitize_text_field( $request->get_param( 'selected_posttype' ) );
 
-		if ( empty( $selected_posttype ) ) {
-			return new WP_REST_Response( [ 'message' => __( 'A post type is required for conversion. Please make a selection.', 'envira-gallery-lite' ) ], 400 );
-		}
-
-		if ( ! post_type_exists( $selected_posttype ) ) {
-			return new WP_REST_Response( [ 'message' => __( 'Post type not recognized. Please check your selection and try again.', 'envira-gallery-lite' ) ], 404 );
-		}
-
 		// Get all posts of the given post type.
 		$args  = [
 			'post_type'   => $selected_posttype,
@@ -189,13 +279,23 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 			return new WP_REST_Response( [ 'message' => __( 'No galleries were found in the selected post type.', 'envira-gallery-lite' ) ], 400 );
 		}
 
-		// Send back the found posts.
-		return new WP_REST_Response(
-			[
-				'posts' => $found_posts,
-			],
-			200
+		// Each post item will be checked against the can_edit_post() method to ensure
+		// the current user has permission to edit it.
+
+		$filtered_posts = array_values(
+			array_filter(
+				$found_posts,
+				function ( $post_id ) {
+					return $this->can_edit_post( $post_id );
+				}
+			)
 		);
+
+		if ( empty( $filtered_posts ) ) {
+			return new WP_REST_Response( [ 'message' => __( 'You do not have permission to edit any of the found posts.', 'envira-gallery-lite' ) ], 403 );
+		}
+
+		return new WP_REST_Response( [ 'posts' => $filtered_posts ], 200 );
 	}
 
 	/**
@@ -205,20 +305,18 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 	 * @return WP_REST_Response
 	 */
 	public function envira_convert_process_items( $request ) {
-		// Get form data from the request.
+		// Get form data from the request - support both postId and post_id for backward compatibility.
 		$post_id = absint( $request->get_param( 'post_id' ) );
-		$post_id = isset( $post_id ) ? $post_id : 0;
+		if ( $post_id <= 0 ) {
+			$post_id = absint( $request->get_param( 'postId' ) );
+		}
 
-		if ( empty( $post_id ) ) {
+		if ( $post_id <= 0 ) {
 			return new WP_REST_Response( [ 'error' => __( 'A valid post ID is required.', 'envira-gallery-lite' ) ], 400 );
 		}
 
 		// Get the post.
 		$post = get_post( $post_id );
-
-		if ( ! $post ) {
-			return new WP_REST_Response( [ 'error' => __( 'Post not found.', 'envira-gallery-lite' ) ], 400 );
-		}
 
 		$updated_content = $post->post_content; // Start with the current content.
 		$needs_update    = false;
@@ -251,5 +349,15 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 				400
 			);
 		}
+	}
+
+	/**
+	 * Check if the current user can edit the post or has edit_posts capability.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return bool
+	 */
+	public function can_edit_post( $post_id ) {
+		return current_user_can( 'edit_post', $post_id );
 	}
 }

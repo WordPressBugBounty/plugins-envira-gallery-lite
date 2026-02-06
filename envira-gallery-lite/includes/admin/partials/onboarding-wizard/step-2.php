@@ -7,6 +7,10 @@
  * @package Envira Gallery Lite
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 $onboarding = new OnboardingWizard();
 ?>
 <div class="envira-onboarding-form-step " id="features">

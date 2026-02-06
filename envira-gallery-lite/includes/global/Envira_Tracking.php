@@ -218,7 +218,7 @@ class Envira_Tracking {
 
 		$schedules['weekly'] = [
 			'interval' => 604800,
-			'display'  => __( 'Once Weekly', 'envira-gallery' ),
+			'display'  => __( 'Once Weekly', 'envira-gallery-lite' ),
 		];
 
 		return $schedules;

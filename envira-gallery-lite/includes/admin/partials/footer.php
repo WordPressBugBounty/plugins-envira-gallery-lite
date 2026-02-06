@@ -10,6 +10,10 @@
  * @author     David Bisset, Envira Team
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 ?>
 <div class="clear"></div>
 <div class="envira-footer-promotion">

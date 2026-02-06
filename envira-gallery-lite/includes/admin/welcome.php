@@ -495,6 +495,8 @@ class Envira_Welcome {
 
 		unset( $submenu['edit.php?post_type=envira'][15] );
 		unset( $submenu['edit.php?post_type=envira'][16] );
+		unset( $submenu['edit.php?post_type=envira'][17] );
+		unset( $submenu['edit.php?post_type=envira'][18] );
 	}
 
 	/**

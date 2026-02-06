@@ -1,12 +1,12 @@
 <?php
 /**
- * Plugin Name: Envira Gallery Lite
+ * Plugin Name: Envira Gallery - Image Photo Gallery, Albums, Video Gallery, Slideshows & More
  * Plugin URI:  http://enviragallery.com
- * Description: Envira Gallery is the best responsive WordPress gallery plugin. This is the Lite version.
+ * Description: Envira Gallery is a fast, easy and powerful gallery builder with lightbox, masonry and grid layouts, albums, videos, and responsive displays and more
  * Author:      Envira Gallery Team
  * Author URI:  http://enviragallery.com
- * Version:     1.11.0
- * Requires at least: 5.5.0
+ * Version:     1.12.3
+ * Requires at least: 5.5
  * Requires PHP: 7.0
  * Text Domain: envira-gallery-lite
  *
@@ -59,7 +59,7 @@ class Envira_Gallery_Lite {
 	 *
 	 * @var string
 	 */
-	public $version = '1.11.0';
+	public $version = '1.12.3';
 
 
 	/**
@@ -136,21 +136,8 @@ class Envira_Gallery_Lite {
 		// Fire a hook before the class is setup.
 		do_action( 'envira_gallery_pre_init' );
 
-		// Load the plugin textdomain.
-		add_action( 'plugins_loaded', [ $this, 'load_plugin_textdomain' ] );
-
 		// Load the plugin formally.
 		add_action( 'init', [ $this, 'init' ], 0 );
-	}
-
-	/**
-	 * Loads the plugin textdomain for translation.
-	 *
-	 * @since 1.0.0
-	 */
-	public function load_plugin_textdomain() {
-
-		load_plugin_textdomain( 'envira-gallery-lite' );
 	}
 
 	/**

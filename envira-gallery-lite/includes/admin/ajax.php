@@ -8,6 +8,10 @@
  * @author  Envira Gallery Team
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 add_action( 'wp_ajax_envira_gallery_change_type', 'envira_gallery_ajax_change_type' );
 /**
  * Changes the type of gallery to the user selection.
@@ -19,14 +23,14 @@ function envira_gallery_ajax_change_type() {
 	// Run a security check first.
 	check_admin_referer( 'envira-gallery-change-type', 'nonce' );
 
-	if ( ! current_user_can( 'edit_posts' ) ) {
-		wp_send_json_error( [ 'message' => esc_html__( 'You are not allowed to edit galleries.', 'envira-gallery-lite' ) ] );
-	}
-
 	// Prepare variables.
 	$post_id = isset( $_POST['post_id'] ) ? absint( wp_unslash( $_POST['post_id'] ) ) : null;
-	$post    = get_post( $post_id );
-	$type    = isset( $_POST['type'] ) ? sanitize_text_field( wp_unslash( $_POST['type'] ) ) : null;
+
+	if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		wp_send_json_error( [ 'message' => esc_html__( 'You are not allowed to edit galleries.', 'envira-gallery-lite' ) ] );
+	}
+	$post = get_post( $post_id );
+	$type = isset( $_POST['type'] ) ? sanitize_text_field( wp_unslash( $_POST['type'] ) ) : null;
 
 	// Retrieve the data for the type selected.
 	ob_start();
@@ -82,13 +86,13 @@ function envira_gallery_ajax_load_image() {
 	// Run a security check first.
 	check_admin_referer( 'envira-gallery-load-image', 'nonce' );
 
-	if ( ! current_user_can( 'edit_posts' ) ) {
-		wp_send_json_error( [ 'message' => esc_html__( 'You are not allowed to edit galleries.', 'envira-gallery-lite' ) ] );
-	}
-
 	// Prepare variables.
 	$id      = isset( $_POST['id'] ) ? absint( wp_unslash( $_POST['id'] ) ) : null;
 	$post_id = isset( $_POST['post_id'] ) ? absint( wp_unslash( $_POST['post_id'] ) ) : null;
+
+	if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		wp_send_json_error( [ 'message' => esc_html__( 'You are not allowed to edit galleries.', 'envira-gallery-lite' ) ] );
+	}
 
 	// Set post meta to show that this image is attached to one or more Envira galleries.
 	$has_gallery = get_post_meta( $id, '_eg_has_gallery', true );
@@ -286,12 +290,12 @@ function envira_gallery_ajax_remove_image() {
 	// Run a security check first.
 	check_admin_referer( 'envira-gallery-remove-image', 'nonce' );
 
-	if ( ! current_user_can( 'edit_posts' ) ) {
+	// Prepare variables.
+	$post_id = isset( $_POST['post_id'] ) ? absint( wp_unslash( $_POST['post_id'] ) ) : null;
+
+	if ( ! current_user_can( 'edit_post', $post_id ) ) {
 		wp_send_json_error( [ 'message' => esc_html__( 'You are not allowed to edit galleries.', 'envira-gallery-lite' ) ] );
 	}
-
-	// Prepare variables.
-	$post_id      = isset( $_POST['post_id'] ) ? absint( wp_unslash( $_POST['post_id'] ) ) : null;
 	$attach_id    = isset( $_POST['attachment_id'] ) ? absint( wp_unslash( $_POST['attachment_id'] ) ) : null;
 	$gallery_data = get_post_meta( $post_id, '_eg_gallery_data', true );
 	$in_gallery   = get_post_meta( $post_id, '_eg_in_gallery', true );
@@ -576,12 +580,12 @@ function envira_gallery_ajax_refresh() {
 	// Run a security check first.
 	check_admin_referer( 'envira-gallery-refresh', 'nonce' );
 
-	if ( ! current_user_can( 'edit_posts' ) ) {
-		wp_send_json_error( [ 'message' => esc_html__( 'You are not allowed to edit galleries.', 'envira-gallery-lite' ) ] );
-	}
-
 	// Prepare variables.
 	$post_id = isset( $_POST['post_id'] ) ? absint( wp_unslash( $_POST['post_id'] ) ) : null;
+
+	if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		wp_send_json_error( [ 'message' => esc_html__( 'You are not allowed to edit galleries.', 'envira-gallery-lite' ) ] );
+	}
 	$gallery = '';
 
 	// Grab all gallery data.
@@ -875,6 +879,20 @@ function envira_gallery_get_attachment_links() {
 	// Get required inputs.
 	$attachment_id = isset( $_POST['attachment_id'] ) ? absint( wp_unslash( $_POST['attachment_id'] ) ) : null;
 
+	if ( ! $attachment_id ) {
+		wp_send_json_error( [ 'message' => esc_html__( 'Invalid attachment ID.', 'envira-gallery-lite' ) ] );
+	}
+
+	// Verify the attachment exists and is a valid attachment.
+	$attachment = get_post( $attachment_id );
+	if ( ! $attachment || 'attachment' !== $attachment->post_type ) {
+		wp_send_json_error( [ 'message' => esc_html__( 'Invalid attachment.', 'envira-gallery-lite' ) ] );
+	}
+
+	if ( ! current_user_can( 'upload_files' ) ) {
+		wp_send_json_error( [ 'message' => esc_html__( 'You are not allowed to access attachments.', 'envira-gallery-lite' ) ] );
+	}
+
 	// Return the attachment's links.
 	wp_send_json_success(
 		[
@@ -1016,7 +1034,11 @@ function envira_gallery_move_media() {
 		wp_send_json_error( __( 'The From Gallery ID has not been specified.', 'envira-gallery-lite' ) );
 	}
 	if ( ! $to_gallery_id ) {
-		wp_send_json_error( __( 'The From Gallery ID has not been specified.', 'envira-gallery-lite' ) );
+		wp_send_json_error( __( 'The To Gallery ID has not been specified.', 'envira-gallery-lite' ) );
+	}
+
+	if ( ! current_user_can( 'edit_post', $to_gallery_id ) ) {
+		wp_send_json_error( [ 'message' => esc_html__( 'You are not allowed to edit galleries.', 'envira-gallery-lite' ) ] );
 	}
 	if ( count( $image_ids ) === 0 ) {
 		wp_send_json_error( __( 'No images were selected to be moved between Galleries.', 'envira-gallery-lite' ) );

@@ -218,7 +218,7 @@ class OnboardingWizard {
 			}
 			?>
 				<div class="envira-onboarding-close-and-exit">
-					<a href="<?php echo esc_url( admin_url( '/edit.php?post_type=envira&page=envira-gallery-settings' ) ); ?>"><?php esc_html_e( 'Close and Exit Wizard Without Saving', 'envira-gallery' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( '/edit.php?post_type=envira&page=envira-gallery-settings' ) ); ?>"><?php esc_html_e( 'Close and Exit Wizard Without Saving', 'envira-gallery-lite' ); ?></a>
 				</div>
 			</div>
 		</div>

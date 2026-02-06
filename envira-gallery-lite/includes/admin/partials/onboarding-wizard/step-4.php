@@ -7,6 +7,10 @@
  * @package Envira Gallery Lite
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 ?>
 <div class="envira-onboarding-form-step envira-wizard-license-key" id="summary">
 	<div class="envira-onboarding-wizard-body">

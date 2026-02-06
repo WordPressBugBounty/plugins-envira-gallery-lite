@@ -8,6 +8,10 @@
  * @author  Envira Gallery Team
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Importer Preview Class
  *

@@ -87,8 +87,9 @@ class Envira_Gallery_Posttype {
 			'show_in_rest'        => true,
 			'rest_base'           => 'envira-gallery',
 			'menu_position'       => apply_filters( 'envira_gallery_post_type_menu_position', 247 ),
-			'menu_icon'           => plugins_url( 'assets/css/images/menu-icon@2x.png', $this->base->file ),
+			'menu_icon'           => plugins_url( 'assets/css/images/envira-green.png', $this->base->file ),
 			'supports'            => [ 'title' ],
+			'map_meta_cap'        => true,
 		];
 
 		$args['capabilities'] = [

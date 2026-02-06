@@ -94,7 +94,7 @@ class Envira_Gallery_Addons {
 		$this->hook = add_submenu_page(
 			'edit.php?post_type=envira',
 			__( 'Envira Gallery Addons', 'envira-gallery-lite' ),
-			'<span style="color:#7cc048"> ' . __( 'Addons', 'envira-gallery-lite' ) . '</span>',
+			'<span style="color:#00ac53"> ' . __( 'Addons', 'envira-gallery-lite' ) . '</span>',
 			apply_filters( 'envira_gallery_menu_cap', 'manage_options' ),
 			$this->base->plugin_slug . '-addons',
 			[ $this, 'addons_page' ]

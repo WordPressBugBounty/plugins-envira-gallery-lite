@@ -101,14 +101,14 @@ class Menu_Nudge {
 			<div class="envira-admin-menu-tooltip-header">
 				<span class="envira-admin-menu-tooltip-icon"><span
 						class="dashicons dashicons-megaphone"></span></span>
-				<?php esc_html_e( 'Envira Gallery Alert!', 'envira-gallery' ); ?>
+				<?php esc_html_e( 'Envira Gallery Alert!', 'envira-gallery-lite' ); ?>
 				<span class="envira-admin-menu-tooltip-close"><span
 						class="dashicons dashicons-dismiss"></span></span>
 			</div>
 			<div class="envira-admin-menu-tooltip-content">
-				<?php esc_html_e( "👋 You're not showcasing any images on this website. Why not create a stunning gallery with Envira?", 'envira-gallery' ); ?>
+				<?php esc_html_e( "👋 You're not showcasing any images on this website. Why not create a stunning gallery with Envira?", 'envira-gallery-lite' ); ?>
 				<p>
-					<button id="envira-admin-menu-launch-tooltip-button" class="button button-primary"><?php esc_html_e( 'Build a Gallery', 'envira-gallery' ); ?></button>
+					<button id="envira-admin-menu-launch-tooltip-button" class="button button-primary"><?php esc_html_e( 'Build a Gallery', 'envira-gallery-lite' ); ?></button>
 				</p>
 			</div>
 		</div>

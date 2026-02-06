@@ -3,7 +3,6 @@
  */
 
 (function ($, document, envira_gallery_convert) {
-
 	// DOM ready.
 	$(function () {
 		/**
@@ -34,7 +33,7 @@
 
 			// Prepare form data.
 			const formData = new FormData();
-			formData.append("selected_posttype", selectedPostType);
+			formData.append('selected_posttype', selectedPostType);
 
 			// Disable the dropdown and button.
 			postTypeDropDown.attr('disabled', true);
@@ -43,14 +42,14 @@
 
 			// Make the fetch request to the REST API.
 			fetch(envira_gallery_convert.bulk_convert_rest_url, {
-				method: "POST",
+				method: 'POST',
 				body: formData,
 				headers: {
-					"X-WP-Nonce": envira_gallery_convert.gallery_convert_rest_nonce, // REST API nonce for authorization.
-				},
+					'X-WP-Nonce': envira_gallery_convert.gallery_convert_rest_nonce // REST API nonce for authorization.
+				}
 			})
-				.then((response) => response.json())
-				.then((response) => {
+				.then(response => response.json())
+				.then(response => {
 					if (response.posts) {
 						let posts = response.posts;
 						let totalPosts = posts.length;
@@ -63,7 +62,15 @@
 							.html(envira_gallery_convert.bulk_conversion_started)
 							.show();
 
-						$('.envira-convert-process-logs').show().html('<p><strong>' + totalPosts + ' ' + envira_gallery_convert.found_posts_text + '</strong></p><div class="envira-convert-progress-bar-container"><div class="envira-convert-progress-bar"></div></div><div class="envira-convert-progress-counts"></div>');
+						$('.envira-convert-process-logs')
+							.show()
+							.html(
+								'<p><strong>' +
+									totalPosts +
+									' ' +
+									envira_gallery_convert.found_posts_text +
+									'</strong></p><div class="envira-convert-progress-bar-container"><div class="envira-convert-progress-bar"></div></div><div class="envira-convert-progress-counts"></div>'
+							);
 
 						// Function to update the progress bar.
 						function updateProgressBar() {
@@ -79,28 +86,50 @@
 
 								// Prepare form data.
 								const itemFormData = new FormData();
-								itemFormData.append("post_id", post_id);
+								itemFormData.append('post_id', post_id);
 
 								// Make the fetch request to the REST API.
 								fetch(envira_gallery_convert.process_item_rest_url, {
-									method: "POST",
+									method: 'POST',
 									body: itemFormData,
 									headers: {
-										"X-WP-Nonce": envira_gallery_convert.gallery_convert_rest_nonce, // REST API nonce for authorization.
-									},
+										'X-WP-Nonce': envira_gallery_convert.gallery_convert_rest_nonce // REST API nonce for authorization.
+									}
 								})
-									.then((processResponse) => processResponse.json())
-									.then((processResponse) => {
+									.then(processResponse => processResponse.json())
+									.then(processResponse => {
 										if (processResponse.error) {
 											let edit_url_html = '';
 											if (processResponse.edit_url) {
 												const edit_url = processResponse.edit_url;
-												edit_url_html = ' (<a target="_blank" href="' + edit_url + '" target="_blank">' + envira_gallery_convert.edit_post_text + '</a>)';
+												edit_url_html =
+													' (<a target="_blank" href="' +
+													edit_url +
+													'" target="_blank">' +
+													envira_gallery_convert.edit_post_text +
+													'</a>)';
 											}
 											if (failedPostsCount === 0) {
-												$('.envira-convert-process-logs').show().append('<p><strong>' + envira_gallery_convert.failed_conversion_logs + '</strong></p>');
+												$('.envira-convert-process-logs')
+													.show()
+													.append(
+														'<p><strong>' +
+															envira_gallery_convert.failed_conversion_logs +
+															'</strong></p>'
+													);
 											}
-											$('.envira-convert-process-logs').show().append('<p><strong>' + envira_gallery_convert.post_id_text + ' ' + post_id + edit_url_html + '</strong>: ' + processResponse.error + '</p>');
+											$('.envira-convert-process-logs')
+												.show()
+												.append(
+													'<p><strong>' +
+														envira_gallery_convert.post_id_text +
+														' ' +
+														post_id +
+														edit_url_html +
+														'</strong>: ' +
+														processResponse.error +
+														'</p>'
+												);
 											failedPostsCount++;
 										}
 
@@ -108,11 +137,8 @@
 										updateProgressBar(); // Update progress bar.
 										processNextPost(); // Process next post.
 									})
-									.catch((error) => {
-										$('.envira-convert-gallery-message')
-											.addClass('error')
-											.html(error)
-											.show();
+									.catch(error => {
+										$('.envira-convert-gallery-message').addClass('error').html(error).show();
 									});
 							} else {
 								// Conversion process completed.
@@ -138,23 +164,17 @@
 						convertButton.attr('disabled', false);
 						convertButton.html(buttonText);
 
-						$('.envira-convert-gallery-message')
-							.addClass('error')
-							.html(response.message)
-							.show();
+						$('.envira-convert-gallery-message').addClass('error').html(response.message).show();
 					}
 				})
-				.catch((error) => {
+				.catch(error => {
 					// Re-enable the dropdown and button.
 					postTypeDropDown.attr('disabled', false);
 					convertButton.attr('disabled', false);
 					convertButton.html(buttonText);
 
 					// Display the error message.
-					$('.envira-convert-gallery-message')
-						.addClass('error')
-						.html(error)
-						.show();
+					$('.envira-convert-gallery-message').addClass('error').html(error).show();
 				})
 				.finally(() => {
 					// Re-enable the dropdown and button.

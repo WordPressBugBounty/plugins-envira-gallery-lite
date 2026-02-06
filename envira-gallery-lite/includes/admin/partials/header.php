@@ -10,6 +10,10 @@
  * @author     David Bisset, Envira Team
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 $upgrade_link = Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/pricing', 'topbar', 'goPro' );
 $logo_link    = Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'logo', 'liteplugin' );
 

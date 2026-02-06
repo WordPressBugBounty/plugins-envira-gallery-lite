@@ -99,6 +99,9 @@ class Envira_Gallery_Common_Admin {
 		add_action( 'admin_menu', [ $this, 'add_cdn_menu_item' ], 11 );
 		add_action( 'admin_head', [ $this, 'admin_inline_styles' ] );
 		add_action( 'admin_footer', [ $this, 'admin_sidebar_target' ] );
+
+		// Add action to output JS for Envira CDN menu item.
+		add_action( 'admin_footer', [ $this, 'admin_cdn_menu_target_blank' ] );
 	}
 
 	/**
@@ -147,7 +150,7 @@ class Envira_Gallery_Common_Admin {
 		<script type="text/javascript">
 		jQuery(document).ready(function($) {
 			$('li.envira-sidebar-upgrade-pro a').attr('target','_blank');
-			$('li.cdn-menu-item-target-blank a').attr('target','_blank');
+			$('a:has(.cdn_new_badge)').attr('target','_blank');
 		});
 		</script>
 		<?php
@@ -520,7 +523,7 @@ class Envira_Gallery_Common_Admin {
 				'unlock_url'                 => esc_url( $this->get_upgrade_link( 'https://enviragallery.com/pricing', 'listgallery', 'unlock' ) ),
 				'unlock_title'               => esc_html__( 'Unlock All Features', 'envira-gallery-lite' ),
 				'unlock_text'                => esc_html__( 'Upgrade to Pro to get access to Albums, Protected Images,  Video Galleries, and more!', 'envira-gallery-lite' ),
-				'unlock_btn'                 => esc_html__( 'Unlock Gallery Features ' ),
+				'unlock_btn'                 => esc_html__( 'Unlock Gallery Features ', 'envira-gallery-lite' ),
 			]
 		);
 
@@ -904,6 +907,19 @@ class Envira_Gallery_Common_Admin {
 			<br/>
 			<span class="envira-posttype-dropdown-error"><?php esc_html_e( 'Please select a post type for conversion.', 'envira-gallery-lite' ); ?></span>
 		</div>
+		<?php
+	}
+
+	/**
+	 * Add link target.
+	 */
+	public function admin_cdn_menu_target_blank() {
+		?>
+		<script type="text/javascript">
+			jQuery(document).ready(function($) {
+				$('span.cdn_new_badge').closest('li').find('a').attr('target', '_blank');
+			});
+		</script>
 		<?php
 	}
 

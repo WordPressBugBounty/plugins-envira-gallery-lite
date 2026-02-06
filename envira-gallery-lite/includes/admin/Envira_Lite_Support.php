@@ -5,6 +5,10 @@
  * @package   Envira_Gallery_Lite
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Class Envira_Lite_Support
  */

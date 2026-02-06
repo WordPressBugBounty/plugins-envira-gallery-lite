@@ -338,7 +338,7 @@ class Envira_Gallery_Common {
 
 		$sizes[] = [
 			'value' => 'full',
-			'name'  => __( 'Original Image', 'envira-gallery' ),
+			'name'  => __( 'Original Image', 'envira-gallery-lite' ),
 		];
 
 		return apply_filters( 'envira_gallery_image_sizes', $sizes );

@@ -5,6 +5,10 @@
  * @package Envira Gallery Lite
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 use Envira\Admin\Envira_Permissions;
 
 /**
