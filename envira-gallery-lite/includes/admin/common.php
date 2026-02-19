@@ -124,7 +124,10 @@ class Envira_Gallery_Common_Admin {
 	public function admin_inline_styles() {
 		echo '<style>
 			.envira-sidebar-upgrade-pro {
-				background-color: #37993B;
+				background-color: #00ac53;
+			}
+			.envira-sidebar-upgrade-pro:hover {
+				background-color: #1c803d;
 			}
 			.envira-sidebar-upgrade-pro a {
 				color: #fff !important;
@@ -523,7 +526,8 @@ class Envira_Gallery_Common_Admin {
 				'unlock_url'                 => esc_url( $this->get_upgrade_link( 'https://enviragallery.com/pricing', 'listgallery', 'unlock' ) ),
 				'unlock_title'               => esc_html__( 'Unlock All Features', 'envira-gallery-lite' ),
 				'unlock_text'                => esc_html__( 'Upgrade to Pro to get access to Albums, Protected Images,  Video Galleries, and more!', 'envira-gallery-lite' ),
-				'unlock_btn'                 => esc_html__( 'Unlock Gallery Features ', 'envira-gallery-lite' ),
+				'unlock_btn'                 => esc_html__( 'Upgrade to Pro', 'envira-gallery-lite' ),
+				'unlock_icon'                => plugins_url( 'assets/css/images/envira-green.png', $this->base->file ),
 			]
 		);
 

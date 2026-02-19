@@ -939,7 +939,7 @@ function envira_gallery_editor_get_galleries() {
 		}
 
 		if ( ! empty( $gallery['config']['title'] ) ) {
-			$gallery_title = $gallery['config']['title'];
+			$gallery_title = wp_specialchars_decode( $gallery['config']['title'], ENT_QUOTES );
 		} else {
 			$gallery_title = false;
 		}
@@ -987,7 +987,7 @@ function envira_gallery_editor_get_galleries() {
 			$prepend_results[] = [
 				'id'        => $gallery['id'],
 				'slug'      => $gallery['config']['slug'],
-				'title'     => $gallery['config']['title'],
+				'title'     => wp_specialchars_decode( $gallery['config']['title'], ENT_QUOTES ),
 				'thumbnail' => ( ( isset( $thumbnail ) && is_array( $thumbnail ) ) ? $thumbnail[0] : '' ),
 				'action'    => 'gallery', // Tells the editor modal whether this is a Gallery or Album for the shortcode output.
 			];

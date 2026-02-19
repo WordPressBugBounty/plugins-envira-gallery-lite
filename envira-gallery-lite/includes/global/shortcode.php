@@ -297,9 +297,18 @@ class Envira_Gallery_Shortcode {
 		} else {
 			$row_height              = $this->get_config( 'justified_row_height', $this->gallery_data );
 			$justified_gallery_theme = $this->get_config( 'justified_gallery_theme', $this->gallery_data );
+
+			// Sanitize row height - ensure it's a positive integer
+			$row_height = absint( $row_height );
+			if ( $row_height <= 0 ) {
+				$row_height = $this->common->get_config_default( 'justified_row_height' ); // Default to 150
+			}
+
+			// Sanitize justified gallery theme - ensure it's a valid theme
+			$justified_gallery_theme = $this->sanitize_justified_gallery_theme( $justified_gallery_theme );
 		}
 
-			$gallery .= '<div' . $opacity_insert . ' data-row-height="' . $row_height . '" data-gallery-theme="' . $justified_gallery_theme . '" id="envira-gallery-' . sanitize_html_class( $this->gallery_data['id'] ) . '" class="envira-gallery-public ' . $extra_css . ' envira-gallery-' . sanitize_html_class( $this->get_config( 'columns', $this->gallery_data ) ) . '-columns envira-clear' . ( $this->get_config( 'isotope', $this->gallery_data ) ? ' enviratope' : '' ) . ( $this->get_config( 'css_animations', $this->gallery_data ) ? ' envira-gallery-css-animations' : '' ) . '" data-envira-columns="' . $this->get_config( 'columns', $this->gallery_data ) . '">';
+			$gallery .= '<div' . $opacity_insert . ' data-row-height="' . esc_attr( $row_height ) . '" data-gallery-theme="' . esc_attr( $justified_gallery_theme ) . '" id="envira-gallery-' . sanitize_html_class( $this->gallery_data['id'] ) . '" class="envira-gallery-public ' . $extra_css . ' envira-gallery-' . sanitize_html_class( $this->get_config( 'columns', $this->gallery_data ) ) . '-columns envira-clear' . ( $this->get_config( 'isotope', $this->gallery_data ) ? ' enviratope' : '' ) . ( $this->get_config( 'css_animations', $this->gallery_data ) ? ' envira-gallery-css-animations' : '' ) . '" data-envira-columns="' . esc_attr( $this->get_config( 'columns', $this->gallery_data ) ) . '">';
 
 				// Start image loop.
 		foreach ( $data['gallery'] as $id => $item ) {
@@ -1909,6 +1918,19 @@ class Envira_Gallery_Shortcode {
 	public function get_config( $key, $data ) {
 
 		return isset( $data['config'][ $key ] ) ? $data['config'][ $key ] : $this->common->get_config_default( $key );
+	}
+
+	/**
+	 * Sanitizes the justified gallery theme parameter to prevent XSS.
+	 *
+	 * @since 1.12.4
+	 *
+	 * @param string $theme The theme value to sanitize.
+	 * @return string Sanitized theme value.
+	 */
+	public function sanitize_justified_gallery_theme( $theme ) {
+		// Delegate to the common class to ensure consistent sanitization logic across entry points.
+		return $this->common->sanitize_justified_gallery_theme( $theme );
 	}
 
 	/**

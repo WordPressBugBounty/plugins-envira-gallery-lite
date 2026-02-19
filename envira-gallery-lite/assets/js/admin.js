@@ -209,6 +209,21 @@ import Swal from 'sweetalert2';
 		$('#screen-meta').prependTo('#envira-header-temp');
 
 		/**
+		 * Hide empty tablenav divs
+		 * Check if tablenav has no actual visible content (ignoring whitespace)
+		 */
+		$('div.tablenav').each(function () {
+			const $tablenav = $(this);
+			// Check if there's any visible text
+			const textContent = $tablenav.text().trim();
+			
+			// If no text content and no visible children, hide it
+			if (!textContent) {
+				$tablenav.hide();
+			}
+		});
+
+		/**
 		 * Copy to Clipboard
 		 */
 		if (typeof ClipboardJS !== 'undefined') {
@@ -258,9 +273,7 @@ import Swal from 'sweetalert2';
 		});
 
 		let svg =
-			'<svg xmlns="http://www.w3.org/2000/svg" width="33" height="23" fill="none" viewBox="0 0 33 23">' +
-			'<path fill="#3871AC" d="M27.687 10.021a4.908 4.908 0 00.146-3.052 4.927 4.927 0 00-1.69-2.552 4.963 4.963 0 00-5.832-.244A8.188 8.188 0 0016.357.636a8.234 8.234 0 00-5.302-.379 8.203 8.203 0 00-4.421 2.937 8.142 8.142 0 00-1.684 5.02v.46a7.386 7.386 0 00-3.97 3.208 7.333 7.333 0 001.626 9.415A7.412 7.412 0 007.425 23H26.4c1.75 0 3.43-.692 4.667-1.925A6.557 6.557 0 0033 16.43c0-3.122-2.277-5.8-5.313-6.407zm-7.21 3.286l-.578.559a1.24 1.24 0 01-1.749-.066l-1.65-1.758v6.424c0 .723-.561 1.232-1.238 1.232h-.825a1.191 1.191 0 01-1.157-.753 1.178 1.178 0 01-.08-.48V12.06L11.5 13.8a1.24 1.24 0 01-1.749.05l-.577-.576c-.512-.492-.512-1.281 0-1.741l4.785-4.764a1.224 1.224 0 011.716 0l4.785 4.764c.528.46.528 1.232 0 1.741l.017.033z"></path>' +
-			'</svg>';
+			'<img class="envira-unlock-icon" src="' + envira_gallery_admin.unlock_icon + '" alt="Unlock" />';
 		let colspan = $('.post-type-envira table > thead > tr:first > th').length + 1; // add for checkbox td?
 		var $unlock =
 			'<tr class="envira_tr"><td scope="col" colspan="' +
@@ -273,9 +286,24 @@ import Swal from 'sweetalert2';
 			envira_gallery_admin.unlock_text +
 			'</h5></hgroup><a href="' +
 			envira_gallery_admin.unlock_url +
-			'" class="button envira-button-blue" target="_blank">' +
+			'" class="button envira-button-blue envira-button-green" target="_blank">' +
 			envira_gallery_admin.unlock_btn +
 			'</a></div></td></tr>';
 		$('.post-type-envira .wp-list-table tbody').append($unlock);
+
+		/**
+		 * Empty State Display
+		 * Move empty state from admin_footer to wpbody-content
+		 */
+		const $emptyStateContainer = $('#envira-empty-state-container');
+		if ($emptyStateContainer.length) {
+			document.body.classList.add('envira-empty-state-active');
+
+			const $emptyState = $emptyStateContainer.find('.envira-empty-state');
+			if ($emptyState.length && $('#wpbody-content').length) {
+				$('#wpbody-content').prepend($emptyState);
+				$emptyStateContainer.remove();
+			}
+		}
 	});
 })(jQuery, window, document, envira_gallery_admin);

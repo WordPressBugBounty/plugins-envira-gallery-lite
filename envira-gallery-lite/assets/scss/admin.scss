@@ -67,6 +67,9 @@ body.post-type-envira_album {
 		* Page Title Action (i.e. Add New)
 		*/
 		a.page-title-action {
+			background: $primary_color;
+			border-color: $primary_color;
+			color: $white;
 			position: relative;
 			top: -37px;
 			left: 115px; /* default - English */
@@ -230,8 +233,8 @@ body.post-type-envira_album {
 			color: $white;
 
 			&:hover {
-				background: $primary_button_color_hover;
-				border-color: $primary_button_color_hover;
+				background: $primary_button_color_hover !important;
+				border-color: $primary_button_color_hover !important;
 				color: $white;
 			}
 		}
@@ -322,7 +325,7 @@ body.post-type-envira_album.locale-fr-fr {
 	display: none;
 }
 #envira-top-notification {
-	border-top: 3px solid #D99B3D;
+	border-top: 3px solid $primary_color;
 	position: relative;
 	background-color: #DDDDDD;
 	text-align: center;
@@ -336,7 +339,7 @@ body.post-type-envira_album.locale-fr-fr {
 		font-size: 13px;
 	}
 	a {
-		color: #D88913;
+		color: $primary_color;
 		font-size: 13px;
 	}
 	.envira-dismiss {
@@ -1265,7 +1268,12 @@ div.addon-tag:after {
 		font-size: 21px;
 		height: 50px;
 		line-height: 48px;
-		background-color: $dark_green;
+		background-color: $primary_color;
+
+		&:hover {
+			background-color: $primary_button_color_hover;
+			border-color: $primary_button_color_hover;
+		}
 	}
 	.wrap{
 		webkit-filter: blur(3px);
@@ -1399,7 +1407,7 @@ div.addon-tag:after {
      vertical-align: baseline;
 	}
 	.envira-external-req{
-	    border: 1px solid $primary-color;
+	    border: 1px solid $primary_color;
 	    border-radius: 4px;
 	    padding: 30px;
 	    h2{
@@ -1569,7 +1577,7 @@ div.addon-tag:after {
 	box-sizing: border-box;
 
 	td {
-		border-left: 5px solid #3871AC;
+		border-left: 5px solid $primary_color;
 		div {
 			padding: 5px 0;
 			display: flex;
@@ -1587,6 +1595,10 @@ div.addon-tag:after {
 			svg {
 				padding-right: 20px;
 			}
+			.envira-unlock-icon {
+				width: 40px;
+				margin-right: 10px;
+			}
 
 		}
 		.envira-button-blue {
@@ -1594,6 +1606,20 @@ div.addon-tag:after {
 			margin-left: auto;
 			height: 38px !important;
 			line-height: 38px !important;
+		}
+
+		.envira-button-green {
+			background: $primary_color;
+			border-radius: 5px;
+			border: none;
+			font-size: 14px;
+
+			&:hover {
+				background: $primary_button_color_hover;
+				border-color: $primary_button_color_hover;
+				color: $white;
+				opacity: 1;
+			}
 		}
 	}
 }

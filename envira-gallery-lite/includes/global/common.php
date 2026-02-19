@@ -165,6 +165,31 @@ class Envira_Gallery_Common {
 	}
 
 	/**
+	 * Sanitizes the justified gallery theme parameter to prevent XSS.
+	 *
+	 * @since 1.12.4
+	 *
+	 * @param string $theme The theme value to sanitize.
+	 * @return string Sanitized theme value.
+	 */
+	public function sanitize_justified_gallery_theme( $theme ) {
+		// Get valid themes
+		$valid_themes       = $this->get_justified_gallery_themes();
+		$valid_theme_values = wp_list_pluck( $valid_themes, 'value' );
+
+		// Sanitize the input - remove any HTML tags and trim whitespace
+		$theme = sanitize_text_field( trim( $theme ) );
+
+		// Check if theme is in the list of valid themes
+		if ( in_array( $theme, $valid_theme_values, true ) ) {
+			return $theme;
+		}
+
+		// Default to 'normal' if invalid theme provided
+		return $this->get_config_default( 'justified_gallery_theme' );
+	}
+
+	/**
 	 * Helper method for retrieving display description options.
 	 *
 	 * @since 1.3.7.3

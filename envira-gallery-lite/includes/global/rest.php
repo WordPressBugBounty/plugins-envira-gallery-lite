@@ -188,6 +188,8 @@ class Envira_Rest {
 		$gallery_data['config']['title'] = $post_object->title;
 
 		if ( isset( $value['config'] ) ) {
+			// Sanitize config values before saving to prevent XSS
+			$value['config']        = $this->sanitize_config_values( $value['config'] );
 			$gallery_data['config'] = wp_parse_args( $value['config'], $gallery_data['config'] );
 		}
 
@@ -416,6 +418,34 @@ class Envira_Rest {
 	public function get_config( $key, $data ) {
 
 		return isset( $data['config'][ $key ] ) ? $data['config'][ $key ] : $this->common->get_config_default( $key );
+	}
+
+	/**
+	 * Sanitizes config values to prevent XSS attacks.
+	 *
+	 * @since 1.12.4
+	 *
+	 * @param array $config The config array to sanitize.
+	 * @return array Sanitized config array.
+	 */
+	public function sanitize_config_values( $config ) {
+		// Sanitize justified_gallery_theme - ensure it's a valid theme
+		if ( isset( $config['justified_gallery_theme'] ) ) {
+			$config['justified_gallery_theme'] = $this->common->sanitize_justified_gallery_theme(
+				$config['justified_gallery_theme']
+			);
+		}
+
+		// Sanitize justified_row_height - ensure it's a positive integer
+		if ( isset( $config['justified_row_height'] ) ) {
+			$row_height = absint( $config['justified_row_height'] );
+			if ( $row_height <= 0 ) {
+				$row_height = $this->common->get_config_default( 'justified_row_height' );
+			}
+			$config['justified_row_height'] = $row_height;
+		}
+
+		return $config;
 	}
 
 	/**
