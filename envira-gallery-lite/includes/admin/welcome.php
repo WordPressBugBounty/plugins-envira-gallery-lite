@@ -106,7 +106,8 @@ class Envira_Welcome {
 	 * @since 1.5.0
 	 */
 	public function enqueue_admin_scripts() {
-		if ( isset( $_GET['post_type'] ) && isset( $_GET['page'] ) && 'envira' === wp_unslash( $_GET['post_type'] ) && in_array( wp_unslash( $_GET['page'] ), $this->pages ) ) { // @codingStandardsIgnoreLine
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- $_GET['post_type'] and $_GET['page'] are read-only routing params used only to decide whether to enqueue scripts; nonce verification is not applicable for admin_enqueue_scripts hooks.
+		if ( isset( $_GET['post_type'] ) && isset( $_GET['page'] ) && 'envira' === sanitize_key( wp_unslash( $_GET['post_type'] ) ) && in_array( sanitize_key( wp_unslash( $_GET['page'] ) ), $this->pages, true ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 			wp_register_script( ENVIRA_LITE_SLUG . '-welcome-script', plugins_url( 'assets/js/welcome.js', ENVIRA_LITE_FILE ), [ 'jquery' ], ENVIRA_LITE_VERSION, true );
 			wp_enqueue_script( ENVIRA_LITE_SLUG . '-welcome-script' );

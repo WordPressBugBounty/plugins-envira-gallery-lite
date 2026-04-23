@@ -561,8 +561,9 @@ class Envira_Gallery_Common {
 		global $id, $post;
 
 		// Get the current post ID. If ajax, grab it from the $_POST variable.
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX && isset( $_POST['post_id'] ) ) { // @codingStandardsIgnoreLine
-			$post_id = absint( $_POST['post_id'] ); // @codingStandardsIgnoreLine
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX && isset( $_POST['post_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- get_config_default() is a read-only helper; nonce verification is the responsibility of the AJAX action handler that calls this method.
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- See note above; read-only helper, nonce belongs to calling AJAX handler. Value is sanitized with absint().
+			$post_id = absint( wp_unslash( $_POST['post_id'] ) );
 		} else {
 			$post_id = isset( $post->ID ) ? $post->ID : (int) $id;
 		}
@@ -968,9 +969,19 @@ class Envira_Gallery_Common {
 
 		}
 
-		// Attempt to stream and import the image if it does not exist based on URL provided.
-		if ( ! file_exists( $file_path ) ) {
-			return new WP_Error( 'envira-gallery-error-no-file', __( 'No file could be found for the image URL specified.', 'envira-gallery-lite' ) );
+		// Resolve the canonical path and reject anything that escapes the uploads directory.
+		// $url is a function argument that ultimately traces back to gallery image data which can be
+		// attacker-influenced (e.g. via edit_posts); the regex .+ above captures ../ sequences,
+		// allowing traversal to files like wp-config.php that getimagesize() would then read.
+		$real_uploads_base = realpath( $wp_upload_dir['basedir'] );
+		if ( $file_path ) {
+			$real_file_path = realpath( $file_path );
+			if ( $real_file_path && $real_uploads_base && 0 !== strpos( $real_file_path, trailingslashit( $real_uploads_base ) ) ) {
+				return new WP_Error( 'envira-gallery-error-invalid-path', __( 'The image path is outside the allowed uploads directory.', 'envira-gallery-lite' ) );
+			}
+			if ( $real_file_path ) {
+				$file_path = $real_file_path;
+			}
 		}
 
 		// Attempt to stream and import the image if it does not exist based on URL provided.

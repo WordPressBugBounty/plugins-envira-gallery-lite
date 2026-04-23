@@ -162,6 +162,12 @@ class Envira_Rest {
 	 */
 	public function update_gallery_data( $value, $post_object, $field_name ) {
 
+		// Enforce capability check — register_rest_field() has no permission_callback,
+		// so authorization must be checked here to prevent any authenticated user from writing gallery data.
+		if ( ! current_user_can( 'edit_post', $post_object->ID ) ) { // High06: deny if caller lacks edit_post capability — the ! negation is required and must not be removed.
+			return new WP_Error( 'rest_forbidden', __( 'Permission denied.', 'envira-gallery-lite' ), [ 'status' => 403 ] );
+		}
+
 		$gallery_data = get_post_meta( $post_object->ID, '_eg_gallery_data', true );
 
 		// If Gallery Data is emptyy prepare it.
@@ -429,6 +435,17 @@ class Envira_Rest {
 	 * @return array Sanitized config array.
 	 */
 	public function sanitize_config_values( $config ) {
+		// Sanitize description to prevent stored XSS via the REST API.
+		if ( isset( $config['description'] ) ) {
+			$description = $config['description'];
+
+			if ( ! is_scalar( $description ) ) {
+				$description = '';
+			}
+
+			$config['description'] = wp_kses_post( (string) $description );
+		}
+
 		// Sanitize justified_gallery_theme - ensure it's a valid theme
 		if ( isset( $config['justified_gallery_theme'] ) ) {
 			$config['justified_gallery_theme'] = $this->common->sanitize_justified_gallery_theme(
@@ -443,6 +460,31 @@ class Envira_Rest {
 				$row_height = $this->common->get_config_default( 'justified_row_height' );
 			}
 			$config['justified_row_height'] = $row_height;
+		}
+
+		// Normalize boolean config values to actual PHP booleans at ingestion.
+		// Shortcode output always casts via (bool) before wp_json_encode(), so storing
+		// the string 'false' would evaluate as true (non-empty string). Storing real
+		// booleans ensures (bool) casts downstream behave correctly.
+		foreach ( [ 'aspect', 'loop', 'mousewheel' ] as $key ) {
+			if ( isset( $config[ $key ] ) ) {
+				$config[ $key ] = filter_var( $config[ $key ], FILTER_VALIDATE_BOOLEAN );
+			}
+		}
+
+		// Sanitize arrows - accept boolean-like values supported by FILTER_VALIDATE_BOOLEAN and normalize to 1/0.
+		if ( isset( $config['arrows'] ) ) {
+			$config['arrows'] = filter_var( $config['arrows'], FILTER_VALIDATE_BOOLEAN ) ? 1 : 0;
+		}
+
+		// Sanitize numeric JS values at ingestion — these are emitted bare into a JS numeric
+		// context. esc_attr() encodes HTML entities but not commas/parentheses, allowing JS injection.
+		// absint() guarantees a non-negative integer, which is safe in an unquoted numeric context.
+		foreach ( [ 'thumbnails_width', 'thumbnails_height' ] as $key ) {
+			if ( isset( $config[ $key ] ) ) {
+				$v              = absint( $config[ $key ] ); // Enforce integer; eliminates injection risk in bare JS numeric context.
+				$config[ $key ] = $v > 0 ? $v : $this->common->get_config_default( $key );
+			}
 		}
 
 		return $config;

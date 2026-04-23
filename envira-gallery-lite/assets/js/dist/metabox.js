@@ -1180,3 +1180,20 @@ jQuery(document).ready(function ($) {
 		$upsellModalAI.hide();
 	});
 });
+
+/**
+ * Display envira google photos upsell modal.
+ */
+jQuery(document).ready(function ($) {
+	var $btnUpsell = $('.envira-tab .link-envira-google-photos-tab.upsell');
+	var $upsellModalGooglePhotos = $('#envira-google-photos-upsell-modal');
+	var $closeButton = $('#close-envira-google-photos-upsell-modal');
+
+	$btnUpsell.on('click', function () {
+		$upsellModalGooglePhotos.show();
+	});
+
+	$closeButton.on('click', function () {
+		$upsellModalGooglePhotos.hide();
+	});
+});

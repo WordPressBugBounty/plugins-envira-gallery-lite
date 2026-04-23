@@ -390,18 +390,18 @@ class Envira_Gallery_Table_Admin {
 	 */
 	public function bulk_edit_save( $post_ID ) {
 
-		// Check we are performing a Bulk Edit.
-		if ( ! isset( $_REQUEST['bulk_edit'] ) ) {
+		// Check we are performing a Bulk Edit — presence-only check, no data used from this value.
+		if ( ! isset( $_REQUEST['bulk_edit'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- existence check only; nonce is verified on the very next guard below.
 			return;
 		}
 
-		// Bail out if we fail a security check.
-		if ( ! isset( $_REQUEST['envira-gallery'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_REQUEST['envira-gallery'] ) ), 'envira-gallery' ) ) {
+		// Verify nonce — do NOT sanitize before wp_verify_nonce; sanitize_key() lowercases and strips base64 chars (+/=) which corrupts the hash.
+		if ( ! isset( $_REQUEST['envira-gallery'] ) || ! wp_verify_nonce( wp_unslash( $_REQUEST['envira-gallery'] ), 'envira-gallery' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- nonces must not be sanitized before wp_verify_nonce.
 			return;
 		}
 
-		// Check Post IDs have been submitted.
-		$post_ids = ( ! empty( $_REQUEST['post'] ) ) ? wp_unslash( $_REQUEST['post'] ) : array(); // @codingStandardsIgnoreLine
+		// Check Post IDs have been submitted — nonce verified above; return on failure so this line is only reached with a valid nonce.
+		$post_ids = ( ! empty( $_REQUEST['post'] ) ) ? wp_unslash( $_REQUEST['post'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- nonce verified via wp_verify_nonce() above. Post IDs are cast to absint() before use in get_post_meta().
 		if ( empty( $post_ids ) || ! is_array( $post_ids ) ) {
 			return;
 		}
@@ -417,8 +417,9 @@ class Envira_Gallery_Table_Admin {
 				continue;
 			}
 
-			// Update Settings, if they have values.
-			if ( ! empty( $_REQUEST['_envira_gallery']['columns'] ) && -1 !== sanitize_text_field( wp_unslash( $_REQUEST['_envira_gallery']['columns'] ) ) ) {
+			// Update Settings, if they have values. All $_REQUEST accesses below are covered by wp_verify_nonce() at the top of this function.
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- nonce verified via wp_verify_nonce() above; function returns early on failure.
+			if ( ! empty( $_REQUEST['_envira_gallery']['columns'] ) && -1 !== sanitize_text_field( wp_unslash( $_REQUEST['_envira_gallery']['columns'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				$settings['config']['columns'] = preg_replace( '#[^a-z0-9-_]#', '', sanitize_text_field( wp_unslash( $_REQUEST['_envira_gallery']['columns'] ) ) );
 			}
 			if ( ! empty( $_REQUEST['_envira_gallery']['gallery_theme'] ) && -1 !== sanitize_text_field( wp_unslash( $_REQUEST['_envira_gallery']['gallery_theme'] ) ) ) {

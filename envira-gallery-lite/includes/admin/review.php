@@ -160,7 +160,8 @@ class Envira_Lite_Review {
 					}
 
 					$.post( ajaxurl, {
-						action: 'envira_dismiss_review'
+						action: 'envira_dismiss_review',
+						nonce:  '<?php echo esc_js( wp_create_nonce( 'envira-gallery-dismiss-review' ) ); ?>' // Nonce generated at output time; verified server-side to prevent CSRF.
 					});
 
 					$('.envira-review-notice').remove();
@@ -176,6 +177,9 @@ class Envira_Lite_Review {
 	 * @since 1.1.6.1
 	 */
 	public function dismiss_review() {
+
+		// Verify nonce to prevent CSRF — capability check alone does not validate request origin.
+		check_ajax_referer( 'envira-gallery-dismiss-review', 'nonce' );
 
 		$review = get_option( 'envira_gallery_review' );
 		if ( ! $review ) {

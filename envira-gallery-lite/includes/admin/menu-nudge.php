@@ -66,6 +66,15 @@ class Menu_Nudge {
 	public function enqueue_admin_styles() {
 		wp_register_style( '-menu-nudge', ENVIRA_LITE_URL . 'assets/css/menu-nudge.css', [], ENVIRA_LITE_VERSION );
 		wp_register_script( '-menu-nudge-script', ENVIRA_LITE_URL . 'assets/js/min/menu-nudge-min.js', [ 'jquery' ], ENVIRA_LITE_VERSION, true );
+		// Localize a nonce so the JS can send it with the hide-tooltip AJAX request (Medium09 CSRF fix).
+		wp_localize_script(
+			'-menu-nudge-script',
+			'enviraMenuNudge',
+			[
+				'nonce'         => wp_create_nonce( 'envira-hide-admin-menu-tooltip' ), // Nonce scoped to this action only.
+				'redirectNonce' => wp_create_nonce( 'envira-redirect-to-add-new-gallery' ),
+			]
+		);
 	}
 
 	/**
@@ -120,6 +129,9 @@ class Menu_Nudge {
 	 * Hide the admin menu tooltip.
 	 */
 	public function envira_hide_admin_menu_tooltip_callback() {
+		// Verify nonce before acting; current_user_can() alone does not prevent CSRF (Medium09 fix).
+		check_ajax_referer( 'envira-hide-admin-menu-tooltip', 'nonce' );
+
 		if ( current_user_can( 'manage_options' ) ) {
 			update_option( 'envira_admin_menu_tooltip', time() );
 		}
@@ -131,6 +143,7 @@ class Menu_Nudge {
 	 * Reload to add new page.
 	 */
 	public function envira_redirect_to_add_new_gallery_callback() {
+		check_ajax_referer( 'envira-redirect-to-add-new-gallery', 'nonce' );
 		if ( current_user_can( 'manage_options' ) ) {
 			$url = admin_url( 'post-new.php?post_type=envira' );
 			wp_send_json_success( [ 'redirect_url' => $url ] );

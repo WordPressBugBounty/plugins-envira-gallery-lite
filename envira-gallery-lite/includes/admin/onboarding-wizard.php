@@ -344,8 +344,8 @@ class OnboardingWizard {
 	 */
 	public function save_onboarding_data() {
 
-		// check for nonce enviraOnboardingCheck.
-		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'enviraOnboardingCheck' ) ) {
+		// Verify nonce — do NOT sanitize before wp_verify_nonce; sanitize_text_field() can corrupt the hash and cause false failures.
+		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['nonce'] ), 'enviraOnboardingCheck' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- nonces must not be sanitized before wp_verify_nonce.
 			wp_send_json_error( 'Invalid nonce' );
 			wp_die();
 		}
@@ -356,9 +356,12 @@ class OnboardingWizard {
 			wp_die();
 		}
 
-		if ( ! empty( $_POST['eow'] ) ) {
+		if ( ! empty( $_POST['eow'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified via wp_verify_nonce() above; wp_die() is called on failure so execution never reaches here without a valid nonce.
 			// Sanitize data and merge to existing data.
 			$onboarding_data = get_option( 'envira_onboarding_data', [] );
+
+			// Capture the previous user type before it is overwritten.
+			$previous_user_type = isset( $onboarding_data['_user_type'] ) ? $onboarding_data['_user_type'] : '';
 
 			$onboarding_data = $this->sanitize_and_assign( '_usage_tracking', 'sanitize_text_field', $onboarding_data );
 			$onboarding_data = $this->sanitize_and_assign( '_email_address', 'sanitize_email', $onboarding_data );
@@ -369,7 +372,7 @@ class OnboardingWizard {
 
 			if ( $updated ) {
 				// Send data to Drip.
-				$this->save_to_drip( $onboarding_data );
+				$this->save_to_drip( $onboarding_data, $previous_user_type );
 			}
 
 			wp_send_json_success( 'Data saved successfully' );
@@ -409,7 +412,7 @@ class OnboardingWizard {
 	 *
 	 * @return void
 	 */
-	public function save_to_drip( array $onboarding_data ) {
+	public function save_to_drip( array $onboarding_data, string $previous_user_type = '' ) {
 
 		$url = 'https://enviragallery.com/wp-json/envira/v1/get_opt_in_data';
 
@@ -419,16 +422,22 @@ class OnboardingWizard {
 			return;
 		}
 
-		$tags = [ 'envira-lite' ];
+		$tags              = [ 'envira-lite' ];
+		$current_user_type = isset( $onboarding_data['_user_type'] ) ? $onboarding_data['_user_type'] : '';
 
-		if ( isset( $onboarding_data['_user_type'] ) ) {
-			$tags[] = $onboarding_data['_user_type'];
+		if ( $current_user_type ) {
+			$tags[] = $current_user_type;
 		}
 
 		$body_data = [
 			'envira-drip-email' => base64_encode( $email ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 			'envira-drip-tags'  => $tags,
 		];
+
+		// If the user type changed, ask the endpoint to remove the old tag.
+		if ( $previous_user_type && $previous_user_type !== $current_user_type ) {
+			$body_data['envira-drip-remove-tags'] = [ $previous_user_type ];
+		}
 
 		$body = wp_json_encode( $body_data );
 
@@ -453,8 +462,8 @@ class OnboardingWizard {
 	 * Save selected addons to database.
 	 */
 	public function save_selected_addons() {
-		// check for nonce enviraOnboardingCheck.
-		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'enviraOnboardingCheck' ) ) {
+		// Verify nonce — do NOT sanitize before wp_verify_nonce; sanitize_text_field() can corrupt the hash and cause false failures.
+		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['nonce'] ), 'enviraOnboardingCheck' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- nonces must not be sanitized before wp_verify_nonce.
 			wp_send_json_error( 'Invalid nonce' );
 			wp_die();
 		}
@@ -465,7 +474,7 @@ class OnboardingWizard {
 			wp_die();
 		}
 
-		if ( ! empty( $_POST['addons'] ) ) {
+		if ( ! empty( $_POST['addons'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified via wp_verify_nonce() above; wp_die() is called on failure so execution never reaches here without a valid nonce.
 
 			$addons = explode( ',', sanitize_text_field( wp_unslash( $_POST['addons'] ) ) );
 
@@ -548,8 +557,8 @@ class OnboardingWizard {
 	 * @return void
 	 */
 	public function install_recommended_plugins() {
-		// check for nonce enviraOnboardingCheck.
-		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'enviraOnboardingCheck' ) ) {
+		// Verify nonce — do NOT sanitize before wp_verify_nonce; sanitize_text_field() can corrupt the hash and cause false failures.
+		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['nonce'] ), 'enviraOnboardingCheck' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- nonces must not be sanitized before wp_verify_nonce.
 			wp_send_json_error( 'Invalid nonce' );
 			wp_die();
 		}
@@ -560,7 +569,7 @@ class OnboardingWizard {
 			wp_die();
 		}
 
-		if ( ! empty( $_POST['plugins'] ) ) {
+		if ( ! empty( $_POST['plugins'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified via wp_verify_nonce() above; wp_die() is called on failure so execution never reaches here without a valid nonce.
 			// Sanitize data, plugins is a string delimited by comma.
 
 			$plugins = explode( ',', sanitize_text_field( wp_unslash( $_POST['plugins'] ) ) );

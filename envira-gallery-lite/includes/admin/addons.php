@@ -430,8 +430,7 @@ class Envira_Gallery_Addons {
 	 * @return bool True if being refreshed, false otherwise.
 	 */
 	public function is_refreshing_addons() {
-
-		return isset( $_POST['envira-gallery-refresh-addons'] ); // @codingStandardsIgnoreLine
+		return $this->refresh_addons_action();
 	}
 
 	/**
@@ -443,7 +442,7 @@ class Envira_Gallery_Addons {
 	 */
 	public function refresh_addons_action() {
 
-		return isset( $_POST['envira-gallery-refresh-addons'] ) && wp_verify_nonce( sanitize_key( $_POST['envira-gallery-refresh-addons'] ), 'envira-gallery-refresh-addons' );
+		return isset( $_POST['envira-gallery-refresh-addons'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['envira-gallery-refresh-addons'] ) ), 'envira-gallery-refresh-addons' );
 	}
 
 	/**

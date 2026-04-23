@@ -226,7 +226,8 @@ class Envira_Settings {
 			return;
 		}
 
-		if ( ! isset( $_POST['envira-permissions-nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['envira-permissions-nonce'] ), 'envira-permissions-nonce' ) ) {
+		// Verify nonce — do NOT sanitize before wp_verify_nonce; sanitize_key() can corrupt the hash and cause false failures.
+		if ( ! isset( $_POST['envira-permissions-nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['envira-permissions-nonce'] ), 'envira-permissions-nonce' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- nonces must not be sanitized before wp_verify_nonce.
 			add_action( 'envira_gallery_settings_permissions_tab_notice', [ $this, 'permissions_settings_nonce_notice' ] );
 			return;
 		}
@@ -237,7 +238,7 @@ class Envira_Settings {
 		foreach ( $fields as $field ) {
 			// The method sanitize_field_data() is already sanitizing the data.
 
-			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing -- nonce verified via wp_verify_nonce() above; function returns early on failure so this line is only reached with a valid nonce.
 			$permissions_data[ $field ] = isset( $_POST[ $field ] ) ? $permissions->sanitize_field_data( wp_unslash( $_POST[ $field ] ) ) : '';
 			if ( empty( $permissions_data[ $field ] ) ) {
 				continue;

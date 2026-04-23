@@ -5,16 +5,21 @@ const formSteps = document.querySelectorAll('.envira-onboarding-form-step');
 const progressSteps = document.querySelectorAll('.envira-onboarding-progress-step');
 
 let formStepsNum = 0;
+let isSavingFormData = false;
 
 /* Event Listener for Next Button. */
 nextBtns.forEach(btn => {
-	btn.addEventListener('click', () => {
+	btn.addEventListener('click', e => {
+		e.preventDefault();
 		if (formStepsNum === 0) {
 			saveFormData();
 		} else {
 			let nextStep = btn.getAttribute('data-next');
 			if (nextStep) {
-				formStepsNum = nextStep;
+				formStepsNum = parseInt(nextStep, 10);
+				if (isNaN(formStepsNum)) {
+					return;
+				}
 				updateFormSteps();
 				updateProgressbar();
 			}
@@ -28,11 +33,24 @@ prevBtns.forEach(btn => {
 		// Get data-prev attribute from the button and set it as stepsNum.
 		let prevStep = btn.getAttribute('data-prev');
 		if (prevStep) {
-			formStepsNum = prevStep;
+			formStepsNum = parseInt(prevStep, 10);
+			if (isNaN(formStepsNum)) {
+				return;
+			}
 			updateFormSteps();
 			updateProgressbar();
 		}
 	});
+});
+
+/* Prevent Enter-key native form submission on step 0. Without this, pressing Enter
+   inside the "other" text field or the email field POSTs the form to the current page
+   (full reload), bypassing the AJAX save entirely. */
+document.querySelector('#envira-general').addEventListener('submit', e => {
+	e.preventDefault();
+	if (formStepsNum === 0) {
+		saveFormData();
+	}
 });
 
 /* Updates Form Items */
@@ -44,7 +62,7 @@ function updateFormSteps() {
 	formSteps[formStepsNum].classList.add('envira-onboarding-form-step-active');
 
 	// Show selected plugins div only on step 2.
-	if (formStepsNum === '2') {
+	if (formStepsNum === 2) {
 		selectedPluginsdiv.style.display = 'block';
 	} else {
 		selectedPluginsdiv.style.display = 'none';
@@ -174,23 +192,50 @@ userTypes.forEach(userType => {
 });
 
 function saveFormData() {
-	// post form data via WP admin-ajax. enviraOnboardingWizard.ajaxUrl,
+	// Guard against concurrent calls: the submit event (Enter key) can fire while a
+	// fetch is already in-flight because formStepsNum only advances after the response.
+	if (isSavingFormData) {
+		return;
+	}
+
 	const form = document.querySelector('#envira-general');
-	// Disable form submit.
-	form.addEventListener('submit', async e => {
-		e.preventDefault();
-		e.stopPropagation();
 
-		const formData = new FormData(form);
+	// Manual validation: e.preventDefault() on the button's click event bypasses native
+	// browser validation for required radio buttons. Ensure a user type is selected.
+	const isAnyUserTypeChecked = Array.from(userTypes).some(radio => radio.checked);
+	if (!isAnyUserTypeChecked) {
+		form.reportValidity();
+		return;
+	}
 
-		formData.append('action', 'save_onboarding_data');
-		formData.append('nonce', enviraOnboardingWizard.nonce);
-		try {
-			const response = await fetch(enviraOnboardingWizard.ajaxUrl, {
-				method: 'POST',
-				body: formData
-			});
-			const data = await response.json();
+	// If "Something Else" is selected, the #others text field is required but native
+	// browser validation is bypassed, so we must enforce it explicitly.
+	const othersInput = document.querySelector('#others');
+	if (othersInput.required && othersInput.value.trim() === '') {
+		othersInput.setCustomValidity('This field is required');
+		form.reportValidity();
+		othersInput.setCustomValidity('');
+		return;
+	}
+
+	isSavingFormData = true;
+
+	// post form data via WP admin-ajax. enviraOnboardingWizard.ajaxUrl,
+	const formData = new FormData(form);
+
+	// Disable next buttons during async request to prevent duplicate submissions.
+	nextBtns.forEach(btn => {
+		btn.disabled = true;
+	});
+
+	formData.append('action', 'save_onboarding_data');
+	formData.append('nonce', enviraOnboardingWizard.nonce);
+	fetch(enviraOnboardingWizard.ajaxUrl, {
+		method: 'POST',
+		body: formData
+	})
+		.then(response => response.json())
+		.then(data => {
 			if (data.success) {
 				formStepsNum = 1;
 				updateFormSteps();
@@ -199,11 +244,20 @@ function saveFormData() {
 				formStepsNum = 0;
 				console.log('Error saving the data');
 			}
-		} catch (error) {
+		})
+		.catch(error => {
 			formStepsNum = 0;
-			console.error('Error:', error);
-		}
-	});
+			console.error(
+				'Failed to save onboarding data. Please check your connection and try again.',
+				error
+			);
+		})
+		.finally(() => {
+			isSavingFormData = false;
+			nextBtns.forEach(btn => {
+				btn.disabled = false;
+			});
+		});
 }
 // Get all the checkboxes with the class feature.
 const features = document.querySelectorAll('.feature');
@@ -304,7 +358,7 @@ let displaySelectedPlugins = () => {
 
 	selectedPluginsNames.forEach(name => {
 		let plugin = document.createElement('span');
-		plugin.innerHTML = `${name}`;
+		plugin.textContent = name;
 		selectedPluginsdiv.appendChild(plugin);
 		// Append comma after each plugin name but not after the last plugin name.
 		if (selectedPluginsNames.indexOf(name) !== selectedPluginsNames.length - 1) {
@@ -379,7 +433,8 @@ function displaySelectedAddons() {
 		);
 		// Get data-name attribute from the checkbox by its name.
 		let addonName = document.querySelector(`input[name="${feature}"]`).getAttribute('data-name');
-		addon.innerHTML = `${tickSvg}${addonName}</div>`;
+		addon.innerHTML = tickSvg;
+		addon.appendChild(document.createTextNode(addonName));
 		selectedAddons.appendChild(addon);
 		// show the desc of the selected feature.
 		document.querySelector(`#${feature}-desc`).style.display = 'block';
@@ -434,11 +489,11 @@ verifyBtn.addEventListener('click', e => {
 		.then(data => {
 			if (data.success) {
 				successMessage.classList.add('envira-success');
-				successMessage.innerHTML = data.data.message;
+				successMessage.textContent = data.data.message;
 				toggleButtonsVisibility();
 			} else {
 				successMessage.classList.add('envira-error');
-				successMessage.innerHTML = data.data.message;
+				successMessage.textContent = data.data.message;
 				toggleButtonsVisibility();
 			}
 		})

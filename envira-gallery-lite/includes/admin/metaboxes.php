@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Metabox class.
  *
@@ -20,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Envira_Gallery_Metaboxes {
+
 
 
 
@@ -1420,17 +1420,18 @@ class Envira_Gallery_Metaboxes {
 			<p>Video platform integrations allow you to add more video sources for your galleries. We’ve added integrations with all the most popular video sharing and video hosting providers.</p>
 			<div class="two-column-list">
 				<ul>
-					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagevideos', 'videoplatformlinks' ) ); ?>">Self-hosted Videos</a> (MP4)</li>
-					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagevideos', 'videoplatformlinks' ) ); ?>">YouTube</a> (with playlist and custom start time support)</li>
-					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagevideos', 'videoplatformlinks' ) ); ?>">Vimeo</a></li>
-					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagevideos', 'videoplatformlinks' ) ); ?>">Instagram</a> Feed Videos</li>
-					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagesocial', 'videoplatformlinks' ) ); ?>">Instagram</a> IGTV</li>
+					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagevideos', 'videoplatformlinks' ) ); ?>" rel="noopener noreferrer">Self-hosted Videos</a> (MP4)</li>
+					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagevideos', 'videoplatformlinks' ) ); ?>" rel="noopener noreferrer">YouTube</a> (with playlist and custom start time support)</li>
+					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagevideos', 'videoplatformlinks' ) ); ?>" rel="noopener noreferrer">Vimeo</a></li>
+					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagevideos', 'videoplatformlinks' ) ); ?>" rel="noopener noreferrer">Instagram</a> Feed Videos</li>
+					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagesocial', 'videoplatformlinks' ) ); ?>" rel="noopener noreferrer">Instagram</a> IGTV</li>
 				</ul>
 				<ul>
-					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagevideos', 'videoplatformlinks' ) ); ?>">Twitch</a></li>
-					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagevideos', 'videoplatformlinks' ) ); ?>">VideoPress</a></li>
-					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagevideos', 'videoplatformlinks' ) ); ?>">DailyMotion</a></li>
-					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagevideos', 'videoplatformlinks' ) ); ?>">TikTok</a></li>
+					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagevideos', 'videoplatformlinks' ) ); ?>" rel="noopener noreferrer">Twitch</a></li>
+					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagevideos', 'videoplatformlinks' ) ); ?>" rel="noopener noreferrer">VideoPress</a></li>
+					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagevideos', 'videoplatformlinks' ) ); ?>" rel="noopener noreferrer">DailyMotion</a></li>
+					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagevideos', 'videoplatformlinks' ) ); ?>" rel="noopener noreferrer">TikTok</a></li>
+					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagevideos', 'videoplatformlinks' ) ); ?>" rel="noopener noreferrer">Google Photos</a></li>
 					<li><strong>...and more!</strong></li>
 				</ul>
 			</div>
@@ -1725,6 +1726,24 @@ class Envira_Gallery_Metaboxes {
 				$settings['config']['crop_width']    = isset( $_POST['_envira_gallery']['crop_width'] ) ? absint( $_POST['_envira_gallery']['crop_width'] ) > 0 ? absint( $_POST['_envira_gallery']['crop_width'] ) : $this->get_config_default( 'crop_width' ) : false;
 				$settings['config']['crop_height']   = isset( $_POST['_envira_gallery']['crop_height'] ) ? absint( $_POST['_envira_gallery']['crop_height'] ) > 0 ? absint( $_POST['_envira_gallery']['crop_height'] ) : $this->get_config_default( 'crop_height' ) : false;
 
+				// Validate type against registered types; prevents arbitrary hook names via do_action('envira_gallery_display_'.$type).
+				if ( isset( $_POST['_envira_gallery']['type'] ) ) {
+					$type        = sanitize_text_field( wp_unslash( $_POST['_envira_gallery']['type'] ) );
+					$valid_types = array_keys( $this->get_envira_types( $post ) );
+					if ( in_array( $type, $valid_types, true ) ) {
+						$settings['config']['type'] = $type;
+					}
+				}
+
+				// Validate image_size against registered sizes; prevents storing an arbitrary size key.
+				if ( isset( $_POST['_envira_gallery']['image_size'] ) ) {
+					$image_size        = sanitize_text_field( wp_unslash( $_POST['_envira_gallery']['image_size'] ) );
+					$valid_image_sizes = array_column( $this->get_image_sizes(), 'value' );
+					if ( in_array( $image_size, $valid_image_sizes, true ) ) {
+						$settings['config']['image_size'] = $image_size;
+					}
+				}
+
 				// Provide a filter to override settings.
 				$settings = apply_filters( 'envira_gallery_quick_edit_save_settings', $settings, $post_id, $post );
 
@@ -1767,7 +1786,9 @@ class Envira_Gallery_Metaboxes {
 		$settings['id'] = $post_id;
 
 		// Config.
-		$settings['config']['type']               = isset( $_POST['_envira_gallery']['type'] ) ? sanitize_text_field( wp_unslash( $_POST['_envira_gallery']['type'] ) ) : $this->get_config_default( 'type' );
+		$type                                     = isset( $_POST['_envira_gallery']['type'] ) ? sanitize_text_field( wp_unslash( $_POST['_envira_gallery']['type'] ) ) : '';
+		$valid_types                              = array_keys( $this->get_envira_types( $post ) );
+		$settings['config']['type']               = in_array( $type, $valid_types, true ) ? $type : $this->get_config_default( 'type' );
 		$settings['config']['columns']            = isset( $_POST['_envira_gallery']['columns'] ) ? preg_replace( '#[^a-z0-9-_]#', '', sanitize_text_field( wp_unslash( $_POST['_envira_gallery']['columns'] ) ) ) : $this->get_config_default( 'columns' );
 		$settings['config']['gallery_theme']      = isset( $_POST['_envira_gallery']['gallery_theme'] ) ? preg_replace( '#[^a-z0-9-_]#', '', sanitize_text_field( wp_unslash( $_POST['_envira_gallery']['gallery_theme'] ) ) ) : $this->get_config_default( 'gallery_theme' );
 		$settings['config']['crop_width']         = isset( $_POST['_envira_gallery']['crop_width'] ) ? absint( $_POST['_envira_gallery']['crop_width'] ) > 0 ? absint( $_POST['_envira_gallery']['crop_width'] ) : $this->get_config_default( 'crop_width' ) : $this->get_config_default( 'crop_width' );
@@ -1778,7 +1799,9 @@ class Envira_Gallery_Metaboxes {
 		$settings['config']['lazy_loading_delay'] = isset( $_POST['_envira_gallery']['lazy_loading_delay'] ) ? absint( $_POST['_envira_gallery']['lazy_loading_delay'] ) : $this->get_config_default( 'lazy_loading_delay' );
 		$settings['config']['gutter']             = isset( $_POST['_envira_gallery']['gutter'] ) ? absint( $_POST['_envira_gallery']['gutter'] ) : $this->get_config_default( 'gutter' );
 		$settings['config']['margin']             = isset( $_POST['_envira_gallery']['margin'] ) ? absint( $_POST['_envira_gallery']['margin'] ) : $this->get_config_default( 'margin' );
-		$settings['config']['image_size']         = isset( $_POST['_envira_gallery']['image_size'] ) ? sanitize_text_field( wp_unslash( $_POST['_envira_gallery']['image_size'] ) ) : $this->get_config_default( 'image_size' );
+		$size                                     = isset( $_POST['_envira_gallery']['image_size'] ) ? sanitize_key( wp_unslash( $_POST['_envira_gallery']['image_size'] ) ) : '';
+		$valid_sizes                              = array_column( $this->get_image_sizes(), 'value' ); // Use get_image_sizes() to match Quick-Edit path — includes 'default' and filter-added custom sizes.
+		$settings['config']['image_size']         = in_array( $size, $valid_sizes, true ) ? $size : $this->get_config_default( 'image_size' );
 
 		// Automatic/Justified.
 		$settings['config']['justified_row_height'] = isset( $_POST['_envira_gallery']['justified_row_height'] ) ? absint( $_POST['_envira_gallery']['justified_row_height'] ) : 150;
@@ -2111,8 +2134,9 @@ class Envira_Gallery_Metaboxes {
 		global $id, $post;
 
 		// Get the current post ID. If ajax, grab it from the $_POST variable.
-		if (defined('DOING_AJAX') && DOING_AJAX && array_key_exists('post_id', $_POST)) { // @codingStandardsIgnoreLine
-			$post_id = absint(wp_unslash($_POST['post_id'])); // @codingStandardsIgnoreLine
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX && array_key_exists( 'post_id', $_POST ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- get_config() is a read-only meta lookup helper; nonce verification is the responsibility of the AJAX action handler that calls this method.
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- See note above; read-only helper, nonce belongs to calling AJAX handler. Value is sanitized with absint().
+			$post_id = absint( wp_unslash( $_POST['post_id'] ) );
 		} else {
 			$post_id = isset( $post->ID ) ? $post->ID : (int) $id;
 		}

@@ -216,7 +216,7 @@ import Swal from 'sweetalert2';
 			const $tablenav = $(this);
 			// Check if there's any visible text
 			const textContent = $tablenav.text().trim();
-			
+
 			// If no text content and no visible children, hide it
 			if (!textContent) {
 				$tablenav.hide();
@@ -273,7 +273,9 @@ import Swal from 'sweetalert2';
 		});
 
 		let svg =
-			'<img class="envira-unlock-icon" src="' + envira_gallery_admin.unlock_icon + '" alt="Unlock" />';
+			'<img class="envira-unlock-icon" src="' +
+			envira_gallery_admin.unlock_icon +
+			'" alt="Unlock" />';
 		let colspan = $('.post-type-envira table > thead > tr:first > th').length + 1; // add for checkbox td?
 		var $unlock =
 			'<tr class="envira_tr"><td scope="col" colspan="' +

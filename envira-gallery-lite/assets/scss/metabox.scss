@@ -898,6 +898,16 @@ form#post.envira-gallery {
 										}
 									}
 								}
+
+								/**Google Photos gallery tab icon**/
+								&#envira-gallery-type-google-photos {
+									label,
+									a {
+										div.icon {
+											background-image: url(../images/types/google-photos.png);
+										}
+									}
+								}
 							}
 						}
 

@@ -72,6 +72,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div class="title"><?php esc_html_e( 'TikTok', 'envira-gallery-lite' ); ?></div>
 				</a>
 			</li>
+			<li id="envira-gallery-type-google-photos">
+				<a href="javascript:void(0);" title="<?php esc_attr_e( 'Build Galleries from Google Photos.', 'envira-gallery-lite' ); ?>" class="link-envira-google-photos-tab upsell">
+					<div class="icon"></div>
+					<div class="title"><?php esc_html_e( 'Google Photos', 'envira-gallery-lite' ); ?></div>
+				</a>
+			</li>
 		</ul>
 	</div>
 
@@ -110,7 +116,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</ul>
 					</div>
 					<div class="bottom-content">
-						<a href="https://enviragallery.com/lite/?utm_source=liteplugin&amp;utm_medium=adminpageunlockai&amp;utm_campaign=upgradetopro" class="button button-primary" target="_blank"><?php esc_html_e( 'Unlock AI Features', 'envira-gallery-lite' ); ?></a>
+						<a href="https://enviragallery.com/lite/?utm_source=liteplugin&amp;utm_medium=adminpageunlockai&amp;utm_campaign=upgradetopro" rel="noopener noreferrer" class="button button-primary" target="_blank"><?php esc_html_e( 'Unlock AI Features', 'envira-gallery-lite' ); ?></a>
 						<p class="gift-text">
 							<?php
 							$image_url = esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/css/images/icons/wrapped-gift.svg' );
@@ -153,7 +159,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="connector-icon">
 					<img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/connector.png' ); ?>" alt="Connector icon"></img>
 				</div>
-				<a href="https://enviragallery.com/lite/?utm_source=liteplugin&amp;utm_medium=adminpageunlock_instagram&amp;utm_campaign=upgradetopro" class="button button-upsell-modal" target="_blank"><?php esc_html_e( 'Upgrade to Pro', 'envira-gallery-lite' ); ?>
+				<a href="https://enviragallery.com/lite/?utm_source=liteplugin&amp;utm_medium=adminpageunlock_instagram&amp;utm_campaign=upgradetopro" rel="noopener noreferrer" class="button button-upsell-modal" target="_blank"><?php esc_html_e( 'Upgrade to Pro', 'envira-gallery-lite' ); ?>
 					<img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/arrow-right.png' ); ?>" alt="Arrow right icon" class="arrow-right-icon"></img>
 				</a>
 				<div class="discount-section">
@@ -185,7 +191,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="connector-icon">
 					<img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/connector.png' ); ?>" alt="Connector icon"></img>
 				</div>
-				<a href="https://enviragallery.com/lite/?utm_source=liteplugin&amp;utm_medium=adminpageunlock_dribbble&amp;utm_campaign=upgradetopro" class="button button-upsell-modal" target="_blank"><?php esc_html_e( 'Upgrade to Pro', 'envira-gallery-lite' ); ?>
+				<a href="https://enviragallery.com/lite/?utm_source=liteplugin&amp;utm_medium=adminpageunlock_dribbble&amp;utm_campaign=upgradetopro" rel="noopener noreferrer" class="button button-upsell-modal" target="_blank"><?php esc_html_e( 'Upgrade to Pro', 'envira-gallery-lite' ); ?>
 					<img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/arrow-right.png' ); ?>" alt="Arrow right icon" class="arrow-right-icon"></img>
 				</a>
 				<div class="discount-section">
@@ -217,7 +223,39 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="connector-icon">
 					<img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/connector.png' ); ?>" alt="Connector icon"></img>
 				</div>
-				<a href="https://enviragallery.com/lite/?utm_source=liteplugin&amp;utm_medium=adminpageunlock_tiktok&amp;utm_campaign=upgradetopro" class="button button-upsell-modal" target="_blank"><?php esc_html_e( 'Upgrade to Pro', 'envira-gallery-lite' ); ?>
+				<a href="https://enviragallery.com/lite/?utm_source=liteplugin&amp;utm_medium=adminpageunlock_tiktok&amp;utm_campaign=upgradetopro" rel="noopener noreferrer" class="button button-upsell-modal" target="_blank"><?php esc_html_e( 'Upgrade to Pro', 'envira-gallery-lite' ); ?>
+					<img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/arrow-right.png' ); ?>" alt="Arrow right icon" class="arrow-right-icon"></img>
+				</a>
+				<div class="discount-section">
+					<div class="discount-percentage">
+						<img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/discount-icon.png' ); ?>" alt="Discount percentage">
+						</img>
+						<span>%</span>
+					</div>
+					<p>Envira Gallery lite users <span class="offer-text">get 50% off</span> the regular price, automatically applied at checkout.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Envira Google Photos Upsell Modal -->
+<div id="envira-google-photos-upsell-modal" class="envira-addon-upsell-modal">
+	<div class="envira-addon-upsell-modal-overlay"></div>
+	<div class="envira-addon-upsell-modal-content">
+		<img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/close.png' ); ?>" alt="Close upsell modal" id="close-envira-google-photos-upsell-modal" class="close-envira-addon-upsell-modal"></img>
+
+		<div class="upsell-content-container">
+			<div class="top-content">
+				<img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/lock.png' ); ?>" alt="Lock icon" class="lock-icon"></img>
+				<h3>Google Photos is a Pro Feature</h3>
+				<p>We’re sorry, using Google Photos is not available on your plan. Please upgrade to the Pro plan to unlock all these awesome features.</p>
+			</div>
+			<div class="bottom-content">
+				<div class="connector-icon">
+					<img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/connector.png' ); ?>" alt="Connector icon"></img>
+				</div>
+				<a href="https://enviragallery.com/lite/?utm_source=liteplugin&amp;utm_medium=adminpageunlock_google-photos&amp;utm_campaign=upgradetopro" rel="noopener noreferrer" class="button button-upsell-modal" target="_blank"><?php esc_html_e( 'Upgrade to Pro', 'envira-gallery-lite' ); ?>
 					<img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/arrow-right.png' ); ?>" alt="Arrow right icon" class="arrow-right-icon"></img>
 				</a>
 				<div class="discount-section">

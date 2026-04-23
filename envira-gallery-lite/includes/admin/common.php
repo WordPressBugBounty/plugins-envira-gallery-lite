@@ -457,7 +457,9 @@ class Envira_Gallery_Common_Admin {
 		wp_register_style( $this->base->plugin_slug . '-admin-style', plugins_url( 'assets/css/admin.css', $this->base->file ), [], $this->base->version );
 		wp_enqueue_style( $this->base->plugin_slug . '-admin-style' );
 
-		if ( 'envira_page_envira-gallery-settings' === $hook && isset( $_GET['post_type'] ) && 'envira' === $_GET['post_type'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// Sanitize $_GET['post_type'] at the point of ingestion using sanitize_key() — fixes unvalidated input read (nonce verification N/A for enqueue hooks; sanitization is the correct mitigation here).
+		$post_type = isset( $_GET['post_type'] ) ? sanitize_key( $_GET['post_type'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only query param used only for conditional style loading, not for data mutation; sanitized above.
+		if ( 'envira_page_envira-gallery-settings' === $hook && 'envira' === $post_type ) { // Uses sanitized $post_type instead of raw $_GET value.
 
 			wp_enqueue_style( 'envira-gallery-settings-style-css', plugins_url( 'assets/css/settings.css', $this->base->file ), false, $this->base->version );
 			wp_enqueue_style( 'envira-choice-css', plugins_url( 'assets/css/choices.css', $this->base->file ), false, $this->base->version );
@@ -632,7 +634,12 @@ class Envira_Gallery_Common_Admin {
 
 			// Delete the resized image.
 			if ( file_exists( $file ) ) {
-				@unlink( $file ); // @codingStandardsIgnoreLine
+				$real_file    = realpath( $file ); // resolve canonical path — $metadata['file'] and $dims come from the DB and can be tampered with to contain ../ sequences
+				$real_basedir = realpath( $wp_upload_dir['basedir'] ); // resolve basedir with symlinks expanded for reliable prefix comparison
+				if ( $real_file && $real_basedir && 0 === strpos( $real_file, trailingslashit( $real_basedir ) ) ) {
+					// only unlink when the resolved path is confirmed inside the uploads directory
+					@unlink( $real_file ); // @codingStandardsIgnoreLine
+				}
 			}
 		}
 	}

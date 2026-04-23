@@ -1,22 +1,22 @@
-# Copyright (C) 2025 Envira Gallery Team
-# This file is distributed under the same license as the Envira Gallery Lite plugin.
+# Copyright (C) 2026 Envira Gallery Team
+# This file is distributed under the same license as the Envira Gallery - Image Photo Gallery, Albums, Video Gallery, Slideshows & More plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Envira Gallery Lite 1.12.2\n"
+"Project-Id-Version: Envira Gallery - Image Photo Gallery, Albums, Video Gallery, Slideshows & More 1.12.4-0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/envira-gallery-lite\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-12-23T16:39:01+00:00\n"
+"POT-Creation-Date: 2026-02-02T14:08:51+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: envira-gallery-lite\n"
 
 #. Plugin Name of the plugin
 #: envira-gallery-lite.php
-msgid "Envira Gallery Lite"
+msgid "Envira Gallery - Image Photo Gallery, Albums, Video Gallery, Slideshows & More"
 msgstr ""
 
 #. Plugin URI of the plugin
@@ -27,7 +27,7 @@ msgstr ""
 
 #. Description of the plugin
 #: envira-gallery-lite.php
-msgid "Envira Gallery is the best responsive WordPress gallery plugin. This is the Lite version."
+msgid "Envira Gallery is a fast, easy and powerful gallery builder with lightbox, masonry and grid layouts, albums, videos, and responsive displays and more"
 msgstr ""
 
 #. Author of the plugin
@@ -163,102 +163,103 @@ msgstr ""
 msgid "Inactive"
 msgstr ""
 
-#: includes/admin/ajax.php:26
-#: includes/admin/ajax.php:59
-#: includes/admin/ajax.php:90
-#: includes/admin/ajax.php:161
-#: includes/admin/ajax.php:250
-#: includes/admin/ajax.php:293
-#: includes/admin/ajax.php:346
-#: includes/admin/ajax.php:407
-#: includes/admin/ajax.php:501
-#: includes/admin/ajax.php:583
-#: includes/admin/ajax.php:617
-#: includes/admin/ajax.php:872
-#: includes/admin/ajax.php:914
-#: includes/admin/ajax.php:1022
-#: includes/admin/ajax.php:1037
+#: includes/admin/ajax.php:30
+#: includes/admin/ajax.php:63
+#: includes/admin/ajax.php:94
+#: includes/admin/ajax.php:165
+#: includes/admin/ajax.php:254
+#: includes/admin/ajax.php:297
+#: includes/admin/ajax.php:350
+#: includes/admin/ajax.php:411
+#: includes/admin/ajax.php:505
+#: includes/admin/ajax.php:587
+#: includes/admin/ajax.php:621
+#: includes/admin/ajax.php:876
+#: includes/admin/ajax.php:918
+#: includes/admin/ajax.php:1026
+#: includes/admin/ajax.php:1041
 msgid "You are not allowed to edit galleries."
 msgstr ""
 
-#: includes/admin/ajax.php:157
-#: includes/admin/ajax.php:246
-#: includes/admin/ajax.php:342
-#: includes/admin/ajax.php:403
-#: includes/admin/ajax.php:497
-#: includes/admin/ajax.php:1018
+#: includes/admin/ajax.php:161
+#: includes/admin/ajax.php:250
+#: includes/admin/ajax.php:346
+#: includes/admin/ajax.php:407
+#: includes/admin/ajax.php:501
+#: includes/admin/ajax.php:1022
 msgid "Invalid Post ID."
 msgstr ""
 
-#: includes/admin/ajax.php:639
-#: includes/admin/ajax.php:1139
-#: includes/admin/ajax.php:1215
+#: includes/admin/ajax.php:643
+#: includes/admin/ajax.php:1143
+#: includes/admin/ajax.php:1219
 msgid "You are not allowed to install plugins."
 msgstr ""
 
-#: includes/admin/ajax.php:703
-#: includes/admin/ajax.php:1083
+#: includes/admin/ajax.php:707
+#: includes/admin/ajax.php:1087
 msgid "You are not allowed to activate plugins."
 msgstr ""
 
-#: includes/admin/ajax.php:732
-#: includes/admin/ajax.php:1114
+#: includes/admin/ajax.php:736
+#: includes/admin/ajax.php:1118
 msgid "You are not allowed to deactivate plugins."
 msgstr ""
 
-#: includes/admin/ajax.php:819
-#: includes/admin/ajax.php:851
+#: includes/admin/ajax.php:823
+#: includes/admin/ajax.php:855
 msgid "You are not allowed to dismiss notices."
 msgstr ""
 
-#: includes/admin/ajax.php:879
+#: includes/admin/ajax.php:883
 msgid "Invalid attachment ID."
 msgstr ""
 
-#: includes/admin/ajax.php:885
+#: includes/admin/ajax.php:889
 msgid "Invalid attachment."
 msgstr ""
 
-#: includes/admin/ajax.php:889
+#: includes/admin/ajax.php:893
 msgid "You are not allowed to access attachments."
 msgstr ""
 
-#: includes/admin/ajax.php:1030
+#: includes/admin/ajax.php:1034
 msgid "The From Gallery ID has not been specified."
 msgstr ""
 
-#: includes/admin/ajax.php:1033
+#: includes/admin/ajax.php:1037
 msgid "The To Gallery ID has not been specified."
 msgstr ""
 
-#: includes/admin/ajax.php:1040
+#: includes/admin/ajax.php:1044
 msgid "No images were selected to be moved between Galleries."
 msgstr ""
 
-#: includes/admin/ajax.php:1220
+#: includes/admin/ajax.php:1224
 msgid "Please enter your license key to connect."
 msgstr ""
 
-#: includes/admin/ajax.php:1227
-#: includes/admin/ajax.php:1279
+#: includes/admin/ajax.php:1231
+#: includes/admin/ajax.php:1283
 msgid "There was an error connecting to the remote key API. Please try again later."
 msgstr ""
 
-#: includes/admin/ajax.php:1272
-#: includes/admin/ajax.php:1331
+#: includes/admin/ajax.php:1276
+#: includes/admin/ajax.php:1335
 msgid "Congratulations! This site is now receiving automatic updates."
 msgstr ""
 
-#: includes/admin/albums.php:59
-#: includes/admin/albums.php:60
+#: includes/admin/albums.php:63
+#: includes/admin/albums.php:64
 msgid "Albums"
 msgstr ""
 
 #: includes/admin/common.php:170
 #: includes/admin/common.php:171
-#: includes/admin/partials/metabox-gallery-type.php:152
-#: includes/admin/partials/metabox-gallery-type.php:184
-#: includes/admin/partials/metabox-gallery-type.php:216
+#: includes/admin/partials/metabox-gallery-type.php:162
+#: includes/admin/partials/metabox-gallery-type.php:194
+#: includes/admin/partials/metabox-gallery-type.php:226
+#: includes/admin/partials/metabox-gallery-type.php:258
 msgid "Upgrade to Pro"
 msgstr ""
 
@@ -272,7 +273,7 @@ msgstr ""
 #: includes/admin/common.php:825
 #: includes/admin/gutenberg.php:129
 #: includes/admin/metaboxes.php:435
-#: includes/admin/partials/header.php:37
+#: includes/admin/partials/header.php:41
 #: includes/global/posttype.php:73
 msgid "Envira Gallery"
 msgstr ""
@@ -303,6 +304,10 @@ msgstr ""
 
 #: includes/admin/common.php:525
 msgid "Upgrade to Pro to get access to Albums, Protected Images,  Video Galleries, and more!"
+msgstr ""
+
+#: includes/admin/common.php:526
+msgid "Unlock Gallery Features "
 msgstr ""
 
 #: includes/admin/common.php:542
@@ -438,20 +443,20 @@ msgstr ""
 msgid "Add Gallery"
 msgstr ""
 
-#: includes/admin/Envira_Lite_Support.php:48
+#: includes/admin/Envira_Lite_Support.php:52
 msgid "Support General"
 msgstr ""
 
-#: includes/admin/Envira_Lite_Support.php:49
-#: includes/admin/partials/footer.php:19
+#: includes/admin/Envira_Lite_Support.php:53
+#: includes/admin/partials/footer.php:23
 msgid "Support"
 msgstr ""
 
-#: includes/admin/Envira_Lite_Support.php:229
+#: includes/admin/Envira_Lite_Support.php:233
 msgid "Fix"
 msgstr ""
 
-#: includes/admin/Envira_Lite_Support.php:237
+#: includes/admin/Envira_Lite_Support.php:241
 msgid "Toggle"
 msgstr ""
 
@@ -464,7 +469,7 @@ msgid "Make your gallery shine with awesome customizations, drag and drop manage
 msgstr ""
 
 #: includes/admin/gutenberg.php:133
-#: includes/admin/settings.php:397
+#: includes/admin/settings.php:401
 msgid "Converting..."
 msgstr ""
 
@@ -484,8 +489,8 @@ msgstr ""
 msgid "This gallery has no images."
 msgstr ""
 
-#: includes/admin/import-galleries.php:59
-#: includes/admin/import-galleries.php:60
+#: includes/admin/import-galleries.php:63
+#: includes/admin/import-galleries.php:64
 msgid "Import Galleries"
 msgstr ""
 
@@ -539,6 +544,14 @@ msgstr ""
 
 #: includes/admin/media-view.php:202
 msgid "Prepends each inserted Gallery with the Gallery Title."
+msgstr ""
+
+#: includes/admin/media-view.php:236
+msgid "Edit previous media item"
+msgstr ""
+
+#: includes/admin/media-view.php:237
+msgid "Edit next media item"
 msgstr ""
 
 #: includes/admin/media-view.php:240
@@ -632,6 +645,18 @@ msgstr ""
 
 #: includes/admin/media-view.php:462
 msgid "Once done, click the Move button, and the selected images will be moved to the chosen Gallery."
+msgstr ""
+
+#: includes/admin/menu-nudge.php:104
+msgid "Envira Gallery Alert!"
+msgstr ""
+
+#: includes/admin/menu-nudge.php:109
+msgid "👋 You're not showcasing any images on this website. Why not create a stunning gallery with Envira?"
+msgstr ""
+
+#: includes/admin/menu-nudge.php:111
+msgid "Build a Gallery"
 msgstr ""
 
 #: includes/admin/metaboxes.php:114
@@ -983,6 +1008,14 @@ msgstr ""
 msgid "Enables or disables the gallery lightbox."
 msgstr ""
 
+#: includes/admin/metaboxes.php:1138
+msgid "Enable Links?"
+msgstr ""
+
+#: includes/admin/metaboxes.php:1144
+msgid "Enables or disables links only when the gallery lightbox is disabled."
+msgstr ""
+
 #: includes/admin/metaboxes.php:1156
 msgid "Gallery Lightbox Theme"
 msgstr ""
@@ -1035,6 +1068,14 @@ msgstr ""
 msgid "Custom Gallery Classes"
 msgstr ""
 
+#: includes/admin/metaboxes.php:1304
+msgid "Enter custom gallery CSS classes here, one per line."
+msgstr ""
+
+#: includes/admin/metaboxes.php:1305
+msgid "Adds custom CSS classes to this gallery. Enter one class per line."
+msgstr ""
+
 #: includes/admin/metaboxes.php:1310
 msgid "Enable RTL Support?"
 msgstr ""
@@ -1071,39 +1112,39 @@ msgstr ""
 msgid "Comments"
 msgstr ""
 
-#: includes/admin/metaboxes.php:1659
+#: includes/admin/metaboxes.php:1660
 msgid "Search images with Envira Pro"
 msgstr ""
 
-#: includes/admin/metaboxes.php:1668
+#: includes/admin/metaboxes.php:1669
 msgid "Upgrade to Envira Gallery Pro to unlock advanced search capabilities, making it effortless for users to find their favorite images in your galleries!"
 msgstr ""
 
-#: includes/admin/metaboxes.php:1673
+#: includes/admin/metaboxes.php:1674
 msgid "Bonus:"
 msgstr ""
 
-#: includes/admin/metaboxes.php:1674
+#: includes/admin/metaboxes.php:1675
 msgid "Envira Lite users get a discount code for"
 msgstr ""
 
-#: includes/admin/metaboxes.php:1675
+#: includes/admin/metaboxes.php:1676
 msgid "50% off"
 msgstr ""
 
-#: includes/admin/metaboxes.php:1676
+#: includes/admin/metaboxes.php:1677
 msgid "regular price"
 msgstr ""
 
-#: includes/admin/metaboxes.php:1681
+#: includes/admin/metaboxes.php:1682
 msgid "Upgrade To Envira Pro"
 msgstr ""
 
-#: includes/admin/metaboxes.php:1929
+#: includes/admin/metaboxes.php:1930
 msgid "Remove Image from Gallery?"
 msgstr ""
 
-#: includes/admin/metaboxes.php:1930
+#: includes/admin/metaboxes.php:1931
 msgid "Modify Image"
 msgstr ""
 
@@ -1112,12 +1153,12 @@ msgid "Dismiss this notice"
 msgstr ""
 
 #. Translators: Human-Readable time to display.
-#: includes/admin/notifications.php:279
+#: includes/admin/notifications.php:283
 #, php-format
 msgid "%1$s ago"
 msgstr ""
 
-#: includes/admin/notifications.php:634
+#: includes/admin/notifications.php:638
 msgid "Dismiss"
 msgstr ""
 
@@ -1127,729 +1168,761 @@ msgstr ""
 msgid "%1$s &rsaquo; Onboarding Wizard"
 msgstr ""
 
-#: includes/admin/partials/albums.php:13
+#: includes/admin/onboarding-wizard.php:221
+msgid "Close and Exit Wizard Without Saving"
+msgstr ""
+
+#: includes/admin/partials/albums.php:17
 msgid "Create and Manage Albums is only available with Pro Features"
 msgstr ""
 
-#: includes/admin/partials/albums.php:16
+#: includes/admin/partials/albums.php:20
 msgid "Once you upgrade to Envira Pro, all features of albums will be available to create beautiful albums in seconds."
 msgstr ""
 
 #. Translators: %1$s - Opening strong tag, do not translate. %2$s - Closing strong tag, do not translate. %3$s - Opening span tag, do not translate. %4$s - Closing strong tag, do not translate.
-#: includes/admin/partials/albums.php:42
-#: includes/admin/partials/import-galleries.php:33
-#: includes/admin/partials/licensing.php:39
+#: includes/admin/partials/albums.php:46
+#: includes/admin/partials/import-galleries.php:37
+#: includes/admin/partials/licensing.php:43
 #, php-format
 msgid "%1$sBonus%2$s: Envira Gallery Lite users get %3$s 50%% off%4$s regular price, automatically applied at checkout"
 msgstr ""
 
-#: includes/admin/partials/albums.php:56
-#: includes/admin/partials/import-galleries.php:47
-#: includes/admin/partials/licensing.php:53
+#: includes/admin/partials/albums.php:57
+#: includes/admin/partials/import-galleries.php:48
+#: includes/admin/partials/licensing.php:54
+msgid "Upgrade to Envira Gallery Pro Now"
+msgstr ""
+
+#: includes/admin/partials/albums.php:60
+#: includes/admin/partials/import-galleries.php:51
+#: includes/admin/partials/licensing.php:57
 msgid "Already Purchased?"
 msgstr ""
 
-#: includes/admin/partials/footer.php:16
+#: includes/admin/partials/footer.php:20
 msgid "Made with ♥ by the Envira Gallery Team"
 msgstr ""
 
-#: includes/admin/partials/footer.php:25
+#: includes/admin/partials/footer.php:29
 msgid "Free Plugins"
 msgstr ""
 
-#: includes/admin/partials/footer.php:34
+#: includes/admin/partials/footer.php:38
 msgid "Facebook"
 msgstr ""
 
-#: includes/admin/partials/footer.php:42
-#: includes/admin/partials/metabox-gallery-type.php:56
+#: includes/admin/partials/footer.php:46
+#: includes/admin/partials/metabox-gallery-type.php:60
 msgid "Instagram"
 msgstr ""
 
-#: includes/admin/partials/footer.php:50
+#: includes/admin/partials/footer.php:54
 msgid "LinkedIn"
 msgstr ""
 
-#: includes/admin/partials/footer.php:58
+#: includes/admin/partials/footer.php:62
 msgid "Twitter"
 msgstr ""
 
-#: includes/admin/partials/footer.php:66
+#: includes/admin/partials/footer.php:70
 msgid "YouTube"
 msgstr ""
 
-#: includes/admin/partials/import-galleries.php:13
+#: includes/admin/partials/import-galleries.php:17
 msgid "Importing Galleries is a Pro Feature"
 msgstr ""
 
-#: includes/admin/partials/import-galleries.php:17
+#: includes/admin/partials/import-galleries.php:21
 msgid ""
 "We're sorry, importing your Foo Gallery or Modula Gallery is not available in your plan. Please upgrade to the Pro plan to unlock this awesome feature.\n"
 ""
 msgstr ""
 
-#: includes/admin/partials/import-galleries.php:44
-#: includes/admin/partials/licensing.php:50
-msgid "Upgrade to Envira Gallery Pro Now"
-msgstr ""
-
-#: includes/admin/partials/licensing.php:13
+#: includes/admin/partials/licensing.php:17
 msgid "Image Licensing is only available with Pro Features"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:16
+#: includes/admin/partials/licensing.php:20
 msgid "Once you upgrade to Envira Pro, licensing will be available to customize and show licenses on your galleries in seconds."
 msgstr ""
 
-#: includes/admin/partials/licensing.php:21
+#: includes/admin/partials/licensing.php:25
 msgid "Enable/Disable Licensing"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:23
+#: includes/admin/partials/licensing.php:27
 msgid "Choose License Type"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:27
+#: includes/admin/partials/licensing.php:31
 msgid "Set Author/Creator Name"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:29
+#: includes/admin/partials/licensing.php:33
 msgid "Display License On The Galleries"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:58
+#: includes/admin/partials/licensing.php:62
 msgid "Specify how your assets can be shared, used, or modified from inside your galleries by displaying Creative Commons licensing information. "
 msgstr ""
 
-#: includes/admin/partials/licensing.php:59
+#: includes/admin/partials/licensing.php:63
 msgid "Once enabled, Envira Gallery will add your license to the bottom of each embedded gallery."
 msgstr ""
 
 #. translators: %s is the URL to the Creative Commons website.
-#: includes/admin/partials/licensing.php:61
+#: includes/admin/partials/licensing.php:65
 #, php-format
 msgid "Need help  %s choosing a proper license"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:68
+#: includes/admin/partials/licensing.php:72
 msgid "Enable Image Licensing"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:72
+#: includes/admin/partials/licensing.php:76
 msgid "If enabled, Envira Gallery will add your license to the bottom of each embedded gallery."
 msgstr ""
 
-#: includes/admin/partials/licensing.php:75
+#: includes/admin/partials/licensing.php:79
 msgid "Author/Creator Name"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:76
+#: includes/admin/partials/licensing.php:80
 msgid "Author Name"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:79
+#: includes/admin/partials/licensing.php:83
 msgid "License Type"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:82
+#: includes/admin/partials/licensing.php:86
 msgid "cc-by"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:83
+#: includes/admin/partials/licensing.php:87
 msgid "4.0 International Deed"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:84
+#: includes/admin/partials/licensing.php:88
 msgid "(CC BY 4.0)"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:87
+#: includes/admin/partials/licensing.php:91
 msgid "cc-by-nc"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:88
+#: includes/admin/partials/licensing.php:92
 msgid "NonCommercial 4.0 International"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:89
+#: includes/admin/partials/licensing.php:93
 msgid "(CC BY-NC 4.0)"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:92
+#: includes/admin/partials/licensing.php:96
 msgid "cc-by-nc-nd"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:93
+#: includes/admin/partials/licensing.php:97
 msgid "NonCommercial 4.0 No Derivatives"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:94
+#: includes/admin/partials/licensing.php:98
 msgid "(CC BY-NC-SA 4.0)"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:97
+#: includes/admin/partials/licensing.php:101
 msgid "cc-by-nc-sa"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:98
+#: includes/admin/partials/licensing.php:102
 msgid "NonCommercial 4.0 ShareALike"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:99
-#: includes/admin/partials/licensing.php:109
+#: includes/admin/partials/licensing.php:103
+#: includes/admin/partials/licensing.php:113
 msgid "(CC BY-SA 4.0)"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:102
+#: includes/admin/partials/licensing.php:106
 msgid "cc-by-nd"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:103
+#: includes/admin/partials/licensing.php:107
 msgid "No Derivatives"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:104
+#: includes/admin/partials/licensing.php:108
 msgid "(CC BY-ND 4.0)"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:107
+#: includes/admin/partials/licensing.php:111
 msgid "cc-by-sa"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:108
+#: includes/admin/partials/licensing.php:112
 msgid "ShareALike"
 msgstr ""
 
-#: includes/admin/partials/licensing.php:114
-#: includes/admin/settings.php:340
+#: includes/admin/partials/licensing.php:118
+#: includes/admin/settings.php:344
 msgid "Save"
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-code.php:14
+#: includes/admin/partials/metabox-gallery-code.php:18
 msgid "You can place this gallery anywhere into your posts, pages, custom post types or widgets by using one of the shortcode(s) below:"
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-code.php:17
-#: includes/admin/partials/metabox-gallery-code.php:27
+#: includes/admin/partials/metabox-gallery-code.php:21
+#: includes/admin/partials/metabox-gallery-code.php:31
 #: includes/admin/table.php:231
 msgid "Copy Shortcode to Clipboard"
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-code.php:18
-#: includes/admin/partials/metabox-gallery-code.php:28
-#: includes/admin/partials/metabox-gallery-code.php:39
-#: includes/admin/partials/metabox-gallery-code.php:49
+#: includes/admin/partials/metabox-gallery-code.php:22
+#: includes/admin/partials/metabox-gallery-code.php:32
+#: includes/admin/partials/metabox-gallery-code.php:43
+#: includes/admin/partials/metabox-gallery-code.php:53
 #: includes/admin/table.php:232
 msgid "Copy to Clipboard"
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-code.php:35
+#: includes/admin/partials/metabox-gallery-code.php:39
 msgid "You can also place this gallery into your template files by using <strong>one</strong> the template tag(s) below:"
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-code.php:38
-#: includes/admin/partials/metabox-gallery-code.php:48
+#: includes/admin/partials/metabox-gallery-code.php:42
+#: includes/admin/partials/metabox-gallery-code.php:52
 msgid "Copy Template Tag to Clipboard"
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:17
-msgid "Native Envira Gallery"
-msgstr ""
-
-#: includes/admin/partials/metabox-gallery-type.php:20
 #: includes/admin/partials/metabox-gallery-type.php:21
-msgid "External Gallery"
+msgid "Native Envira Gallery"
 msgstr ""
 
 #: includes/admin/partials/metabox-gallery-type.php:24
 #: includes/admin/partials/metabox-gallery-type.php:25
+msgid "External Gallery"
+msgstr ""
+
+#: includes/admin/partials/metabox-gallery-type.php:28
+#: includes/admin/partials/metabox-gallery-type.php:29
 msgid "Create with Envira AI"
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:51
+#: includes/admin/partials/metabox-gallery-type.php:55
 msgid "Create Dynamic Galleries with Envira"
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:54
+#: includes/admin/partials/metabox-gallery-type.php:58
 msgid "Build Galleries from Instagram images."
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:60
+#: includes/admin/partials/metabox-gallery-type.php:64
 msgid "Build Galleries from Dribbble images."
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:62
+#: includes/admin/partials/metabox-gallery-type.php:66
 msgid "Dribbble"
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:66
+#: includes/admin/partials/metabox-gallery-type.php:70
 msgid "Build Galleries from TikTok videos."
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:68
+#: includes/admin/partials/metabox-gallery-type.php:72
 msgid "TikTok"
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:77
+#: includes/admin/partials/metabox-gallery-type.php:76
+msgid "Build Galleries from Google Photos."
+msgstr ""
+
+#: includes/admin/partials/metabox-gallery-type.php:78
+msgid "Google Photos"
+msgstr ""
+
+#: includes/admin/partials/metabox-gallery-type.php:87
 msgid "Add images to your gallery using the power of AI"
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:79
-#: includes/admin/partials/metabox-gallery-type.php:80
+#: includes/admin/partials/metabox-gallery-type.php:89
+#: includes/admin/partials/metabox-gallery-type.php:90
 msgid "Create Images with AI"
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:94
-#: includes/admin/partials/metabox-gallery-type.php:113
+#: includes/admin/partials/metabox-gallery-type.php:104
+#: includes/admin/partials/metabox-gallery-type.php:123
 msgid "Unlock feature"
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:95
+#: includes/admin/partials/metabox-gallery-type.php:105
 msgid "Upgrade to Envira Gallery and Create images with AI!"
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:96
+#: includes/admin/partials/metabox-gallery-type.php:106
 msgid "Create unique and stunning galleries with Envira AI. No matter the type of site or design style, Envira Gallery makes it easy to create assets without a designer."
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:100
+#: includes/admin/partials/metabox-gallery-type.php:110
 msgid "Here’s what you get with Envira AI"
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:102
+#: includes/admin/partials/metabox-gallery-type.php:112
 msgid "Specify your asset needs."
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:103
+#: includes/admin/partials/metabox-gallery-type.php:113
 msgid "Create an unlimited number of images."
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:104
+#: includes/admin/partials/metabox-gallery-type.php:114
 msgid "Choose your design style."
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:105
+#: includes/admin/partials/metabox-gallery-type.php:115
 msgid "Customize your image sizes."
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:109
+#: includes/admin/partials/metabox-gallery-type.php:119
 msgid "Unlock AI Features"
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:120
+#: includes/admin/partials/metabox-gallery-type.php:130
 msgid "Plus <span class=\"offer-text\">Save 50%</span> by Upgrading to Pro today"
 msgstr ""
 
-#: includes/admin/partials/metabox-gallery-type.php:129
+#: includes/admin/partials/metabox-gallery-type.php:139
 msgid "Demo Images"
 msgstr ""
 
 #. Translators: Placeholder for the number of active notifications.
-#: includes/admin/partials/notifications.php:18
+#: includes/admin/partials/notifications.php:22
 #, php-format
 msgid "New Notifications (%s)"
 msgstr ""
 
 #. Translators: Placeholder for the number of dismissed notifications.
-#: includes/admin/partials/notifications.php:29
+#: includes/admin/partials/notifications.php:33
 #, php-format
 msgid "Notifications (%s)"
 msgstr ""
 
-#: includes/admin/partials/notifications.php:36
+#: includes/admin/partials/notifications.php:40
 msgid "Dismissed Notifications"
 msgstr ""
 
-#: includes/admin/partials/notifications.php:39
+#: includes/admin/partials/notifications.php:43
 msgid "Active Notifications"
 msgstr ""
 
-#: includes/admin/partials/notifications.php:66
+#: includes/admin/partials/notifications.php:70
 msgid "Dismiss all"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-1.php:15
+#: includes/admin/partials/onboarding-wizard/step-1.php:19
 msgid "Step - 1 of 5"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-1.php:18
-#: includes/admin/partials/onboarding-wizard/step-1.php:52
+#: includes/admin/partials/onboarding-wizard/step-1.php:22
+#: includes/admin/partials/onboarding-wizard/step-1.php:56
 msgid "What best describes you?"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-1.php:21
+#: includes/admin/partials/onboarding-wizard/step-1.php:25
 msgid "Tell us a bit about this website to help us craft the perfect experience for you."
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-1.php:28
+#: includes/admin/partials/onboarding-wizard/step-1.php:32
 msgid "Photographer / Artist"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-1.php:32
+#: includes/admin/partials/onboarding-wizard/step-1.php:36
 msgid "Web Developer / Designer"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-1.php:36
+#: includes/admin/partials/onboarding-wizard/step-1.php:40
 msgid "Marketer"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-1.php:40
+#: includes/admin/partials/onboarding-wizard/step-1.php:44
 msgid "Blogger"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-1.php:44
+#: includes/admin/partials/onboarding-wizard/step-1.php:48
 msgid "Business Store Owner"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-1.php:48
+#: includes/admin/partials/onboarding-wizard/step-1.php:52
 msgid "Something Else"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-1.php:58
+#: includes/admin/partials/onboarding-wizard/step-1.php:62
 msgid "Join Envira Community"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-1.php:66
+#: includes/admin/partials/onboarding-wizard/step-1.php:70
 msgid "Email Address"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-1.php:80
+#: includes/admin/partials/onboarding-wizard/step-1.php:84
 msgid "I agree to receive important communications from Envira Gallery."
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-1.php:91
+#: includes/admin/partials/onboarding-wizard/step-1.php:95
 msgid "Help us better understand our users and their website needs."
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-1.php:96
+#: includes/admin/partials/onboarding-wizard/step-1.php:100
 msgid "If enabled EnviraGallery  will send some non-identifiable information about your WordPress site like what plugins and themes you use and which Envira Gallery settings you use to us so that we can improve our product."
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-1.php:104
-#: includes/admin/partials/onboarding-wizard/step-2.php:272
-#: includes/admin/partials/onboarding-wizard/step-3.php:209
-#: includes/admin/partials/onboarding-wizard/step-4.php:106
-#: includes/admin/partials/onboarding-wizard/step-5.php:54
+#: includes/admin/partials/onboarding-wizard/step-1.php:108
+#: includes/admin/partials/onboarding-wizard/step-2.php:276
+#: includes/admin/partials/onboarding-wizard/step-3.php:213
+#: includes/admin/partials/onboarding-wizard/step-4.php:110
+#: includes/admin/partials/onboarding-wizard/step-5.php:58
 msgid "Go back"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-1.php:105
-#: includes/admin/partials/onboarding-wizard/step-2.php:273
-#: includes/admin/partials/onboarding-wizard/step-3.php:210
-#: includes/admin/partials/onboarding-wizard/step-4.php:107
+#: includes/admin/partials/onboarding-wizard/step-1.php:109
+#: includes/admin/partials/onboarding-wizard/step-2.php:277
+#: includes/admin/partials/onboarding-wizard/step-3.php:214
+#: includes/admin/partials/onboarding-wizard/step-4.php:111
 msgid "Save and Continue"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:14
+#: includes/admin/partials/onboarding-wizard/step-2.php:18
 msgid "Step - 2 of 5"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:17
+#: includes/admin/partials/onboarding-wizard/step-2.php:21
 msgid "What Envira Gallery features do you want to enable?"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:21
+#: includes/admin/partials/onboarding-wizard/step-2.php:25
 msgid "We have already selected our recommended features based upon your website, but you can choose other features."
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:30
+#: includes/admin/partials/onboarding-wizard/step-2.php:34
 msgid "Responsive Photo Galleries"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:33
+#: includes/admin/partials/onboarding-wizard/step-2.php:37
 msgid "Create beautiful fully responsive galleries which are cross browser compatible."
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:63
+#: includes/admin/partials/onboarding-wizard/step-2.php:67
 msgid "Drag and Drop"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:65
+#: includes/admin/partials/onboarding-wizard/step-2.php:69
 msgid "Easily add, remove, and reorder gallery images with drag and drop simplicity."
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:94
+#: includes/admin/partials/onboarding-wizard/step-2.php:98
 msgid "Lightboxes"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:96
+#: includes/admin/partials/onboarding-wizard/step-2.php:100
 msgid "Showcase your galleries in beautiful lightboxes, which look great on every device."
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:124
+#: includes/admin/partials/onboarding-wizard/step-2.php:128
 msgid "Installs Envira Albums & Tags"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:124
+#: includes/admin/partials/onboarding-wizard/step-2.php:128
 msgid "Envira Albums & Tags is already installed"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:131
-#: includes/admin/partials/onboarding-wizard/step-2.php:141
+#: includes/admin/partials/onboarding-wizard/step-2.php:135
+#: includes/admin/partials/onboarding-wizard/step-2.php:145
 msgid "Albums & Tags"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:133
+#: includes/admin/partials/onboarding-wizard/step-2.php:137
 msgid "Easily organize and label galleries to allow your visitors to see exactly what they’re looking for."
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:161
+#: includes/admin/partials/onboarding-wizard/step-2.php:165
 msgid "Installs Envira Videos"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:161
+#: includes/admin/partials/onboarding-wizard/step-2.php:165
 msgid "Envira Videos is already installed"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:168
-#: includes/admin/partials/onboarding-wizard/step-2.php:178
+#: includes/admin/partials/onboarding-wizard/step-2.php:172
+#: includes/admin/partials/onboarding-wizard/step-2.php:182
 msgid "Video Galleries"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:170
+#: includes/admin/partials/onboarding-wizard/step-2.php:174
 msgid "Increase engagement from your galleries and embed videos. Works with all video types."
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:198
+#: includes/admin/partials/onboarding-wizard/step-2.php:202
 msgid "Installs Envira Slideshows"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:198
+#: includes/admin/partials/onboarding-wizard/step-2.php:202
 msgid "Envira Slideshows is already installed"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:205
-#: includes/admin/partials/onboarding-wizard/step-2.php:215
+#: includes/admin/partials/onboarding-wizard/step-2.php:209
+#: includes/admin/partials/onboarding-wizard/step-2.php:219
 msgid "Slideshows"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:207
+#: includes/admin/partials/onboarding-wizard/step-2.php:211
 msgid "Create beautiful scrolling slideshows with customization."
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:235
+#: includes/admin/partials/onboarding-wizard/step-2.php:239
 msgid "Installs Envira Proofing"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:235
+#: includes/admin/partials/onboarding-wizard/step-2.php:239
 msgid "Envira Proofing is already installed"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:242
-#: includes/admin/partials/onboarding-wizard/step-2.php:252
+#: includes/admin/partials/onboarding-wizard/step-2.php:246
+#: includes/admin/partials/onboarding-wizard/step-2.php:256
 msgid "Proofing and eCommerce"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-2.php:244
+#: includes/admin/partials/onboarding-wizard/step-2.php:248
 msgid "Let your customers proof and purchase images from you. Great for photographers."
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:15
+#: includes/admin/partials/onboarding-wizard/step-3.php:19
 msgid "Step - 3 of 5"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:18
+#: includes/admin/partials/onboarding-wizard/step-3.php:22
 msgid "Add Recommended Features to Grow Your Websites"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:22
+#: includes/admin/partials/onboarding-wizard/step-3.php:26
 msgid "We have already selected our recommended features based on your site category, but you can use the following features to fine-tune your site."
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:28
+#: includes/admin/partials/onboarding-wizard/step-3.php:32
 msgid "Installs All In One SEO Pack"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:28
+#: includes/admin/partials/onboarding-wizard/step-3.php:32
 msgid "All In One SEO Pack is already installed"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:35
+#: includes/admin/partials/onboarding-wizard/step-3.php:39
 msgid "SEO Toolkit"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:37
+#: includes/admin/partials/onboarding-wizard/step-3.php:41
 msgid "Improve your website search rankings for your gallery with AIOSEO"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:45
+#: includes/admin/partials/onboarding-wizard/step-3.php:49
 msgid "All In One SEO Pack"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:64
+#: includes/admin/partials/onboarding-wizard/step-3.php:68
 msgid "Installs WP Forms"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:64
+#: includes/admin/partials/onboarding-wizard/step-3.php:68
 msgid "WP Forms is already installed"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:71
+#: includes/admin/partials/onboarding-wizard/step-3.php:75
 msgid "Form Builder"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:73
+#: includes/admin/partials/onboarding-wizard/step-3.php:77
 msgid "Build forms for your photography business using the fastest form builder ever WPForms"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:81
+#: includes/admin/partials/onboarding-wizard/step-3.php:85
 msgid "WP Forms"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:100
+#: includes/admin/partials/onboarding-wizard/step-3.php:104
 msgid "Installs Google Analytics For WordPress"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:100
+#: includes/admin/partials/onboarding-wizard/step-3.php:104
 msgid "Google Analytics For WordPress is already installed"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:107
+#: includes/admin/partials/onboarding-wizard/step-3.php:111
 msgid "Website Analytics"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:109
+#: includes/admin/partials/onboarding-wizard/step-3.php:113
 msgid "Understand your customer’s interactions across your Galleries with MonsterInsight."
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:117
+#: includes/admin/partials/onboarding-wizard/step-3.php:121
 msgid "Google Analytics For WordPress"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:136
+#: includes/admin/partials/onboarding-wizard/step-3.php:140
 msgid "Installs Duplicator"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:136
+#: includes/admin/partials/onboarding-wizard/step-3.php:140
 msgid "Duplicator is already installed"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:143
+#: includes/admin/partials/onboarding-wizard/step-3.php:147
 msgid "Website Backups"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:145
+#: includes/admin/partials/onboarding-wizard/step-3.php:149
 msgid "Backup, Migrate, Secure your gallery images from getting lost with Duplicator."
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:153
+#: includes/admin/partials/onboarding-wizard/step-3.php:157
 #: includes/admin/welcome.php:437
 msgid "Duplicator"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:172
+#: includes/admin/partials/onboarding-wizard/step-3.php:176
 msgid "Installs WP Mail SMTP"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:172
+#: includes/admin/partials/onboarding-wizard/step-3.php:176
 msgid "WP Mail SMTP is already installed"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:180
+#: includes/admin/partials/onboarding-wizard/step-3.php:184
 msgid "Email Deliverability"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:182
+#: includes/admin/partials/onboarding-wizard/step-3.php:186
 msgid "Set up your WordPress to use a trusted email provider with WP Mail SMTP"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-3.php:190
+#: includes/admin/partials/onboarding-wizard/step-3.php:194
 #: includes/admin/welcome.php:218
 msgid "WP Mail SMTP"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-4.php:13
+#: includes/admin/partials/onboarding-wizard/step-4.php:17
 msgid "Step - 4 of 5"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-4.php:16
+#: includes/admin/partials/onboarding-wizard/step-4.php:20
 msgid "Create a Beautiful Gallery and Sell your Photo Online"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-4.php:19
+#: includes/admin/partials/onboarding-wizard/step-4.php:23
 msgid "You are currently using Envira Lite."
 msgstr ""
 
 #. Translators: %s is the link to upgrade to PRO.
-#: includes/admin/partials/onboarding-wizard/step-4.php:27
+#: includes/admin/partials/onboarding-wizard/step-4.php:31
 #, php-format
 msgid "To Unlock below features, <strong><a target=\"_blank\" href=\"%s\">Upgrade to PRO</a></strong> and Enter your license key below"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-4.php:42
+#: includes/admin/partials/onboarding-wizard/step-4.php:46
 msgid "Ecommerce Integration"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-4.php:53
+#: includes/admin/partials/onboarding-wizard/step-4.php:57
 msgid "Watermarking to avoid Redistribution"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-4.php:64
+#: includes/admin/partials/onboarding-wizard/step-4.php:68
 msgid "Proofing and Social Sharing"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-4.php:75
+#: includes/admin/partials/onboarding-wizard/step-4.php:79
 msgid "Deeplinking for better SEO"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-4.php:82
+#: includes/admin/partials/onboarding-wizard/step-4.php:86
 msgid "Already purchased? Simply enter your license key below to connect with Envira Pro!"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-4.php:87
+#: includes/admin/partials/onboarding-wizard/step-4.php:91
 msgid "Enter your license key"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-4.php:90
+#: includes/admin/partials/onboarding-wizard/step-4.php:94
 msgid "Connect"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-5.php:13
+#: includes/admin/partials/onboarding-wizard/step-5.php:17
 msgid "Step - 5 of 5"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-5.php:16
+#: includes/admin/partials/onboarding-wizard/step-5.php:20
 msgid "Congratulations! Grab your photos and start uploading your beautiful gallery"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-5.php:19
+#: includes/admin/partials/onboarding-wizard/step-5.php:23
 msgid "Need Help? Here’s what to do next"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-5.php:32
+#: includes/admin/partials/onboarding-wizard/step-5.php:36
 msgid "Read our Step by Step Guide to Create and Share your Gallery"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-5.php:40
+#: includes/admin/partials/onboarding-wizard/step-5.php:44
 msgid "Watch Guided tour of Envira Gallery"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-5.php:48
+#: includes/admin/partials/onboarding-wizard/step-5.php:52
 msgid "Learn WordPress Tutorials"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-5.php:56
+#: includes/admin/partials/onboarding-wizard/step-5.php:60
 msgid "Go to settings"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/step-5.php:57
+#: includes/admin/partials/onboarding-wizard/step-5.php:61
 msgid "Create your first gallery"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/welcome.php:15
+#: includes/admin/partials/onboarding-wizard/welcome.php:19
 msgid "Welcome to Envira Gallery!"
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/welcome.php:16
+#: includes/admin/partials/onboarding-wizard/welcome.php:20
 msgid "Create stunning responsive photo and video galleries for your website. Your first gallery is only minutes away."
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/welcome.php:18
+#: includes/admin/partials/onboarding-wizard/welcome.php:22
 msgid "Get Started → "
 msgstr ""
 
-#: includes/admin/partials/onboarding-wizard/welcome.php:22
+#: includes/admin/partials/onboarding-wizard/welcome.php:26
 msgid "Go back to the dashboard"
+msgstr ""
+
+#: includes/admin/permissions.php:67
+#: includes/admin/settings.php:307
+msgid "Create Galleries"
+msgstr ""
+
+#: includes/admin/permissions.php:68
+#: includes/admin/settings.php:316
+msgid "Edit Galleries"
+msgstr ""
+
+#: includes/admin/permissions.php:69
+#: includes/admin/settings.php:325
+msgid "Delete Galleries"
+msgstr ""
+
+#: includes/admin/permissions.php:70
+msgid "Edit Others Galleries"
 msgstr ""
 
 #: includes/admin/posttype.php:118
@@ -1893,147 +1966,135 @@ msgstr ""
 msgid "Envira gallery draft updated."
 msgstr ""
 
-#: includes/admin/review.php:144
+#: includes/admin/review.php:148
 msgid "Hey congrats on creating a photo gallery with Envira — that’s awesome! Could you do us a BIG favor and give us a 5-star rating on WordPress to help us spread the word and boost our motivation?"
 msgstr ""
 
-#: includes/admin/review.php:146
+#: includes/admin/review.php:150
 msgid "Ok, you deserve it"
 msgstr ""
 
-#: includes/admin/review.php:147
+#: includes/admin/review.php:151
 msgid "Nope, maybe later"
 msgstr ""
 
-#: includes/admin/review.php:148
+#: includes/admin/review.php:152
 msgid "I already did"
 msgstr ""
 
-#: includes/admin/settings.php:51
+#: includes/admin/settings.php:55
 #: includes/admin/welcome.php:466
 msgid "Envira Gallery "
 msgstr ""
 
-#: includes/admin/settings.php:56
-#: includes/admin/settings.php:57
+#: includes/admin/settings.php:60
+#: includes/admin/settings.php:61
 msgid "Settings"
 msgstr ""
 
-#: includes/admin/settings.php:81
+#: includes/admin/settings.php:85
 msgid "General"
 msgstr ""
 
-#: includes/admin/settings.php:82
+#: includes/admin/settings.php:86
 msgid "Permissions"
 msgstr ""
 
-#: includes/admin/settings.php:83
+#: includes/admin/settings.php:87
 msgid "Image Licensing"
 msgstr ""
 
-#: includes/admin/settings.php:84
+#: includes/admin/settings.php:88
 msgid "Convert to Envira"
 msgstr ""
 
-#: includes/admin/settings.php:153
+#: includes/admin/settings.php:157
 msgid "License"
 msgstr ""
 
-#: includes/admin/settings.php:154
+#: includes/admin/settings.php:158
 msgid "Your license key provides access to updates and add-ons."
 msgstr ""
 
-#: includes/admin/settings.php:159
+#: includes/admin/settings.php:163
 msgid " License Key"
 msgstr ""
 
-#: includes/admin/settings.php:162
+#: includes/admin/settings.php:166
 msgid "You're using Envira Gallery Lite - no license needed. Enjoy! 🙂"
 msgstr ""
 
 #. Translators: %1$s - Opening anchor tag, do not translate. %2$s - Closing anchor tag, do not translate.
-#: includes/admin/settings.php:168
+#: includes/admin/settings.php:172
 #, php-format
 msgid "To unlock more features consider %1$supgrading to PRO%2$s."
 msgstr ""
 
 #. Translators: %1$s - Opening span tag, do not translate. %2$s - Closing span tag, do not translate.
-#: includes/admin/settings.php:178
+#: includes/admin/settings.php:182
 #, php-format
 msgid "As a valued Envira Gallery Lite user you receive %1$s 50%% off%2$s, automatically applied at checkout"
 msgstr ""
 
-#: includes/admin/settings.php:186
+#: includes/admin/settings.php:190
 msgid "Already purchased? Simply enter your license key below to enable Envira Gallery PRO!"
 msgstr ""
 
-#: includes/admin/settings.php:187
+#: includes/admin/settings.php:191
 msgid "Paste license key here"
 msgstr ""
 
-#: includes/admin/settings.php:189
+#: includes/admin/settings.php:193
 msgid "Verify Key"
 msgstr ""
 
-#: includes/admin/settings.php:197
-#: includes/admin/settings.php:198
+#: includes/admin/settings.php:201
+#: includes/admin/settings.php:202
 msgid "Setup Wizard"
 msgstr ""
 
-#: includes/admin/settings.php:198
+#: includes/admin/settings.php:202
 msgid "Launch Setup Wizard"
 msgstr ""
 
-#: includes/admin/settings.php:260
+#: includes/admin/settings.php:264
 msgid "The nonce field is invalid."
 msgstr ""
 
-#: includes/admin/settings.php:274
+#: includes/admin/settings.php:278
 msgid "Permissions updated successfully!"
 msgstr ""
 
-#: includes/admin/settings.php:303
-msgid "Create Galleries"
-msgstr ""
-
-#: includes/admin/settings.php:307
+#: includes/admin/settings.php:311
 msgid "Users that have at least one of these roles will be able to create galleries."
 msgstr ""
 
-#: includes/admin/settings.php:312
-msgid "Edit Galleries"
-msgstr ""
-
-#: includes/admin/settings.php:316
+#: includes/admin/settings.php:320
 msgid "Users that have at least one of these roles will be able to edit/update galleries."
 msgstr ""
 
-#: includes/admin/settings.php:321
-msgid "Delete Galleries"
-msgstr ""
-
-#: includes/admin/settings.php:325
+#: includes/admin/settings.php:329
 msgid "Users that have at least one of these roles will be able to delete galleries."
 msgstr ""
 
-#: includes/admin/settings.php:330
+#: includes/admin/settings.php:334
 msgid "Edit Other's Galleries"
 msgstr ""
 
-#: includes/admin/settings.php:334
+#: includes/admin/settings.php:338
 msgid "Users that have at least one of these roles will be able to edit other's galleries."
 msgstr ""
 
-#: includes/admin/settings.php:390
-#: includes/admin/settings.php:395
+#: includes/admin/settings.php:394
+#: includes/admin/settings.php:399
 msgid "Convert Galleries"
 msgstr ""
 
-#: includes/admin/settings.php:391
+#: includes/admin/settings.php:395
 msgid "With a single click, easily convert all of your website’s WordPress galleries to Envira Galleries! This will let you get features like drag and drop ordering, image layouts, and much more."
 msgstr ""
 
-#: includes/admin/settings.php:392
+#: includes/admin/settings.php:396
 msgid "Important: Converting your galleries to Envira Gallery is not reversible. <em>We strongly recommend making a full backup of your website first before making changes.</em>"
 msgstr ""
 
@@ -2284,43 +2345,43 @@ msgstr ""
 
 #: includes/admin/welcome.php:471
 #: includes/admin/welcome.php:472
-#: includes/admin/welcome.php:531
+#: includes/admin/welcome.php:533
 msgid "About Us"
 msgstr ""
 
 #: includes/admin/welcome.php:480
 #: includes/admin/welcome.php:481
-#: includes/admin/welcome.php:554
+#: includes/admin/welcome.php:556
 msgid "Getting Started"
 msgstr ""
 
 #: includes/admin/welcome.php:489
 #: includes/admin/welcome.php:490
-#: includes/admin/welcome.php:577
+#: includes/admin/welcome.php:579
 msgid "Lite vs Pro"
 msgstr ""
 
-#: includes/admin/welcome.php:598
+#: includes/admin/welcome.php:600
 msgid "Hello and welcome to Envira Gallery, the most beginner-friendly WordPress Gallery Plugin. At Envira Gallery, we build software that helps you create beautiful galleries in minutes."
 msgstr ""
 
-#: includes/admin/welcome.php:599
+#: includes/admin/welcome.php:601
 msgid "Over the years, we found that most WordPress gallery plugins were bloated, buggy, slow, and very hard to use. So, we started with a simple goal: build a WordPress gallery system that’s both easy and powerful."
 msgstr ""
 
-#: includes/admin/welcome.php:600
+#: includes/admin/welcome.php:602
 msgid "Our goal is to provide the easiest way to create beautiful galleries."
 msgstr ""
 
-#: includes/admin/welcome.php:601
+#: includes/admin/welcome.php:603
 msgid "Envira Gallery is brought to you by the same team that’s behind the largest WordPress resource site, WPBeginner, the most popular lead-generation software, OptinMonster, the best WordPress analytics plugin, MonsterInsights, and more!"
 msgstr ""
 
-#: includes/admin/welcome.php:602
+#: includes/admin/welcome.php:604
 msgid "Yup, we know a thing or two about building awesome products that customers love."
 msgstr ""
 
-#: includes/admin/welcome.php:642
+#: includes/admin/welcome.php:644
 msgid "Creating your first gallery"
 msgstr ""
 
@@ -2399,6 +2460,10 @@ msgstr ""
 
 #: includes/global/common.php:276
 msgid "Legacy"
+msgstr ""
+
+#: includes/global/common.php:341
+msgid "Original Image"
 msgstr ""
 
 #: includes/global/common.php:359
@@ -2556,6 +2621,14 @@ msgstr ""
 msgid "This post contains gallery content that is not compatible with the conversion process."
 msgstr ""
 
+#: includes/global/Envira_Tracking.php:221
+msgid "Once Weekly"
+msgstr ""
+
+#: includes/global/Installer_Skin.php:87
+msgid "There was an error installing the addon. Please try again."
+msgstr ""
+
 #: includes/global/posttype.php:62
 msgid "Galleries"
 msgstr ""
@@ -2609,152 +2682,4 @@ msgstr ""
 #: includes/global/shortcode.php:1115
 #: includes/global/shortcode.php:1832
 msgid "Previous"
-msgstr ""
-
-msgid ""
-msgstr ""
-"Content-Type: text/plain; charset=utf-8\n"
-"X-Generator: babel-plugin-makepot\n"
-
-#: ../envira-gallery-lite/_gutenberg/Block/index.js:19
-msgid "Select a gallery below to add it to your page."
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Block/index.js:22
-msgid "Envira Gallery"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Block/index.js:22
-msgid "Photo"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Block/index.js:22
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:362
-msgid "Image"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:253
-msgid "Select Layout"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:258
-msgid "Enable Isotope"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:29
-msgid "None"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:290
-msgid "Custom"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:297
-msgid "Set Row Height"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:30
-msgid "Small"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:304
-msgid "Gallery Margins"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:31
-msgid "Medium"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:314
-msgid "Custom Margin"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:32
-msgid "Large"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:334
-msgid "Lightbox"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:335
-msgid "Enable Lightbox?"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:339
-msgid "Select Lightbox Theme"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:367
-msgid "Title"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:376
-msgid "Caption"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:398
-msgid "Gallery"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:402
-msgid "Search for a Gallery"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:408
-msgid "No galleries found. Create your first gallery to get started!"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Inspector/index.js:416
-#: ../envira-gallery-lite/_gutenberg/Componenets/Placeholder/index.js:76
-msgid "Add New Gallery"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Layout/index.js:176
-msgid "Drag & Drop images or"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Layout/index.js:187
-msgid "Upload Images"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Layout/index.js:228
-msgid "Upload"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Layout/index.js:240
-#: ../envira-gallery-lite/_gutenberg/Componenets/Placeholder/index.js:90
-msgid "Media Library"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Placeholder/index.js:33
-msgid ""
-"Drop your images here, upload new images, select images from your Media "
-"Library or select an existing gallery."
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Placeholder/index.js:42
-msgid "Search for a gallery."
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Placeholder/index.js:48
-msgid "Hello there!"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Placeholder/index.js:50
-msgid "Create your first Envira Gallery by adding images below"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Placeholder/index.js:53
-msgid ""
-"Use Envira Gallery to build beautiful and fast galleries with just a few "
-"clicks."
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Select/index.js:96
-msgid "(No Title)"
-msgstr ""
-
-#: ../envira-gallery-lite/_gutenberg/Componenets/Toolbar/index.js:19
-msgid "Edit Gallery"
 msgstr ""

@@ -23,7 +23,8 @@
 			url: ajaxurl,
 			type: 'POST',
 			data: {
-				action: 'envira_redirect_to_add_new_gallery'
+				action: 'envira_redirect_to_add_new_gallery',
+				nonce: enviraMenuNudge.redirectNonce
 			},
 			success: function (response) {
 				if (response.success) {
@@ -47,7 +48,8 @@
 			url: ajaxurl,
 			type: 'POST',
 			data: {
-				action: 'envira_hide_admin_menu_tooltip'
+				action: 'envira_hide_admin_menu_tooltip',
+				nonce: enviraMenuNudge.nonce // Include nonce to satisfy check_ajax_referer() (Medium09 CSRF fix).
 			}
 		});
 	});

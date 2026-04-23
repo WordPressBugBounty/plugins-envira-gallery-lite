@@ -53,7 +53,7 @@ $onboarding = new OnboardingWizard();
 							</div>
 						</div>
 						<div class="envira-options" id="others_div" style="display: none;">
-							<input type="text" id="others" name="eow[_others]" value="<?php echo esc_attr( $onboarding->get_onboarding_data( '_others' ) ); ?>" placeholder="<?php esc_attr_e( 'What best describes you?', 'envira-gallery-lite' ); ?>">
+							<input type="text" id="others" name="eow[_others]" required value="<?php echo esc_attr( $onboarding->get_onboarding_data( '_others' ) ); ?>" placeholder="<?php esc_attr_e( 'What best describes you?', 'envira-gallery-lite' ); ?>">
 					</div>
 					</div>
 				</div>
