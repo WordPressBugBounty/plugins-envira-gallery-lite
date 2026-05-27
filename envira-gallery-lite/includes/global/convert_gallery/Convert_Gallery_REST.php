@@ -61,7 +61,7 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 	 * Verify REST request nonce.
 	 *
 	 * @param WP_REST_Request $request Request object.
-	 * @return bool|WP_REST_Response
+	 * @return bool|WP_Error
 	 */
 	public function verify_rest_nonce( $request ) {
 		// Get the nonce from the request header.
@@ -69,7 +69,7 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 
 		// Verify the nonce.
 		if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
-			return new WP_REST_Response( [ 'message' => __( 'Security check failed. You are not authorized. Please refresh and try again.', 'envira-gallery-lite' ) ], 403 );
+			return new WP_Error( 'rest_forbidden', __( 'Security check failed. You are not authorized. Please refresh and try again.', 'envira-gallery-lite' ), [ 'status' => 403 ] );
 		}
 
 		// Return true if valid.
@@ -80,9 +80,13 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 	 * Permission callback for single gallery conversion.
 	 *
 	 * @param WP_REST_Request $request Request object.
-	 * @return bool|WP_REST_Response
+	 * @return bool|WP_Error
 	 */
 	public function verify_convert_gallery_permission( $request ) {
+
+		if ( ! is_user_logged_in() ) {
+			return new WP_Error( 'rest_not_logged_in', __( 'You must be logged in to perform this action.', 'envira-gallery-lite' ), [ 'status' => 401 ] );
+		}
 
 		// Get post ID from request - support both postId and post_id for backward compatibility.
 		$post_id = absint( $request->get_param( 'post_id' ) );
@@ -91,12 +95,12 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 		}
 
 		if ( $post_id <= 0 ) {
-			return new WP_REST_Response( [ 'message' => __( 'A valid post ID is required.', 'envira-gallery-lite' ) ], 400 );
+			return new WP_Error( 'rest_bad_request', __( 'A valid post ID is required.', 'envira-gallery-lite' ), [ 'status' => 400 ] );
 		}
 
 		// Check if user can edit the post.
 		if ( ! $this->can_edit_post( $post_id ) ) {
-			return new WP_REST_Response( [ 'message' => __( 'You do not have permission to edit this post.', 'envira-gallery-lite' ) ], 403 );
+			return new WP_Error( 'rest_forbidden', __( 'You do not have permission to edit this post.', 'envira-gallery-lite' ), [ 'status' => 403 ] );
 		}
 
 		return true;
@@ -106,32 +110,36 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 	 * Permission callback for bulk gallery conversion.
 	 *
 	 * @param WP_REST_Request $request Request object.
-	 * @return bool|WP_REST_Response
+	 * @return bool|WP_Error
 	 */
 	public function verify_bulk_convert_permission( $request ) {
+
+		if ( ! is_user_logged_in() ) {
+			return new WP_Error( 'rest_not_logged_in', __( 'You must be logged in to perform this action.', 'envira-gallery-lite' ), [ 'status' => 401 ] );
+		}
 
 		// Check bulk conversion capability.
 		$capability = apply_filters( 'envira_convert_bulk_galleries_cap', 'manage_options' );
 		if ( ! current_user_can( $capability ) ) {
-			return new WP_REST_Response( [ 'message' => __( 'You do not have permission to access this feature.', 'envira-gallery-lite' ) ], 403 );
+			return new WP_Error( 'rest_forbidden', __( 'You do not have permission to access this feature.', 'envira-gallery-lite' ), [ 'status' => 403 ] );
 		}
 
 		// Get post type from request.
 		$selected_posttype = sanitize_text_field( $request->get_param( 'selected_posttype' ) );
 
 		if ( empty( $selected_posttype ) ) {
-			return new WP_REST_Response( [ 'message' => __( 'A post type is required for conversion. Please make a selection.', 'envira-gallery-lite' ) ], 400 );
+			return new WP_Error( 'rest_bad_request', __( 'A post type is required for conversion. Please make a selection.', 'envira-gallery-lite' ), [ 'status' => 400 ] );
 		}
 
 		if ( ! post_type_exists( $selected_posttype ) ) {
-			return new WP_REST_Response( [ 'message' => __( 'Post type not recognized. Please check your selection and try again.', 'envira-gallery-lite' ) ], 404 );
+			return new WP_Error( 'rest_not_found', __( 'Post type not recognized. Please check your selection and try again.', 'envira-gallery-lite' ), [ 'status' => 404 ] );
 		}
 
 		// Check if the current user can edit the selected post type.
 		$post_type_object = get_post_type_object( $selected_posttype );
 		if ( ! current_user_can( $post_type_object->cap->edit_posts ) ) {
 			// translators: %s is the post type singular name.
-			return new WP_REST_Response( [ 'message' => sprintf( __( 'You do not have permission to edit %s item(s).', 'envira-gallery-lite' ), $post_type_object->labels->singular_name ) ], 403 );
+			return new WP_Error( 'rest_forbidden', sprintf( __( 'You do not have permission to edit %s item(s).', 'envira-gallery-lite' ), $post_type_object->labels->singular_name ), [ 'status' => 403 ] );
 		}
 
 		return true;
@@ -141,9 +149,13 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 	 * Permission callback for processing gallery items.
 	 *
 	 * @param WP_REST_Request $request Request object.
-	 * @return bool|WP_REST_Response
+	 * @return bool|WP_Error
 	 */
 	public function verify_process_gallery_permission( $request ) {
+
+		if ( ! is_user_logged_in() ) {
+			return new WP_Error( 'rest_not_logged_in', __( 'You must be logged in to perform this action.', 'envira-gallery-lite' ), [ 'status' => 401 ] );
+		}
 
 		// Get post ID from request - support both postId and post_id for backward compatibility.
 		$post_id = absint( $request->get_param( 'post_id' ) );
@@ -152,19 +164,19 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 		}
 
 		if ( $post_id <= 0 ) {
-			return new WP_REST_Response( [ 'error' => __( 'A valid post ID is required.', 'envira-gallery-lite' ) ], 400 );
+			return new WP_Error( 'rest_bad_request', __( 'A valid post ID is required.', 'envira-gallery-lite' ), [ 'status' => 400 ] );
 		}
 
 		// Get the post.
 		$post = get_post( $post_id );
 
 		if ( ! $post ) {
-			return new WP_REST_Response( [ 'error' => __( 'Post not found.', 'envira-gallery-lite' ) ], 400 );
+			return new WP_Error( 'rest_not_found', __( 'Post not found.', 'envira-gallery-lite' ), [ 'status' => 404 ] );
 		}
 
 		// Check if user can edit the post.
 		if ( ! $this->can_edit_post( $post_id ) ) {
-			return new WP_REST_Response( [ 'error' => __( 'You do not have permission to edit this post.', 'envira-gallery-lite' ) ], 403 );
+			return new WP_Error( 'rest_forbidden', __( 'You do not have permission to edit this post.', 'envira-gallery-lite' ), [ 'status' => 403 ] );
 		}
 
 		return true;

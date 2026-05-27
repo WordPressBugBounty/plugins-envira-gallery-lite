@@ -2,9 +2,9 @@
 Contributors: enviragallery
 Tags: gallery, image gallery, photo gallery, best gallery plugin, wordpress gallery plugin
 Requires at least: 5.5
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.0
-Stable tag: 1.12.5
+Stable tag: 1.12.6
 License: GNU General Public License v2.0 or later
 
 Envira Gallery is a fast, easy and powerful gallery builder with lightbox, masonry and grid layouts, albums, videos, and responsive displays and more
@@ -238,6 +238,9 @@ You can get access to more features, Addons and support by <a href="http://envir
 Yes, Envira has full translation and localization support via the envira-gallery-lite textdomain. To submit a translation, see https://translate.wordpress.org/projects/wp-plugins/envira-gallery-lite
 
 == Changelog ==
+
+1.12.6
+* Fixed: General security improvements and hardening.
 
 1.12.5
 * Added: Google Photos option to external gallery type selector (Pro feature upsell)
