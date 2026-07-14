@@ -1,244 +1,275 @@
 === Envira Gallery - Image Photo Gallery, Albums, Video Gallery, Slideshows & More ===
-Contributors: enviragallery
-Tags: gallery, image gallery, photo gallery, best gallery plugin, wordpress gallery plugin
+Contributors: enviragallery, smub
+Tags: photo gallery, image gallery, gallery, lightbox, albums
 Requires at least: 5.5
 Tested up to: 7.0
 Requires PHP: 7.0
-Stable tag: 1.12.6
+Stable tag: 1.13.0
 License: GNU General Public License v2.0 or later
 
-Envira Gallery is a fast, easy and powerful gallery builder with lightbox, masonry and grid layouts, albums, videos, and responsive displays and more
+The fastest drag & drop photo gallery plugin. Create stunning image galleries, albums, video galleries & lightbox displays in minutes — no coding!
 
 == Description ==
 
-= Gallery Plugin =
+= The Best Photo Gallery Plugin for Beautiful Image Galleries =
 
-https://www.youtube.com/watch?v=4jHG3LOmV-c&w=532&rel=0
+We believe creating a **photo gallery** should be simple!
 
-= Helpful Links: =
-* [Gallery Demo](https://enviragallery.com/demo/)
-* [Gallery Documentation](https://enviragallery.com/docs/)
-* [Gallery Support](https://wordpress.org/support/plugin/envira-gallery-lite/)
+Envira Gallery makes it easy to create beautiful, responsive **image galleries** that look great on any device. Drag, drop, publish — and your photo gallery is live in minutes with zero coding required.
 
-We believe that you shouldn't have to hire a developer to create a great WordPress gallery. That's why we built <a href="http://enviragallery.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend" title="Envira">Envira</a>, a drag & drop **photo gallery plugin** that's both EASY, FAST and POWERFUL.
+More importantly, over 150,000 website owners choose Envira Gallery because it is the **fastest loading gallery plugin** on the market. Your image gallery will never slow down your site.
 
-Envira Gallery is highly optimized for web and server performance because we understand the importance of speed when it comes to SEO and conversion.
+Whether you need a portfolio gallery, a client proofing gallery, or a video gallery for your brand - Envira Gallery does it all.
 
-Our free photo gallery plugin works great with the top page builders including: Elementor, Beaver Builder, Divi, as well as the block editor.
+> <strong>Envira Gallery Pro</strong><br />
+> This plugin is the lite version of Envira Gallery Pro, which comes with albums, video galleries, watermarking, WooCommerce integration, client proofing, social sharing, and tons more. [Click here to purchase the best premium photo gallery plugin now!](https://enviragallery.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion)
 
-> <strong>Envira Pro</strong><br />
-> Photo Gallery by Envira is the lite version of the popular Envira Pro plugin that comes with all the features you will ever need including albums, tags, social media integration, gallery templates / gallery layouts, deeplinking, pagination, e-commerce, image proofing, and tons more. <a href="http://enviragallery.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend" title="Envira">Click here to purchase Envira Pro now!</a>
+See what WordPress developer Chris Lema has to say about Envira Gallery:
 
-**Envira Gallery** has been downloaded over 5,000,000+ times. Here's why smart photographers, designers, and developers love Envira, and you will too!
+> I've suspended flavor-of-the-week gallery plugins in favor of Envira Gallery. It's developer-friendly — a **photo gallery** solution that works great and won't slow down your site.<br>
+> Chris Lema - WordPress Developer & Blogger
 
-= Drag & Drop Photo Gallery Builder =
+= Drag & Drop Gallery Builder =
 
-We were tired with the bloated and buggy gallery widgets and plugins. That's why we built Envira to adapt to your workflow and allow you to create an amazing gallery in minutes. By using our easy to use <a href="http://enviragallery.com/features/drag-drop-builder/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">drag and drop builder</a>, you can upload your photos, rearrange them, and create an image gallery in 5 minutes or less.
+Create a stunning **image gallery** in minutes, not hours. Our drag & drop gallery builder lets you upload photos, reorder images, and publish with just a few clicks.
 
-You can also add gallery blocks built for the block editor with only a few clicks.
+No coding. No confusing settings. Just drag, drop, and your photo gallery is live.
 
-> The trick to making difficult things easy is to keep the easy things still easy. <strong>Envira makes everything easy.</strong> If you've struggled with WordPress gallery plugins that take video tutorials to learn, you're going to love Envira.<br>
-> Chris Lema - WordPress Blogger and Speaker
+Envira Gallery works perfectly with the Block Editor, Classic Editor, and shortcodes. Embed your image gallery on any page or post instantly.
 
-= Mobile Ready, SEO Friendly and Optimized for Speed =
+= Lightning-Fast Photo Gallery Performance =
 
-Envira Gallery is 100% responsive and mobile-friendly by default. We optimized every query on the front-end and the back-end to ensure maximum speed for your website visitors.
+Speed matters. A slow gallery plugin will hurt your search rankings and frustrate your visitors.
 
-Plus, you have the ability for meta data, deeplinks, standalone galleries, and pagination.
+That's why Envira Gallery is **built for speed from the ground up**. Testing by WPBeginner confirmed Envira Gallery loads faster than any other photo gallery plugin.
 
-= Sharing and Selling Photos Made EASY =
+Your image gallery will load fast on desktop, tablet, and mobile.
 
-Social media integrations, image proofing, and WooCommerce store integration.
+= Responsive Lightbox Display =
 
-> Not only is Envira <strong>exceptionally well built</strong> behind the scenes, it's also exceptionally easy to use. It's perfect for those who really want to get things done.<br>
-> Pippin Williamson - WordPress Core Contributor and founder of EasyDigitalDownloads
+Every photo gallery includes a **built-in responsive lightbox** that works beautifully on all devices. Visitors browse images in a gorgeous fullscreen overlay without leaving the page.
 
-= Easy to Customize and Extend =
+The lightbox includes:
 
-You can easily customize with our built-in WordPress templates and layouts or create your own.
+* **Multiple lightbox themes** to match your site's design
+* **Touch and swipe support** for mobile galleries
+* **Keyboard navigation** for desktop browsing
+* **Fullscreen mode** for immersive gallery viewing
+* **Zoom capability** for full-resolution images
+* **Slideshow autoplay** with manual controls
 
-But we also knew that our developer friends may want to extend it further. That's why Envira comes with tons of hooks and filters (and yes it's all very-well documented).
+= Photo Albums to Organize Your Galleries =
 
-> Most WordPress gallery options are either too basic or require a PhD to figure out. For my clients, I need something that is easy to use yet powerful. Envira is the answer. Its straight forward approach means it is a breeze for my clients to quickly create galleries. Nevertheless, with the API and documentation available, it also allows developers to make customizations and extend functionality when necessary. Simply put, <strong>Envira is a great tool</strong> for everyone's tool chest.<br>
-> Jared Atchison - Top Notch Engineer and WordPress Developer
+Got a lot of images? Use **albums** to group your photo galleries into organized collections. Choose cover photos for each album and let visitors browse your galleries their way.
 
-= Full Envira Feature List =
+Albums are perfect for:
 
-* Drag & Drop Photo Gallery Builder
-* 100% Responsive - Mobile Friendly
-* Beautiful Layouts / Templates for Customization
-* <a href="http://enviragallery.com/addons/albums-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Albums</a> - Easily organize your photo galleries, choose cover photos, and more.
-* <a href="http://enviragallery.com/addons/social-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Social Sharing</a> - Share your photos on Facebook, Twitter, Pinterest
-* <a href="http://enviragallery.com/addons/videos-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Video Galleries</a> - Not just for photos! You can add YouTube, Vimeo, Wistia, and other videos in your video gallery.
-* <a href="http://enviragallery.com/addons/watermarking-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Watermarking</a> - Protect your images from theft with watermarking.
-* <a href="http://enviragallery.com/addons/slideshow-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Slideshow</a> - Add beautiful slideshow with autoplay, manual controls, and more.
-* <a href="http://enviragallery.com/addons/deeplinking-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Deeplinking</a> - Make your gallery and images SEO friendly and easily link to individual images with deeplinking.
-* <a href="http://enviragallery.com/addons/pagination-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Pagination</a> - Split your large galleries into multiple pages to improve page speed, user experience, and pageviews.
-* <a href="https://enviragallery.com/addons/elementor-addon/" rel="friend">Elementor</a> - Quickly and easily create, edit, and sync your image and video galleries directly inside the Elementor page builder.
-* <a href="http://enviragallery.com/addons/proofing-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Image Proofing</a> - We made client image proofing easy for your photography business.
-* <a href="http://enviragallery.com/addons/woocommerce-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">WooCommerce Integration</a> - Instantly display and sell your photos with the most popular eCommerce software on the web.
-* <a href="http://enviragallery.com/addons/tags-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Image Tags</a> - Organize your WordPress photos with tags for easy search and display that also filtrable.
-* <a href="http://enviragallery.com/addons/password-protection-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Password Protection</a> - Prevent unauthorized access to your WordPress galleries.
-* <a href="http://enviragallery.com/addons/standalone-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Standalone Galleries</a> - Create independent galleries that are not tied to your posts or pages.
-* <a href="http://enviragallery.com/addons/exif-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">EXIF Meta Data</a> - Display your EXIF data including camera model, aperture, shutter speed, and more.
-* <a href="http://enviragallery.com/addons/pinterest-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Pinterest</a> - Add the Pinterest Pin It button to improve your reach.
-* <a href="http://enviragallery.com/addons/instagram-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Instagram</a> - Import Instagram images.
-* <a href="http://enviragallery.com/addons/fullscreen-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">FullScreen Display</a> - Take advantage of the native fullscreen and Lightbox display.
-* <a href="http://enviragallery.com/addons/supersize-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Supersized Images</a> - Don't want to crop or resize your images? Supersize allows you to do just that.
-* <a href="http://enviragallery.com/addons/dynamic-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Dynamic Galleries</a> - Easily create galleries on the fly from various different sources.
-* <a href="http://enviragallery.com/addons/defaults-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Gallery Defaults</a> - Speed up the creation process by saving your default settings.
-* <a href="http://enviragallery.com/addons/css-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">CSS Styles</a> - Customize your portfolio by adding custom CSS and styles.
-* <a href="http://enviragallery.com/addons/lightroom-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Adobe Lightroom to WordPress</a> - Do you love Adobe Lightroom? We do too. You can automatically create and sync photo galleries from your Adobe Lightroom Collections. We made Lightroom to WordPress import easy!
-* <a href="http://enviragallery.com/addons/zip-importer-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Zip Importer</a> - Nobody likes uploading images individually. Now you can build a gallery from a .zip file.
-* <a href="http://enviragallery.com/addons/dropbox-importer-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Dropbox Importer</a> - You can easily import photos from your Dropbox account.
-* <a href="http://enviragallery.com/addons/nextgen-importer-addon/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">NextGen Importer</a> - Not a fan of NextGen? You can import your files in few simple clicks.
-* <a href="https://enviragallery.com/features/image-compression/" rel="friend">Auto Image Compression</a> - Reduce the file size of your images and make your site run fast.
-* Want us to add something else? Suggest a feature and we'll get it added!
+* Wedding and event photographers with multiple shoots
+* Real estate agents with property photo galleries
+* Travel bloggers organizing galleries by destination
+* Businesses showcasing products by category
+* Schools organizing event photo galleries by year
 
-> When it comes to WordPress gallery plugins, <strong>Envira has no equal</strong>. Solid enough to do the job right, while flexible enough to handle any situation you can throw at it.<br>
-> Andrew Norcross - Expert WordPress Consultant and Core Contributer
+= Video Gallery Support =
 
-= Demos =
+Go beyond photos. With the **Video Gallery addon**, embed videos from YouTube, Vimeo, Wistia, DailyMotion, Twitch, and self-hosted video directly in your gallery.
 
-While Envira offers tons of features, below are some of the most requested demos.
+Mix photos and videos in the same gallery, or create dedicated video galleries. Every video plays inside the same beautiful lightbox your visitors already love.
 
-* <a href="http://enviragallery.com/demo/lightbox-gallery-demo/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">WordPress Lightbox Photo Display Demo</a>
-* <a href="http://enviragallery.com/demo/masonry-gallery-demo/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">WordPress Masonry Display Demo</a>
-* <a href="http://enviragallery.com/demo/albums-demo/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">WordPress Photo Albums Demo</a>
-* <a href="http://enviragallery.com/demo/polaroid-gallery/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">WordPress Polaroid Photo Display Demo</a>
-* <a href="http://enviragallery.com/demo/video-gallery-demo/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">WordPress Video Display Demo</a>
-* See the full list of <a href="http://enviragallery.com/demo/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Envira Demos</a>
+= Sell Your Photos with WooCommerce =
 
-= Popular Envira Tutorials =
+Turn your photo gallery into a revenue stream. The **WooCommerce integration** lets you sell prints, digital downloads, and licensed images directly from your image gallery.
 
-We share tons of photography tutorials at the <a href="http://enviragallery.com/blog/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">Envira blog</a>.
+Visitors browse your gallery, click a photo they love, and purchase — all without leaving your site.
 
-Below are some of the most popular Envira tutorials:
+= Protect Your Images =
 
-* <a href="http://enviragallery.com/how-to-add-a-polaroid-gallery-in-wordpress/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">How to Add a Polaroid Gallery in WordPress</a>
-* <a href="http://enviragallery.com/how-to-create-a-masonry-image-gallery-in-wordpress/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">How to Create a Masonry Image Gallery in WordPress</a>
-* <a href="http://enviragallery.com/how-to-create-a-photo-album-in-wordpress/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">How to Create a Photo Album in WordPress</a>
-* <a href="http://enviragallery.com/how-to-create-an-image-slider-for-your-wordpress-galleries/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">How to Create an Image Slider for Your WordPress Galleries</a>
-* <a href="http://enviragallery.com/add-pagination-galleries-wordpress/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend">How to Add Pagination in WordPress Image Galleries</a>
+Your photos deserve protection. Envira Gallery gives you the tools to keep your gallery images safe:
 
+* **[Watermarking]** — Add text or image watermarks to protect gallery photos (originals are preserved)
+* **Right-click protection** — Prevent visitors from downloading your images
+* **Password protection** — Restrict gallery access to authorized users only
+* **Gallery permissions** — Control who can view each photo gallery by user role
+* **Image licensing** — Display Creative Commons and custom license info to protect your work
+
+= Client Proofing for Photographers =
+
+Running a photography business? The **client proofing addon** streamlines your workflow. Clients browse their photo gallery, select favorites, add feedback, and submit — all from your site.
+
+No more emailing zip files back and forth. Your gallery becomes a professional client experience.
+
+= Beautiful Gallery Layouts =
+
+Every photo gallery deserves the right layout. Envira Gallery includes:
+
+* **Masonry** — Pinterest-style image gallery layout
+* **Grid** — Clean, uniform photo gallery grid
+* **Justified** — Edge-to-edge image gallery rows
+* **Square** — Uniform square thumbnails
+* **Mosaic** — Dynamic, eye-catching gallery pattern
+* **Blogroll** — Full-width image gallery layout for blogs
+
+= Social Sharing & Engagement =
+
+Help your gallery go viral. The **social sharing addon** lets visitors share photos to Facebook, Twitter/X, Pinterest, LinkedIn, WhatsApp, and email.
+
+Add a **Pinterest "Pin It" button** to every image in your gallery for maximum exposure.
+
+= SEO-Friendly Photo Gallery =
+
+Envira Gallery is built to help your image gallery rank. Every gallery includes:
+
+* **Deeplinking** — SEO-friendly URLs for individual gallery images
+* **EXIF metadata display** — Camera model, aperture, shutter speed with schema markup
+* **Alt text and caption support** — Properly structured image gallery data
+* **Lazy loading** — Faster initial page loads for better Core Web Vitals
+* **Image compression** — Reduce file sizes without losing quality
+
+= Adobe Lightroom Integration =
+
+Professional photographers love our **Lightroom addon**. Create and sync image galleries directly from your Lightroom collections. Edit in Lightroom, and your photo gallery updates automatically.
+
+= Full Envira Gallery Feature List =
+
+* Drag & drop gallery builder — Create a photo gallery in minutes without code
+* 100% responsive and mobile-friendly image galleries
+* Built-in responsive lightbox with fullscreen mode
+* Albums — Organize galleries into collections with cover photos
+* Video galleries — YouTube, Vimeo, Wistia, self-hosted video support
+* Slideshow — Autoplay gallery with manual controls
+* Social sharing— Share gallery images to Facebook, Twitter, Pinterest
+* Watermarking — Protect photo gallery images with watermarks
+* WooCommerce /eCommerce Galleries — Sell photos directly from your image gallery
+* Client proofing — Photography business client workflow
+* Deeplinking — SEO-friendly individual image gallery URLs
+* Paginatio — Split large galleries across pages
+* Image tagging — Filterable photo gallery with tag-based navigation
+* Password protection — Restrict gallery access
+* EXIF data display — Show camera details with schema markup
+* Fullscreen mode — Immersive gallery viewing experience
+* Image compression — Optimize gallery performance to load fast on every device
+* Gallery animations — Beautiful transition effects
+* Gallery themes — Professionally designed gallery templates
+* Standalone galleries — Galleries with unique, shareable URLs
+* Downloads — Allow visitors to download gallery images
+* Printing — Add print buttons to gallery images
+* Image / Gallery commenting — Let visitors comment on gallery photos
+* Gallery Zoom — Lightbox zoom for full-resolution viewing
+* Scheduled galleries — Time-based gallery visibility
+* Lazy loading — Faster page loads for large image galleries
+* Block Editor (Gutenberg) support
+* Shortcode embed support
+* Custom CSS support
+
+= Page Builder Integrations =
+
+* Elementor Gallery— Native image gallery addon for Elementor
+* Beaver Builder Gallery — Native photo gallery addon for Beaver Builder
+* Divi Gallery — Full gallery compatibility
+* Block Editor — Dedicated and easy to use gallery block
+
+= Import & Migration =
+
+* Adobe Lightroom — Sync image galleries with Lightroom collections
+* Instagram importer — Import Instagram photos into your gallery automatically
+* Dropbox importer — Import photos from Dropbox
+* Zip file importer — Build galleries from zip files
+* NextGEN / Imagely importer — Migrate from NextGEN Gallery
+
+After reading this feature list, you can see why over 150,000 websites trust Envira Gallery as their go-to photo gallery plugin.
+
+Give Envira Gallery a try.
 
 = Credits =
 
+This plugin is created by <a href="https://syedbalkhi.com/" rel="friend" title="Syed Balkhi">Syed Balkhi</a> and the Envira Gallery Team.
 
 = Branding Guidelines =
-When writing about the photo gallery plugin by Envira Gallery, please make sure to seperate the two words, and capitalize.
 
-Envira Gallery (correct)
-EnviraGallery (incorrect)
-Envira gallery (incorrect)
-envira galleries (incorrect)
-Envira Photo Gallery (incorrect)
+Envira Gallery&reg; is a registered trademark of Envira Gallery LLC. When writing about the photo gallery plugin by Envira Gallery, please use the full name "Envira Gallery."
 
-= What's Next =
-
-If you like this plugin, then consider checking out our other plugins:
-
-If you like our Envira Gallery plugin, then consider checking out our other projects:
-* <a href="http://soliloquywp.com/" rel="friend" title="Soliloquy">Soliloquy</a> - The Best WordPress Slider Plugin
-* <a href="https://wpforms.com.com/">WP Forms</a> #1 drag & drop online form builder for WordPress (trusted by 5 million sites).
-* <a href="https://optinmonster.com/">OptinMonster</a> - Get more email subscribers with the most popular conversion optimization plugin for WordPress.
-* <a href="https://aioseo.com/">AIOSEO</a> - The original WordPress SEO plugin to help you rank higher in search results (trusted by over 3 million sites).
-* <a href="https://www.monsterinsights.com/">MonsterInsights</a> - See the stats that matter and grow your business with confidence. Best Google Analytics plugin for WordPress.
-* <a href="https://www.seedprod.com/">SeedProd</a> - Create beautiful landing pages with our powerful drag & drop landing page builder.
-* <a href="https://wpmailsmtp.com">WP Mail SMTP</a> - Improve email deliverability for your contact form with the most popular SMTP plugin for WordPress.
-* <a href="https://smashballoon.com/">Smash Balloon</a> - #1 social feeds plugin for WordPress - display social media content in WordPress without code.
-* <a href="https://wpcode.com/">WPCode</a> - must have WordPress code snippet management plugin to help you future-proof website customization (trusted by 1.5 million sites).
-* <a href="https://snapcreek.com/">Duplicator</a> - popular WordPress backup and migration plugin used by over 1 million websites.
-* <a href="https://wpsimplepay.com/">WP Simple Pay</a> - #1 Stripe payments plugin for WordPress. Start accepting one-time or recurring payments without a shopping cart.
-* <a href="https://pushengage.com/">Push Engage</a> - Connect with visitors after they leave your website with the leading web push notification plugin.
-* <a href="https://rafflepress.com/">RafflePress</a> - Best WordPress giveaway and contest plugin to grow traffic and social followers.
-* <a href="https://trustpulse.com/">TrustPulse</a> - Add real-time social proof notifications to boost your store conversions by up to 15%.
-* <a href="https://searchwp.com/">SearchWP</a> - The most advanced custom WordPress search plugin to improve WordPress search quality.
-* <a href="https://affiliatewp.com/">AffiliateWP</a> - #1 affiliate management plugin for WordPress. Add a referral program to your online store.
-* <a href="https://easydigitaldownloads.com/">Easy Digital Downloads</a> - The best WordPress eCommerce plugin to sell digital products (eBooks, software, music, and more).
-* <a href="https://sugarcalendar.com/">Sugar Calendar</a> - A simple event calendar plugin for WordPress that's both easy and powerful.
-* <a href="https://www.wpcharitable.com/">WPCharitable</a> - Top-rated WordPress donation and fundraising plugin for WordPress.
-
-Visit <a href="https://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeginner</a> to learn from our <a href="https://www.wpbeginner.com/category/wp-tutorials/" rel="friend" title="WordPress Tutorials">WordPress Tutorials</a> and find out about other <a href="https://www.wpbeginner.com/category/plugins/" rel="friend" title="Best WordPress Plugins">best WordPress plugins</a>.
-
+* Envira Gallery (correct)
+* Envira gallery (incorrect)
+* envira gallery (incorrect)
+* Envira (incorrect)
 
 == Installation ==
 
-1. Install Envira Lite either via the WordPress.org plugin repository or by uploading the files to your server. (See instructions on <a href="http://www.wpbeginner.com/beginners-guide/step-by-step-guide-to-install-a-wordpress-plugin-for-beginners/" rel="friend">how to install a WordPress plugin</a>)
-2. Activate Envira Lite.
-3. Navigate to the Envira tab at the bottom of your admin menu and click the "Add New" button to begin creating, or you can create directly inside the post/page/custom post type of your choice.
-4. Salivate for new features and <a href="http://enviragallery.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend" title="Envira">purchase the full version of Envira</a>!
+1. Install Envira Gallery Lite either via the WordPress.org plugin repository or by uploading the files to your server. (See instructions on <a href="http://www.wpbeginner.com/beginners-guide/step-by-step-guide-to-install-a-wordpress-plugin-for-beginners/" rel="friend">how to install a WordPress plugin</a>)
+2. Activate Envira Gallery Lite.
+3. Navigate to the Envira Gallery tab in your admin menu and click "Add New" to create your first photo gallery.
+4. Want more features? <a href="https://enviragallery.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion">Purchase Envira Gallery Pro</a>!
 
 == Screenshots ==
 
-1. Envira Gallery post type overview screen.
-2. Modal box to select images from your Media Library.
-3. Overlay helper with shortcode and template tag information.
-4. Media modal for inserting a gallery into your WYSIWYG editor.
-5. Gallery display on the front-end with 2 columns.
-6. Lightbox view of the gallery.
+1. Envira Gallery Drag & Drop Gallery Builder
+2. Beautiful Responsive Photo Gallery on the Frontend
+3. Image Gallery Lightbox with Fullscreen Mode
+4. Album View — Organize Multiple Galleries
+5. Gallery Settings — Easy to Configure
 
 == Frequently Asked Questions ==
 
-= Who should use Envira? =
+= Who should use Envira Gallery? =
 
-Envira Gallery is perfect for photographers, designers, bloggers, and small businesses.
+Envira Gallery is perfect for photographers, designers, bloggers, small business owners, real estate agents, and anyone who needs a fast, beautiful photo gallery on their website. If you want to create an image gallery without hiring a developer, Envira Gallery is for you.
 
-= Do I need to have coding skills to use Envira? =
+= Do I need coding skills to use Envira Gallery? =
 
-Absolutely not. You can create and customize beautiful image and video galleries without any coding knowledge. We made it super easy.
+Not at all. Envira Gallery is the most beginner-friendly photo gallery plugin on the market. Our drag & drop gallery builder lets you create a stunning image gallery in minutes. No coding required.
 
-= What kind of galleries can I create with Envira Gallery? =
+= What types of galleries can I create? =
 
-Here are the types of galleries you can create:
+Envira Gallery lets you create virtually any type of gallery you need:
 
-Photo / Image
-Video Gallery
-Fullscreen
-Image Gallery with Albums
-Image Gallery with Lightbox
-Featured Content
-Masonry Photo
-Justified Image
-Image Gallery with Pagination
-Polaroid Image
-Instagram Photo Gallery
-Image Gallery with Tags
-Pinterest Image Gallery
-Photo Gallery with EXIF Data
-Image Gallery with Watermarks
-Photo Gallery with Slideshow
-Image Gallery with Zoom
-Photo Gallery with Proofing
-Lazyload
-WooCommerce Product
-Image Gallery with Lightroom Photos
-Password Protected Photo
-Dropbox Images
-Image from Zip Files
-Photos with Breadcrumb Navigation
-Custom Post Type Content
-YouTube Video
-Vimeo Video
-Wistia Video
-Twitch.tv Video
-Custom Video
-Dynamic Photos
-Portfolio
-Tiles
-Grid
-Music Gallery
+* Photo Galleries & Image Galleries
+* Video Galleries (YouTube, Vimeo, self-hosted)
+* Photography Portfolio Galleries
+* Client Proofing Galleries
+* WooCommerce Product Galleries
+* Wedding & Event Photo Galleries
+* Real Estate Property Galleries
+* Travel & Tourism Image Galleries
+* Food & Restaurant Photo Galleries
+* Instagram Feed Galleries
+* Masonry & Grid Galleries
+* Slideshow Galleries with Lightbox
+* Password-Protected Private Galleries
+* Album Collections with Cover Photos
+* Mixed Photo & Video Galleries
 
-= I'd like access to all features. How can I get them? =
+= Is Envira Gallery mobile-friendly? =
 
-You can get access to more features, Addons and support by <a href="http://enviragallery.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion" rel="friend" title="Click here to learn more about Envira!">visiting the Envira website and purchasing a support license</a>. Purchasing a support license gets you access to the full version of Envira, automatic updates and support, and depending on the level of support license, you can even get exclusive access to Envira Addons!
+Yes! Every photo gallery you create with Envira Gallery is 100% responsive and looks beautiful on mobile, tablet, and desktop. The lightbox includes touch and swipe support for a native mobile gallery experience.
 
-= Is Envira translation ready? =
+= Can I sell photos with Envira Gallery? =
 
-Yes, Envira has full translation and localization support via the envira-gallery-lite textdomain. To submit a translation, see https://translate.wordpress.org/projects/wp-plugins/envira-gallery-lite
+Yes. With the WooCommerce addon, you can sell prints, digital downloads, and licensed images directly from your photo gallery. Visitors can browse your image gallery and purchase photos without leaving your site.
+
+= Is Envira Gallery the fastest gallery plugin? =
+
+Yes. Independent testing confirmed Envira Gallery loads faster than all other popular gallery plugins. Your image gallery loads in about 1 second with minimal server requests. A fast gallery means better SEO rankings and happier visitors.
+
+= Can I migrate from another gallery plugin? =
+
+Yes. Envira Gallery includes a built-in NextGEN Gallery importer, so you can migrate your existing galleries with one click. You can also import images from Dropbox, zip files, Instagram, and Adobe Lightroom.
+
+= Does Envira Gallery work with page builders? =
+
+Yes. Envira Gallery has native addons for Elementor and Beaver Builder. It also works seamlessly with Divi, the Block Editor (Gutenberg), and any theme that supports shortcodes.
+
+= Where can I find documentation? =
+
+For documentation, tutorials, and videos visit: [Envira Gallery Documentation](https://enviragallery.com/docs/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion).
+
+= How can I get support? =
+
+Lite support is available on the [WordPress.org support forum](https://wordpress.org/support/plugin/envira-gallery-lite/). For priority support, [upgrade to Envira Gallery Pro](https://enviragallery.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion).
 
 == Changelog ==
 
+1.13.0
+* Added: AI Image Assistant preview in the gallery editor
 1.12.6
 * Fixed: General security improvements and hardening.
 
