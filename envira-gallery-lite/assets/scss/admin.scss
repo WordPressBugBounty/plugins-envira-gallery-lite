@@ -367,7 +367,8 @@ body.post-type-envira_album.locale-fr-fr {
 			/**
 			* Image width and height (image is 2x so this ensures it displays correctly)
 			*/
-			max-width: 339px;
+			max-width: 254px;
+			height: auto;
 
 			/**
 			* Responsive - ensure the logo doesn't exceed the header dimensions

@@ -38,7 +38,7 @@ if ( $notifications_count > 0 ) {
 <div id="envira-header" class="envira-header">
 	<h1 class="envira-logo" id="envira-logo">
 		<a class="envira-logo-link" href="<?php echo esc_url( $logo_link ); ?>" target="_blank" rel="noopener noreferrer">
-			<img src="<?php echo esc_url( $data['logo'] ); ?>" alt="<?php esc_attr_e( 'Envira Gallery', 'envira-gallery-lite' ); ?>" width="339"/>
+			<img src="<?php echo esc_url( $data['logo'] ); ?>" alt="<?php esc_attr_e( 'Envira Gallery', 'envira-gallery-lite' ); ?>" width="254" height="38"/>
 		</a>
 	</h1>
 

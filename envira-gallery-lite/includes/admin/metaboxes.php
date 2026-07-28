@@ -97,6 +97,7 @@ class Envira_Gallery_Metaboxes {
 		add_action( 'envira_gallery_tab_pagination', [ $this, 'lite_pagination_tab' ] );
 		add_action( 'envira_gallery_tab_comments', [ $this, 'lite_comments_tab' ] );
 		add_action( 'envira_gallery_tab_search', [ $this, 'lite_search_tab' ] );
+		add_action( 'envira_gallery_tab_payment', [ $this, 'lite_payment_tab' ] );
 
 		// Save Gallery.
 		add_action( 'save_post', [ $this, 'save_meta_boxes' ], 10, 2 );
@@ -1362,6 +1363,7 @@ class Envira_Gallery_Metaboxes {
 		$tabs['pagination'] = __( 'Pagination', 'envira-gallery-lite' );
 		$tabs['comments']   = __( 'Comments', 'envira-gallery-lite' );
 		$tabs['search']     = __( 'Search', 'envira-gallery-lite' );
+		$tabs['payment']    = __( 'Payment', 'envira-gallery-lite' );
 		return $tabs;
 	}
 
@@ -1680,6 +1682,59 @@ class Envira_Gallery_Metaboxes {
 
 			<div class="cta-buttons">
 				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( false, 'adminpagesearch', 'upgradetoenviraprobutton' ) ); ?>" target="_blank" class="button button-primary"><?php esc_html_e( 'Upgrade To Envira Pro', 'envira-gallery-lite' ); ?></a>
+			</div>
+		</div>
+
+		<?php
+	}
+
+	/**
+	 * Lite: Callback for displaying the settings UI for the Payment tab.
+	 *
+	 * @since 1.12.7
+	 *
+	 * @param object $post The current post object.
+	 */
+	public function lite_payment_tab( $post ) {
+		?>
+
+		<div class="upgrade-header">
+			<img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/payment-icon.png' ); ?>" width="35" height="35" alt="" />
+			<h2><?php esc_html_e( 'Sell your photos with Envira Pro', 'envira-gallery-lite' ); ?></h2>
+		</div>
+
+		<div class="upgrade-content">
+			<div class="hero-image-exterior">
+				<div class="interior">
+					<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagepayment', 'paymentaddonimage' ) ); ?>" target="_blank"><img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/payment-addon.png' ); ?>" alt="<?php esc_attr_e( 'Upgrade to Envira Gallery Pro to sell your photos', 'envira-gallery-lite' ); ?>" /></a>
+				</div>
+			</div>
+			<p><?php esc_html_e( 'Upgrade to Envira Gallery Pro to sell images straight from your galleries with secure, Stripe-powered payments — no third-party marketplace required.', 'envira-gallery-lite' ); ?></p>
+			<div class="two-column-list">
+				<ul>
+					<li><?php esc_html_e( 'Stripe-powered checkout', 'envira-gallery-lite' ); ?></li>
+					<li><?php esc_html_e( 'Sell images in multiple sizes', 'envira-gallery-lite' ); ?></li>
+					<li><?php esc_html_e( 'Set your own price per image', 'envira-gallery-lite' ); ?></li>
+				</ul>
+				<ul>
+					<li><?php esc_html_e( 'Instant, secure downloads after purchase', 'envira-gallery-lite' ); ?></li>
+					<li><?php esc_html_e( 'Track orders from your dashboard', 'envira-gallery-lite' ); ?></li>
+					<li><strong><?php esc_html_e( '...and more!', 'envira-gallery-lite' ); ?></strong></li>
+				</ul>
+			</div>
+
+			<?php
+			printf(
+				'<p><strong>%s</strong> %s <span class="envira-green">%s</span> %s.</p>',
+				esc_html__( 'Bonus:', 'envira-gallery-lite' ),
+				esc_html__( 'Envira Lite users get a discount code for', 'envira-gallery-lite' ),
+				esc_html__( '50% off', 'envira-gallery-lite' ),
+				esc_html__( 'regular price', 'envira-gallery-lite' )
+			);
+			?>
+
+			<div class="cta-buttons">
+				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( false, 'adminpagepayment', 'upgradetoenviraprobutton' ) ); ?>" target="_blank" class="button button-primary"><?php esc_html_e( 'Upgrade To Envira Pro', 'envira-gallery-lite' ); ?></a>
 			</div>
 		</div>
 
