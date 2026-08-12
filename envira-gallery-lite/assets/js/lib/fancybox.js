@@ -566,7 +566,15 @@
             if (!W || W == "" || W === "nofollow") {
                 j.push(this)
             } else {
-                j = B("a[rel=" + W + "], area[rel=" + W + "]");
+                var Wt = W.split(/\s+/);
+                var Wg = Wt[0];
+                for (var Wi = 0; Wi < Wt.length; Wi++) {
+                    if (/^enviragallery/.test(Wt[Wi])) {
+                        Wg = Wt[Wi];
+                        break
+                    }
+                }
+                j = B('a[rel~="' + Wg + '"], area[rel~="' + Wg + '"]');
                 C = j.index(this)
             }
             w();

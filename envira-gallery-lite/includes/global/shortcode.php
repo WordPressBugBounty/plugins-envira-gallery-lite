@@ -399,7 +399,19 @@ class Envira_Gallery_Shortcode {
 			$item['thumb'] = false;
 		}
 
-		$output = '<div id="envira-gallery-item-' . sanitize_html_class( $id ) . '" class="' . $this->get_gallery_item_classes( $item, $i, $data ) . '" style="padding-left: ' . $padding . 'px; padding-bottom: ' . $this->get_config( 'margin', $data ) . 'px; padding-right: ' . $padding . 'px;" ' . apply_filters( 'envira_gallery_output_item_attr', '', $id, $item, $data, $i ) . ' itemscope itemtype="https://schema.org/ImageObject">';
+		// Reserve intrinsic aspect-ratio before JS layout fires to reduce CLS.
+		$item_width  = ! empty( $item['width'] ) ? absint( $item['width'] ) : 0;
+		$item_height = ! empty( $item['height'] ) ? absint( $item['height'] ) : 0;
+		if ( ( 0 === $item_width || 0 === $item_height ) && $this->get_config( 'crop', $data ) ) {
+			$item_width  = absint( $this->get_config( 'crop_width', $data ) );
+			$item_height = absint( $this->get_config( 'crop_height', $data ) );
+		}
+		$item_style = 'padding-left: ' . $padding . 'px; padding-bottom: ' . $this->get_config( 'margin', $data ) . 'px; padding-right: ' . $padding . 'px;';
+		if ( $item_width > 0 && $item_height > 0 ) {
+			$item_style .= " aspect-ratio: {$item_width} / {$item_height};";
+		}
+
+		$output = '<div id="envira-gallery-item-' . sanitize_html_class( $id ) . '" class="' . $this->get_gallery_item_classes( $item, $i, $data ) . '" style="' . esc_attr( $item_style ) . '" ' . apply_filters( 'envira_gallery_output_item_attr', '', $id, $item, $data, $i ) . ' itemscope itemtype="https://schema.org/ImageObject">';
 
 		$output .= '<div class="envira-gallery-item-inner">';
 		$output  = apply_filters( 'envira_gallery_output_before_link', $output, $id, $item, $data, $i );

@@ -1198,6 +1198,12 @@ form#post.envira-gallery {
 							background-size: 16px 16px;
 						}
 					}
+					&.envira-related_galleries {
+						a {
+							background-image: url(images/icons/related-galleries.svg);
+							background-size: 16px 16px;
+						}
+					}
 					&.envira-slideshow {
 						a {
 							background-image: url(images/icons/slideshow.svg);
@@ -1933,6 +1939,10 @@ form#post.envira-gallery {
 			}
 		}
 	}
+}
+
+#envira-tabs-nav li.envira-related_galleries a {
+	white-space: nowrap !important;
 }
 
 /**

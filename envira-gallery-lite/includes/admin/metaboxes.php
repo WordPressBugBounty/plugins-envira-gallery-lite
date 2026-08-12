@@ -97,6 +97,7 @@ class Envira_Gallery_Metaboxes {
 		add_action( 'envira_gallery_tab_pagination', [ $this, 'lite_pagination_tab' ] );
 		add_action( 'envira_gallery_tab_comments', [ $this, 'lite_comments_tab' ] );
 		add_action( 'envira_gallery_tab_search', [ $this, 'lite_search_tab' ] );
+		add_action( 'envira_gallery_tab_related_galleries', [ $this, 'lite_related_galleries_tab' ] );
 		add_action( 'envira_gallery_tab_payment', [ $this, 'lite_payment_tab' ] );
 
 		// Save Gallery.
@@ -808,80 +809,98 @@ class Envira_Gallery_Metaboxes {
 								<ul class="thumbnails image_picker_selector">
 									<li>
 										<div class="thumbnail selected">
-											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/automatic-layout.png' ); ?>">
+											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/automatic-layout.png' ); ?>" alt="<?php esc_attr_e( 'Automatic Layout', 'envira-gallery-lite' ); ?>">
 											<p><?php esc_html_e( 'Automatic', 'envira-gallery-lite' ); ?></p>
 										</div>
 									</li>
 									<li>
 										<div class="thumbnail upgrade-to-pro">
-											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/mason-layout.png' ); ?>">
+											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/mason-layout.png' ); ?>" alt="<?php esc_attr_e( 'Mason Layout', 'envira-gallery-lite' ); ?>">
 											<p><?php esc_html_e( 'Mason', 'envira-gallery-lite' ); ?></p>
 										</div>
 									</li>
 									<li>
 										<div class="thumbnail upgrade-to-pro">
-											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/grid-layout.png' ); ?>">
+											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/grid-layout.png' ); ?>" alt="<?php esc_attr_e( 'Grid Layout', 'envira-gallery-lite' ); ?>">
 											<p><?php esc_html_e( 'Grid', 'envira-gallery-lite' ); ?></p>
 										</div>
 									</li>
 									<li>
 										<div class="thumbnail upgrade-to-pro">
-											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/square-layout.png' ); ?>">
+											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/square-layout.png' ); ?>" alt="<?php esc_attr_e( 'Square Layout', 'envira-gallery-lite' ); ?>">
 											<p><?php esc_html_e( 'Square', 'envira-gallery-lite' ); ?></p>
 										</div>
 									</li>
 									<li>
 										<div class="thumbnail upgrade-to-pro">
-											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/blogroll-layout.png' ); ?>">
+											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/blogroll-layout.png' ); ?>" alt="<?php esc_attr_e( 'Blogroll Layout', 'envira-gallery-lite' ); ?>">
 											<p><?php esc_html_e( 'Blogroll', 'envira-gallery-lite' ); ?></p>
 										</div>
 									</li>
 									<li>
 										<div class="thumbnail upgrade-to-pro">
-											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/bnb-layout.png' ); ?>">
+											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/bnb-layout.png' ); ?>" alt="<?php esc_attr_e( 'BnB Layout', 'envira-gallery-lite' ); ?>">
 											<p><?php esc_html_e( 'BnB', 'envira-gallery-lite' ); ?></p>
 										</div>
 									</li>
 									<li>
 										<div class="thumbnail upgrade-to-pro">
-											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/polaroid-layout.png' ); ?>">
+											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/polaroid-layout.png' ); ?>" alt="<?php esc_attr_e( 'Polaroid Layout', 'envira-gallery-lite' ); ?>">
 											<p><?php esc_html_e( 'Polaroid', 'envira-gallery-lite' ); ?></p>
 										</div>
 									</li>
 									<li>
 										<div class="thumbnail upgrade-to-pro">
-											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/creative-layout.png' ); ?>">
+											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/creative-layout.png' ); ?>" alt="<?php esc_attr_e( 'Creative Layout', 'envira-gallery-lite' ); ?>">
 											<p><?php esc_html_e( 'Creative', 'envira-gallery-lite' ); ?></p>
 										</div>
 									</li>
 									<li>
 										<div class="thumbnail upgrade-to-pro">
-											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/vertical-focus-layout.png' ); ?>">
+											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/vertical-focus-layout.png' ); ?>" alt="<?php esc_attr_e( 'Vertical Focus Layout', 'envira-gallery-lite' ); ?>">
 											<p><?php esc_html_e( 'Vertical Focus', 'envira-gallery-lite' ); ?></p>
 										</div>
 									</li>
 									<li>
 										<div class="thumbnail upgrade-to-pro">
-											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/spread-hermony-layout.png' ); ?>">
+											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/spread-hermony-layout.png' ); ?>" alt="<?php esc_attr_e( 'Spread Hermony Layout', 'envira-gallery-lite' ); ?>">
 											<p><?php esc_html_e( 'Spread Hermony', 'envira-gallery-lite' ); ?></p>
 										</div>
 									</li>
 									<li>
 										<div class="thumbnail upgrade-to-pro">
-											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/grid-fixed-title-layout.png' ); ?>">
+											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/grid-fixed-title-layout.png' ); ?>" alt="<?php esc_attr_e( 'Grid Fixed Title Layout', 'envira-gallery-lite' ); ?>">
 											<p><?php esc_html_e( 'Grid Fixed Title', 'envira-gallery-lite' ); ?></p>
 										</div>
 									</li>
 									<li>
 										<div class="thumbnail upgrade-to-pro">
-											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/highlight-grid-layout.png' ); ?>">
+											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/highlight-grid-layout.png' ); ?>" alt="<?php esc_attr_e( 'Highlight Grid Layout', 'envira-gallery-lite' ); ?>">
 											<p><?php esc_html_e( 'Highlight Grid', 'envira-gallery-lite' ); ?></p>
 										</div>
 									</li>
 									<li>
 										<div class="thumbnail upgrade-to-pro">
-											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/vertical-line-grid-layout.png' ); ?>">
+											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/vertical-line-grid-layout.png' ); ?>" alt="<?php esc_attr_e( 'Vertical Line Grid Layout', 'envira-gallery-lite' ); ?>">
 											<p><?php esc_html_e( 'Vertical Line Grid', 'envira-gallery-lite' ); ?></p>
+										</div>
+									</li>
+									<li>
+										<div class="thumbnail upgrade-to-pro">
+											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/bento-grid-layout.png' ); ?>" alt="<?php esc_attr_e( 'Bento Grid', 'envira-gallery-lite' ); ?>">
+											<p><?php esc_html_e( 'Bento Grid', 'envira-gallery-lite' ); ?></p>
+										</div>
+									</li>
+									<li>
+										<div class="thumbnail upgrade-to-pro">
+											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/horizontal-carousel-layout.png' ); ?>" alt="<?php esc_attr_e( 'Horizontal Carousel Layout', 'envira-gallery-lite' ); ?>">
+											<p><?php esc_html_e( 'Horizontal Carousel', 'envira-gallery-lite' ); ?></p>
+										</div>
+									</li>
+									<li>
+										<div class="thumbnail upgrade-to-pro">
+											<img class="image_picker_image" src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/horizontal-slider-layout.png' ); ?>" alt="<?php esc_attr_e( 'Horizontal Slider Layout', 'envira-gallery-lite' ); ?>">
+											<p><?php esc_html_e( 'Horizontal Slider', 'envira-gallery-lite' ); ?></p>
 										</div>
 									</li>
 								</ul>
@@ -1355,15 +1374,16 @@ class Envira_Gallery_Metaboxes {
 	 */
 	public function lite_tabs( $tabs ) {
 
-		$tabs['mobile']     = __( 'Mobile', 'envira-gallery-lite' );
-		$tabs['videos']     = __( 'Videos', 'envira-gallery-lite' );
-		$tabs['social']     = __( 'Social', 'envira-gallery-lite' );
-		$tabs['tags']       = __( 'Tags', 'envira-gallery-lite' );
-		$tabs['animations'] = __( 'Animations', 'envira-gallery-lite' );
-		$tabs['pagination'] = __( 'Pagination', 'envira-gallery-lite' );
-		$tabs['comments']   = __( 'Comments', 'envira-gallery-lite' );
-		$tabs['search']     = __( 'Search', 'envira-gallery-lite' );
-		$tabs['payment']    = __( 'Payment', 'envira-gallery-lite' );
+		$tabs['mobile']            = __( 'Mobile', 'envira-gallery-lite' );
+		$tabs['videos']            = __( 'Videos', 'envira-gallery-lite' );
+		$tabs['social']            = __( 'Social', 'envira-gallery-lite' );
+		$tabs['tags']              = __( 'Tags', 'envira-gallery-lite' );
+		$tabs['animations']        = __( 'Animations', 'envira-gallery-lite' );
+		$tabs['pagination']        = __( 'Pagination', 'envira-gallery-lite' );
+		$tabs['comments']          = __( 'Comments', 'envira-gallery-lite' );
+		$tabs['search']            = __( 'Search', 'envira-gallery-lite' );
+		$tabs['related_galleries'] = __( 'Related Galleries', 'envira-gallery-lite' );
+		$tabs['payment']           = __( 'Payment', 'envira-gallery-lite' );
 		return $tabs;
 	}
 
@@ -1682,6 +1702,57 @@ class Envira_Gallery_Metaboxes {
 
 			<div class="cta-buttons">
 				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( false, 'adminpagesearch', 'upgradetoenviraprobutton' ) ); ?>" target="_blank" class="button button-primary"><?php esc_html_e( 'Upgrade To Envira Pro', 'envira-gallery-lite' ); ?></a>
+			</div>
+		</div>
+
+		<?php
+	}
+
+	/**
+	 * Lite: Upsell tab for the Related Galleries addon.
+	 *
+	 * @since 1.10.0
+	 *
+	 * @param object $post The current post object.
+	 */
+	public function lite_related_galleries_tab( $post ) {
+
+		?>
+
+		<div class="upgrade-header">
+			<img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/related-galleries-icon.png' ); ?>" width="35" alt="" />
+			<h2><?php esc_html_e( 'Show Visitors More of Your Galleries', 'envira-gallery-lite' ); ?></h2>
+		</div>
+
+		<div class="upgrade-content">
+			<div class="hero-image-exterior">
+				<div class="interior">
+					<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagerelatedgalleries', 'relatedgalleriesaddonimage' ) ); ?>" target="_blank">
+						<img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/related-galleries-addon.png' ); ?>" alt="<?php esc_attr_e( 'Related Galleries Addon Banner Image', 'envira-gallery-lite' ); ?>" />
+					</a>
+				</div>
+			</div>
+			<p><?php esc_html_e( 'By upgrading to Envira Gallery Pro, you can automatically show visitors related galleries at the end of every gallery. No setup required — activate and it works everywhere.', 'envira-gallery-lite' ); ?></p>
+
+			<?php
+			printf(
+				'<p><strong>%1$s</strong> %2$s</p>',
+				esc_html__( 'Bonus:', 'envira-gallery-lite' ),
+				wp_kses(
+					__( 'Envira Lite users get a discount code for <span class="envira-green">50% off</span> regular price.', 'envira-gallery-lite' ),
+					[
+						'span' => [
+							'class' => [],
+						],
+					]
+				)
+			);
+			?>
+
+			<div class="cta-buttons">
+				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( false, 'adminpagerelatedgalleries', 'upgradetoenviraprobutton' ) ); ?>" target="_blank" class="button button-primary">
+					<?php esc_html_e( 'Upgrade To Envira Pro', 'envira-gallery-lite' ); ?>
+				</a>
 			</div>
 		</div>
 
