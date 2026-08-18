@@ -1,10 +1,10 @@
 === Envira Gallery - Image Photo Gallery, Albums, Video Gallery, Slideshows & More ===
 Contributors: enviragallery, smub
 Tags: photo gallery, image gallery, gallery, lightbox, albums
-Requires at least: 5.5
-Tested up to: 7.0
+Requires at least: 6.3
+Tested up to: 7.1
 Requires PHP: 7.0
-Stable tag: 1.15.0
+Stable tag: 1.15.1
 License: GNU General Public License v2.0 or later
 
 The fastest drag & drop photo gallery plugin. Create stunning image galleries, albums, video galleries & lightbox displays in minutes — no coding!
@@ -267,6 +267,11 @@ For documentation, tutorials, and videos visit: [Envira Gallery Documentation](h
 Lite support is available on the [WordPress.org support forum](https://wordpress.org/support/plugin/envira-gallery-lite/). For priority support, [upgrade to Envira Gallery Pro](https://enviragallery.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion).
 
 == Changelog ==
+
+1.15.1 - 08.18.2026
+* Fixed: The Envira Gallery block now displays correctly in the block editor, including on block themes and Full Site Editing page templates where it previously appeared unstyled.
+* Fixed: Selecting and deselecting photos inside the Envira Gallery block works as expected again, and clicking a setting in the editor sidebar no longer clears your photo selection.
+* Updated: The Envira Gallery block now uses the current WordPress block standard, keeping it compatible with the editor changes coming in upcoming WordPress releases.
 
 1.15.0 - 08.12.2026
 * Added: Bento Grid gallery layout for modern, mixed-size image arrangements.

@@ -68,8 +68,45 @@ class Envira_Gutenberg {
 
 		$this->base   = Envira_Gallery_Lite::get_instance();
 		$this->common = Envira_Gallery_Common::get_instance();
+		add_action( 'init', [ $this, 'register_block' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'editor_assets' ], 10 );
 		add_action( 'current_screen', [ $this, 'get_galleries' ] );
+	}
+
+	/**
+	 * Registers the block's metadata (attributes, apiVersion, editorStyle) from block.json.
+	 *
+	 * The block's `edit`/`save` are still registered client-side in `envira-gutenberg.js`;
+	 * this server-side registration is what makes WordPress enqueue and load `editorStyle`
+	 * into the iframed block editor canvas.
+	 *
+	 * `register_block_type()` only accepts a block.json path since WP 5.8, and
+	 * `WP_Block_Type::$editor_style_handles` only exists since WP 6.1, so this is skipped
+	 * entirely below that version rather than registering something WordPress can't use.
+	 *
+	 * @since 2.0.0
+	 */
+	public function register_block() {
+
+		global $wp_version;
+
+		if ( version_compare( $wp_version, '6.1', '<' ) ) {
+			return;
+		}
+
+		// `assets/block.json` is a build copy of `_gutenberg/block.json`; the release zip
+		// strips `_gutenberg/*`, so registration must point at the path that survives packaging.
+		$registered = register_block_type( plugin_dir_path( $this->base->file ) . 'assets/block.json' );
+
+		// Check the stylesheet file itself rather than $registered->editor_style_handles,
+		// which is populated by register_block_style_handle() even when the file is missing.
+		$stylesheet_exists = file_exists( plugin_dir_path( $this->base->file ) . 'assets/css/envira-gutenberg-editor.css' );
+
+		if ( false === $registered || ! $stylesheet_exists ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- intentional, visible without WP_DEBUG.
+			error_log( 'Envira Gallery: failed to register the envira/envira-gallery block.json - block editor styles will not load correctly in the iframed canvas.' );
+			_doing_it_wrong( __METHOD__, 'Failed to register the envira/envira-gallery block.json - block editor styles will not load correctly in the iframed canvas.', '2.0.0' );
+		}
 	}
 
 	/**
