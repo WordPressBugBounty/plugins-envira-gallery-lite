@@ -1240,6 +1240,12 @@ form#post.envira-gallery {
 							background-size: 16px 16px;
 						}
 					}
+					&.envira-submissions {
+						a {
+							background-image: url(images/submissions.svg);
+							background-size: 16px 16px;
+						}
+					}
 					&.envira-woocommerce {
 						a {
 							background-image: url(images/icons/woocommerce.svg);

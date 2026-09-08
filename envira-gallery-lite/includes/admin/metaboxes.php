@@ -97,6 +97,7 @@ class Envira_Gallery_Metaboxes {
 		add_action( 'envira_gallery_tab_pagination', [ $this, 'lite_pagination_tab' ] );
 		add_action( 'envira_gallery_tab_comments', [ $this, 'lite_comments_tab' ] );
 		add_action( 'envira_gallery_tab_search', [ $this, 'lite_search_tab' ] );
+		add_action( 'envira_gallery_tab_submissions', [ $this, 'lite_submissions_tab' ] );
 		add_action( 'envira_gallery_tab_related_galleries', [ $this, 'lite_related_galleries_tab' ] );
 		add_action( 'envira_gallery_tab_payment', [ $this, 'lite_payment_tab' ] );
 
@@ -1382,6 +1383,7 @@ class Envira_Gallery_Metaboxes {
 		$tabs['pagination']        = __( 'Pagination', 'envira-gallery-lite' );
 		$tabs['comments']          = __( 'Comments', 'envira-gallery-lite' );
 		$tabs['search']            = __( 'Search', 'envira-gallery-lite' );
+		$tabs['submissions']       = __( 'Submissions', 'envira-gallery-lite' );
 		$tabs['related_galleries'] = __( 'Related Galleries', 'envira-gallery-lite' );
 		$tabs['payment']           = __( 'Payment', 'envira-gallery-lite' );
 		return $tabs;
@@ -1702,6 +1704,58 @@ class Envira_Gallery_Metaboxes {
 
 			<div class="cta-buttons">
 				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( false, 'adminpagesearch', 'upgradetoenviraprobutton' ) ); ?>" target="_blank" class="button button-primary"><?php esc_html_e( 'Upgrade To Envira Pro', 'envira-gallery-lite' ); ?></a>
+			</div>
+		</div>
+
+		<?php
+	}
+
+	/**
+	 * Callback for displaying the settings UI for the Submissions tab.
+	 *
+	 * @since 1.13.4
+	 *
+	 * @param object $post The current post object.
+	 */
+	public function lite_submissions_tab( $post ) {
+		?>
+
+		<div class="upgrade-header">
+			<img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/submissions-icon.png' ); ?>" width="35" />
+			<h2><?php esc_html_e( 'Let visitors upload their own photos with Envira Pro', 'envira-gallery-lite' ); ?></h2>
+		</div>
+
+		<div class="upgrade-content">
+			<div class="hero-image-exterior">
+				<div class="interior">
+					<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagesubmissions', 'submissionsaddonimage' ) ); ?>" target="_blank"><img src="<?php echo esc_url( trailingslashit( ENVIRA_LITE_URL ) . 'assets/images/frontend-submissions-upsell.png' ); ?>" /></a>
+				</div>
+			</div>
+			<p><?php esc_html_e( 'Turn any gallery into a two-way experience. Visitors upload their own photos directly into your gallery — no account, no login required. Collect event photos, run contests, or build a community gallery in minutes.', 'envira-gallery-lite' ); ?></p>
+			<p><?php esc_html_e( 'Available submissions options include:', 'envira-gallery-lite' ); ?></p>
+			<div class="two-column-list">
+				<ul>
+					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagesubmissions', 'moderation' ) ); ?>"><?php esc_html_e( 'Hold-for-Moderation or Auto-Approve', 'envira-gallery-lite' ); ?></a></li>
+					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagesubmissions', 'spamprotection' ) ); ?>"><?php esc_html_e( 'Built-in Spam Protection', 'envira-gallery-lite' ); ?></a></li>
+				</ul>
+				<ul>
+					<li><a target="_blank" href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( 'https://enviragallery.com/lite', 'adminpagesubmissions', 'gutenbergblock' ) ); ?>"><?php esc_html_e( 'Gutenberg Block or Shortcode', 'envira-gallery-lite' ); ?></a></li>
+					<li><strong><?php esc_html_e( '...and more!', 'envira-gallery-lite' ); ?></strong></li>
+				</ul>
+			</div>
+
+			<?php
+			printf(
+				'<p><strong>%s</strong> %s <span class="envira-green">%s</span> %s.</p>',
+				esc_html__( 'Bonus:', 'envira-gallery-lite' ),
+				esc_html__( 'Envira Lite users get a discount code for', 'envira-gallery-lite' ),
+				esc_html__( '50% off', 'envira-gallery-lite' ),
+				esc_html__( 'regular price', 'envira-gallery-lite' )
+			);
+			?>
+
+			<div class="cta-buttons">
+				<a href="<?php echo esc_url( Envira_Gallery_Common_Admin::get_instance()->get_upgrade_link( false, 'adminpagesubmissions', 'upgradetoenviraprobutton' ) ); ?>" target="_blank" class="button button-primary"><?php esc_html_e( 'Upgrade To Envira Pro', 'envira-gallery-lite' ); ?></a>
 			</div>
 		</div>
 

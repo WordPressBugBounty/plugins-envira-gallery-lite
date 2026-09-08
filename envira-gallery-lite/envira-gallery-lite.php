@@ -5,7 +5,7 @@
  * Description: Envira Gallery is a fast, easy and powerful gallery builder with lightbox, masonry and grid layouts, albums, videos, and responsive displays and more
  * Author:      Envira Gallery Team
  * Author URI:  http://enviragallery.com
- * Version:     1.15.1
+ * Version:     1.16.0
  * Requires at least: 6.3
  * Requires PHP: 7.0
  * Text Domain: envira-gallery-lite
@@ -59,7 +59,7 @@ class Envira_Gallery_Lite {
 	 *
 	 * @var string
 	 */
-	public $version = '1.15.1';
+	public $version = '1.16.0';
 
 
 	/**
