@@ -121,7 +121,27 @@ class Envira_Gutenberg {
 
 		if ( ! is_null( $current_screen ) && method_exists( $current_screen, 'is_block_editor' ) && ( $current_screen->is_block_editor() || ( version_compare( $wp_version, '5.8.0', '>' ) && 'widgets' === $current_screen->base || 'customize' === $current_screen->base ) ) ) {
 			$request = new \WP_REST_Request( 'GET', '/wp/v2/envira-gallery' ); // request.
-			$request->set_query_params( [ 'per_page' => 10 ] );
+
+			// Ask for only the two fields the block editor reads off this preload
+			// (the gallery picker's id + label). Without an explicit whitelist
+			// WordPress runs every registered REST field, including the
+			// `gallery_data` callback, which resolves each image in each of these
+			// preloaded gallery one at a time. add_additional_fields_to_object() gates
+			// get_callback behind rest_is_field_included(), so naming the fields
+			// here skips that work outright - which matters most where uploads are
+			// served through a stream wrapper (Infinite Uploads iu://, WP Offload
+			// Media s3://) and every image resolution is a cloud round-trip that
+			// can run the editor request past max_execution_time. See #5544.
+			//
+			// The whitelist is also what makes a full page of galleries affordable:
+			// the cap was 10, which hid every older gallery from the picker (#5587),
+			// and 100 is the REST API's own maximum for a single page.
+			$request->set_query_params(
+				[
+					'per_page' => 100,
+					'_fields'  => 'id,title',
+				]
+			);
 			$response        = rest_do_request( $request );
 			$server          = rest_get_server();
 			$this->galleries = $server->response_to_data( $response, false );

@@ -99,30 +99,338 @@ class Envira_Rest {
 					continue;
 				}
 
-				$width    = null;
-				$height   = null;
-				$imagesrc = $this->get_image_src( $id, $item, $data, false, false );
+				$width  = null;
+				$height = null;
 
-				// Get the image file path.
-				$urlinfo       = wp_parse_url( $imagesrc );
-				$wp_upload_dir = wp_upload_dir();
+				// Set when the largest-cached-size rescue is what answered, so the log
+				// below still names the attachment: the rescue produces positive numbers
+				// that would otherwise falsify its "! $width || ! $height" gate.
+				$rescued_size_name = null;
+				$imagesrc          = $this->get_image_src( $id, $item, $data, false, false );
 
-				// Interpret the file path of the image.
-				if ( preg_match( '/\/[0-9]{4}\/[0-9]{2}\/.+$/', $urlinfo['path'], $matches ) ) {
+				// Prefer dimensions WordPress (or resize_image()) has already recorded, so
+				// this loop never has to touch the filesystem. Which record is authoritative
+				// depends on what get_image_src() actually returned for this gallery's
+				// settings - it hands back a registered size for some configurations and a
+				// freshly cropped derivative for others, and those disagree.
+				$attachment_meta = wp_get_attachment_metadata( $id );
+				$image_size      = $this->get_config( 'image_size', $data );
+				$crop_enabled    = (bool) $this->get_config( 'crop', $data );
 
-					$file_path = $wp_upload_dir['basedir'] . $matches[0];
+				if ( 'default' === $image_size && $crop_enabled ) {
 
-				} else {
+					// get_image_src() routed through Envira_Gallery_Common::resize_image(),
+					// which writes its dimensions into the filename as "-WxH" (plus a "_c" or
+					// "_$align" marker). Trust that suffix over the configured crop size: when
+					// the resize fails, get_image_src() now falls back to the un-cropped
+					// source, which carries no crop suffix - so width/height correctly stay
+					// null and cascade to the fallbacks below rather than advertising a crop
+					// that never happened.
+					$suffix_dims = $this->get_dimensions_from_filename( $imagesrc, $attachment_meta );
 
-					$content_dir = defined( 'WP_CONTENT_DIR' ) ? WP_CONTENT_DIR : '/wp-content/';
-					$uploads_dir = is_multisite() ? '/files/' : $content_dir;
-					$file_path   = trailingslashit( $wp_upload_dir['basedir'] ) . basename( $urlinfo['path'] );
-					$file_path   = preg_replace( '/(\/\/)/', '/', $file_path );
+					if ( $suffix_dims ) {
+						list( $width, $height ) = $suffix_dims;
+					}
+				} elseif ( 'default' === $image_size && ! $crop_enabled ) {
 
+					$closest_size = $this->find_clostest_size( $data );
+					$isize        = ( is_string( $closest_size ) && '' !== $closest_size ) ? $closest_size : 'full';
+
+					if ( isset( $attachment_meta['sizes'][ $isize ] ) && is_array( $attachment_meta['sizes'][ $isize ] ) ) {
+
+						$size_dims = $this->usable_dimensions(
+							isset( $attachment_meta['sizes'][ $isize ]['width'] ) ? $attachment_meta['sizes'][ $isize ]['width'] : null,
+							isset( $attachment_meta['sizes'][ $isize ]['height'] ) ? $attachment_meta['sizes'][ $isize ]['height'] : null
+						);
+
+						if ( $size_dims ) {
+							list( $width, $height ) = $size_dims;
+						}
+					}
+				} elseif ( is_string( $image_size ) && ! in_array( $image_size, [ 'full', 'envira_gallery_random' ], true )
+					&& isset( $attachment_meta['sizes'][ $image_size ] ) && is_array( $attachment_meta['sizes'][ $image_size ] ) ) {
+
+					// A specific registered WordPress size was requested - use that size's own
+					// metadata, since it rarely shares the original's aspect ratio.
+					$size_dims = $this->usable_dimensions(
+						isset( $attachment_meta['sizes'][ $image_size ]['width'] ) ? $attachment_meta['sizes'][ $image_size ]['width'] : null,
+						isset( $attachment_meta['sizes'][ $image_size ]['height'] ) ? $attachment_meta['sizes'][ $image_size ]['height'] : null
+					);
+
+					if ( $size_dims ) {
+						list( $width, $height ) = $size_dims;
+					}
 				}
 
-				if ( file_exists( $file_path ) && is_file( $file_path ) ) { // file_exists checks for file/directory, is_file can be an extra check.
-					list( $width, $height ) = getimagesize( $file_path );
+				if ( ! $width || ! $height ) {
+
+					// Try the filename suffix first. This is what catches
+					// 'envira_gallery_random', where get_image_src() picks a registered size
+					// at random and the chosen size is no longer knowable from the config.
+					$suffix_dims = $this->get_dimensions_from_filename( $imagesrc, $attachment_meta );
+
+					if ( $suffix_dims ) {
+
+						list( $width, $height ) = $suffix_dims;
+
+					} elseif ( is_array( $attachment_meta ) && $this->usable_dimensions(
+						isset( $attachment_meta['width'] ) ? $attachment_meta['width'] : null,
+						isset( $attachment_meta['height'] ) ? $attachment_meta['height'] : null
+					) ) {
+
+						// Top-level metadata describes whatever file WordPress considers
+						// "full". Unlike Pro - whose envira_get_image_src() returns the
+						// pre-scale original via wp_get_original_image_url() and so needs an
+						// 'original_image' guard - Lite asks for wp_get_attachment_image_src(
+						// $id, 'full' ), which returns the "-scaled" derivative those same
+						// keys describe. No guard needed here.
+						list( $width, $height ) = $this->usable_dimensions( $attachment_meta['width'], $attachment_meta['height'] );
+
+					} else {
+
+						// Get the image file path.
+						$urlinfo       = wp_parse_url( $imagesrc );
+						$wp_upload_dir = wp_upload_dir();
+
+						// Interpret the file path of the image.
+						if ( preg_match( '/\/[0-9]{4}\/[0-9]{2}\/.+$/', $urlinfo['path'], $matches ) ) {
+
+							$file_path = $wp_upload_dir['basedir'] . $matches[0];
+
+						} else {
+
+							$content_dir = defined( 'WP_CONTENT_DIR' ) ? WP_CONTENT_DIR : '/wp-content/';
+							$uploads_dir = is_multisite() ? '/files/' : $content_dir;
+							$file_path   = trailingslashit( $wp_upload_dir['basedir'] ) . basename( $urlinfo['path'] );
+
+						}
+
+						// Never stat or read a stream-wrapped path (s3://, iu://, ...) - each call
+						// is a cloud round-trip, and this loop runs for every image of every
+						// gallery the block editor preloads, so a slow remote runs the request
+						// past max_execution_time and the editor dies with nothing logged.
+						// Computed before the "//" collapse below, which would otherwise turn
+						// "scheme://" into "scheme:/" and hide the wrapper from this check.
+						$is_remote = (bool) preg_match( '#^[a-z][a-z0-9+.\-]*://#i', $file_path );
+
+						if ( $is_remote ) {
+
+							// Can't safely measure a remote path. Ask WordPress for the size it
+							// considers "full" rather than leaving width/height null, which
+							// publishes as 0x0 and breaks the editor's aspect-ratio maths.
+							$fallback_src = wp_get_attachment_image_src( $id, 'full' );
+
+							// Test for usable values, not merely present ones, through the same
+							// helper as every other cached read. When top-level metadata is
+							// missing, image_downsize() finds no 'full' entry in $meta['sizes']
+							// (WordPress only writes that for PDF previews), its own rescue
+							// branch reads the same absent keys, and it returns
+							// [ $url, 0, 0, false ]. An isset() check passes on that and
+							// publishes 0x0 - and would leave the log below unreachable for
+							// precisely the case it documents. image_downsize() reads the same
+							// untrusted metadata, so a corrupt record reaches here too, and
+							// truthy junk would skip the terminal fallback and the log exactly
+							// as a zero pair used to.
+							if ( is_array( $fallback_src ) ) {
+
+								$fallback_dims = $this->usable_dimensions(
+									isset( $fallback_src[1] ) ? $fallback_src[1] : null,
+									isset( $fallback_src[2] ) ? $fallback_src[2] : null
+								);
+
+								if ( $fallback_dims ) {
+									list( $width, $height ) = $fallback_dims;
+								}
+							}
+						} else {
+
+							$file_path = preg_replace( '/(\/\/)/', '/', $file_path );
+
+							// Keep path resolution inside the uploads directory so a crafted
+							// gallery src (e.g. carrying "../" segments) can't stat or read
+							// arbitrary files. realpath() collapses the "../" before the
+							// comparison, and the trailing slash stops a sibling directory
+							// such as "uploads-old" from passing the prefix test.
+							//
+							// Normalize both sides: realpath() returns backslashes on Windows
+							// while trailingslashit() appends a forward slash, so an
+							// un-normalized comparison never matches there - every local image
+							// would silently fall through to 0x0.
+							$real_path = realpath( $file_path );
+							$real_base = realpath( $wp_upload_dir['basedir'] );
+							$real_path = $real_path ? wp_normalize_path( $real_path ) : $real_path;
+							$real_base = $real_base ? wp_normalize_path( $real_base ) : $real_base;
+
+							if ( $real_path && $real_base && 0 === strpos( $real_path, trailingslashit( $real_base ) ) && is_file( $real_path ) ) {
+
+								$imagesize = getimagesize( $real_path );
+
+								if ( is_array( $imagesize ) ) {
+									list( $width, $height ) = $imagesize;
+								}
+							}
+						}
+
+						// Everything above can still leave width/height null, and not only on
+						// the remote branch: realpath() failing, containment rejecting the
+						// path, or getimagesize() returning false all land here on a LOCAL
+						// path too. That matters most on WP Offload Media, which leaves
+						// basedir local while deleting the files, so $is_remote is false and
+						// the rescue that used to live inside it never ran.
+						if ( ! $width || ! $height ) {
+
+							// Take the largest cached intermediate size rather than publish
+							// 0x0, which downstream layout code divides by (see #5588).
+							// Partial metadata - top-level width/height absent but 'sizes'
+							// populated - is common after a bulk offload migration.
+							$largest = 0;
+
+							if ( ! empty( $attachment_meta['sizes'] ) && is_array( $attachment_meta['sizes'] ) ) {
+								foreach ( $attachment_meta['sizes'] as $size_name => $size_meta ) {
+
+									if ( ! is_array( $size_meta ) ) {
+										continue;
+									}
+
+									// Validate before comparing, not after: a corrupt record
+									// holding the string "Array" satisfies both ! empty() and
+									// > $largest under PHP 8 string comparison, so it would win
+									// the largest-size contest and then publish as 0.
+									$size_dims = $this->usable_dimensions(
+										isset( $size_meta['width'] ) ? $size_meta['width'] : null,
+										isset( $size_meta['height'] ) ? $size_meta['height'] : null
+									);
+
+									if ( $size_dims && $size_dims[0] > $largest ) {
+										$largest           = $size_dims[0];
+										$width             = $size_dims[0];
+										$height            = $size_dims[1];
+										$rescued_size_name = is_string( $size_name ) ? $size_name : null;
+									}
+								}
+							}
+
+							// Point src at the file these dimensions actually describe.
+							// The rescue reads an intermediate size while $imagesrc still
+							// held whatever get_image_src() returned, so where the largest
+							// cached size is a hard crop - a theme or WooCommerce square -
+							// the published ratio belonged to a different file and the
+							// gallery laid out at the wrong shape.
+							//
+							// Ask WordPress for that size's URL rather than string-building
+							// it from dirname( $imagesrc ). Offload plugins (WP Offload
+							// Media, Infinite Uploads), CDN rewriters, WPML and multisite
+							// /files/ handling all hook the attachment-URL accessors, and a
+							// hand-built sibling URL bypasses every one of them - on exactly
+							// the offloaded sites this rescue exists for. If WordPress
+							// cannot answer, keep the src we already had rather than
+							// publishing a guess.
+							if ( $rescued_size_name ) {
+								$rescued_src = wp_get_attachment_image_src( $id, $rescued_size_name );
+
+								if ( is_array( $rescued_src ) && ! empty( $rescued_src[0] ) && is_string( $rescued_src[0] ) ) {
+									$imagesrc = $rescued_src[0];
+								} else {
+									// Dimensions without a matching file would publish the
+									// wrong ratio again, so drop them and let the terminal
+									// fallback answer.
+									$width  = null;
+									$height = null;
+								}
+							}
+						}
+					}
+				}
+
+				// Terminal fallback: never publish 0x0. The cascade above can still leave
+				// these null - cached dimensions stored as literal 0 or corrupt, realpath()
+				// failing, containment rejecting the path, or getimagesize() returning
+				// false - and intval( null ) publishes 0x0, which downstream layout
+				// divides by.
+				if ( ! $width || ! $height ) {
+
+					$last_resort = wp_get_attachment_image_src( $id, 'full' );
+
+					if ( is_array( $last_resort ) ) {
+						$last_resort_dims = $this->usable_dimensions(
+							isset( $last_resort[1] ) ? $last_resort[1] : null,
+							isset( $last_resort[2] ) ? $last_resort[2] : null
+						);
+
+						if ( $last_resort_dims ) {
+							list( $width, $height ) = $last_resort_dims;
+						}
+					}
+				}
+
+				// This image is about to publish as 0x0 and the attachment needs its
+				// metadata regenerated. Record it once.
+				//
+				// Placed AFTER the terminal fallback, not inside the branch that measures:
+				// nested in there it fired on attachments the fallback went on to rescue
+				// correctly, and each false alarm burned that attachment's 24h transient -
+				// so a later, genuine 0x0 on the same image was silent, which is the one
+				// case the log exists for. It also could not see a 0x0 that arrived by a
+				// path skipping the measurement at all.
+				//
+				// Deliberately NOT gated on WP_DEBUG, matching Pro: the affected sites are
+				// production sites on offloaded media, where a 0x0 image is invisible
+				// precisely because nothing is logged.
+				//
+				// Three bounds, because this path is anonymously reachable - core's
+				// check_read_permission() returns true for any published post. The
+				// transient bounds it across requests; the static array bounds it within
+				// one; and the request budget caps the total, so a transient store that
+				// silently drops writes (an object-cache drop-in with a dead backend)
+				// degrades to a handful of lines rather than one per image, and cannot turn
+				// a 300-image gallery into 300 transient writes plus 300 log lines on the
+				// very loop #5544 exists to make cheap.
+				//
+				// Known bound, accepted: with a working transient store coverage advances
+				// across requests, because the budget is spent only when a line is written
+				// and an already-reported attachment short-circuits on the transient without
+				// spending it. With a store that drops writes, the same first ten
+				// attachments spend the budget every request and later ones are never named
+				// individually. The failure class is still reported; capping the volume on
+				// an anonymously-reachable path is the point.
+				static $logged_missing_dims = [];
+				static $missing_dims_budget = 0;
+				static $logged_rescued_dims = [];
+				static $rescued_dims_budget = 0;
+
+				// Two buckets, two budgets. A successful rescue is worth reporting - the
+				// attachment still needs its metadata regenerated - but it is not the same
+				// event as publishing 0x0, and sharing the key meant a benign rescue burned
+				// that attachment's 24h key, so a later genuine 0x0 on the same image went
+				// unreported: the failure an earlier round relocated this whole block to
+				// eliminate. Sharing the budget also let routine rescue chatter starve the
+				// fault line.
+				if ( $rescued_size_name && $width && $height ) {
+
+					if ( $rescued_dims_budget < 10 && ! isset( $logged_rescued_dims[ $id ] ) ) {
+
+						$logged_rescued_dims[ $id ] = true;
+						++$rescued_dims_budget;
+
+						$this->common->log_once_per_day(
+							'rescued_dims',
+							(string) (int) $id,
+							sprintf( 'Envira Gallery Lite: attachment %d has no usable top-level dimensions; published the "%s" size instead. Regenerate its metadata.', (int) $id, preg_replace( '/[^A-Za-z0-9_.\-]/', '', $rescued_size_name ) )
+						);
+					}
+				} elseif ( ( ! $width || ! $height ) && $missing_dims_budget < 10 && ! isset( $logged_missing_dims[ $id ] ) ) {
+
+					$logged_missing_dims[ $id ] = true;
+					++$missing_dims_budget;
+
+					// Only the attachment ID is interpolated: $imagesrc traces back to
+					// _eg_gallery_data, which an edit_posts-capable user controls, and
+					// newlines in it would forge log entries.
+					$this->common->log_once_per_day(
+						'missing_dims',
+						(string) (int) $id,
+						sprintf( 'Envira Gallery Lite: no cached dimensions for attachment %d; regenerate its metadata. Further reports for this attachment are suppressed for 24 hours.', (int) $id )
+					);
 				}
 
 				$item['src']    = $imagesrc;
@@ -190,8 +498,30 @@ class Envira_Rest {
 		}
 
 		// Update Fields.
-		$gallery_data['id']              = $post_object->ID;
-		$gallery_data['config']['title'] = $post_object->title;
+		$gallery_data['id'] = $post_object->ID;
+		// wp_strip_all_tags() to match every sibling writer of this key
+		// (metaboxes.php, admin/common.php, and this class's own read path). The key
+		// had been blank since 2024 because of the property typo fixed with it, so it
+		// re-enters a config array whose sanitizer has no 'title' case and whose
+		// consumers were never exercised with a populated value.
+		$gallery_data['config']['title'] = wp_strip_all_tags( $post_object->post_title );
+
+		// is_array() is load-bearing, not defensive tidying. register_rest_field() gives
+		// this field no schema, so $value is whatever JSON the client sent. When config
+		// arrives as a STRING, every branch of sanitize_config_values() is skipped -
+		// each one tests isset( $config['key'] ), and a non-numeric string offset is
+		// always false - and wp_parse_args() then hands the string to wp_parse_str(),
+		// which parse_str()s the payload into real config keys. The whole allowlist was
+		// bypassable by changing one field's JSON type.
+		if ( isset( $value['config'] ) && ! is_array( $value['config'] ) ) {
+
+			// Refuse rather than drop. Falling through stored every other field and
+			// returned truthy, so a client that double-encoded the field - "config":
+			// "{\"columns\":3}" is an ordinary serialization slip - got a 200 with the
+			// gallery echoed back and not one config key saved, indefinitely, with
+			// nothing logged and no way to tell it from a save that worked.
+			return new WP_Error( 'envira_invalid_config', __( 'Gallery config must be an object.', 'envira-gallery-lite' ), [ 'status' => 400 ] );
+		}
 
 		if ( isset( $value['config'] ) ) {
 			// Sanitize config values before saving to prevent XSS
@@ -199,14 +529,32 @@ class Envira_Rest {
 			$gallery_data['config'] = wp_parse_args( $value['config'], $gallery_data['config'] );
 		}
 
+		// Attachment ids arrive as raw client JSON and are used as array keys in
+		// _eg_gallery_data. A non-numeric key survives PHP's key coercion and is later
+		// interpolated into front-end attributes, so cast once here rather than trusting
+		// every downstream reader. absint() also stops an array reaching get_post_meta()
+		// or unset(), which is a TypeError under PHP 8.
+		$attach_id = isset( $value['attach_id'] ) && is_scalar( $value['attach_id'] ) ? absint( $value['attach_id'] ) : 0;
+
+		// Refuse the branches that need an attachment id when it did not survive that
+		// cast, rather than letting 0 through. With 0, remove_image unset a key that
+		// cannot exist and array_search() could not match, so the image stayed in the
+		// gallery behind a 200; update_image was worse, persisting gallery[0] with a
+		// title and no id, src or status, which then reached the render loop as a broken
+		// item. Both were silent, and both were louder before the cast existed - a
+		// non-scalar raised a TypeError and an absent key a warning.
+		if ( ( isset( $value['remove_image'] ) || isset( $value['update_image'] ) ) && ! $attach_id ) {
+			return new WP_Error( 'envira_invalid_attach_id', __( 'A valid attachment ID is required.', 'envira-gallery-lite' ), [ 'status' => 400 ] );
+		}
+
 		if ( isset( $value['remove_image'] ) ) {
 			$in_gallery  = get_post_meta( $post_object->ID, '_eg_in_gallery', true );
-			$has_gallery = get_post_meta( $value['attach_id'], '_eg_has_gallery', true );
+			$has_gallery = get_post_meta( $attach_id, '_eg_has_gallery', true );
 
 			// Unset the image from the gallery, in_gallery and has_gallery checkers.
-			unset( $gallery_data['gallery'][ $value['attach_id'] ] );
+			unset( $gallery_data['gallery'][ $attach_id ] );
 
-			$key = array_search( $value['attach_id'], (array) $in_gallery, true );
+			$key = array_search( $attach_id, (array) $in_gallery, true );
 
 			if ( false !== $key ) {
 				unset( $in_gallery[ $key ] );
@@ -221,21 +569,43 @@ class Envira_Rest {
 
 		if ( isset( $value['update_image'] ) ) {
 
-			$attach_id    = $value['attach_id'];
-			$update_image = $value['updated_image'];
-
-			if ( isset( $update_image['title'] ) ) {
-				$gallery_data['gallery'][ $attach_id ]['title'] = trim( $update_image['title'] );
+			// Rename an image that is IN this gallery, or refuse. A non-zero id was the
+			// only requirement before, and the array write auto-created a slot - so a
+			// rename for an unrelated attachment inserted an item with a title and no
+			// id, src or status, which the render loop then walked because only
+			// 'pending' is skipped.
+			if ( ! isset( $gallery_data['gallery'][ $attach_id ] ) || ! is_array( $gallery_data['gallery'][ $attach_id ] ) ) {
+				return new WP_Error( 'envira_image_not_in_gallery', __( 'That image is not in this gallery.', 'envira-gallery-lite' ), [ 'status' => 404 ] );
 			}
-			if ( isset( $update_image['caption'] ) ) {
-				$gallery_data['gallery'][ $attach_id ]['caption'] = trim( $update_image['caption'] );
+
+			$update_image = isset( $value['updated_image'] ) && is_array( $value['updated_image'] ) ? $value['updated_image'] : [];
+
+			// Sanitized the way the AJAX writer of these same two keys does. trim() alone
+			// raised an uncaught TypeError on an array, and stored the value unfiltered.
+			if ( isset( $update_image['title'] ) && is_scalar( $update_image['title'] ) ) {
+				$gallery_data['gallery'][ $attach_id ]['title'] = trim( wp_kses_post( (string) $update_image['title'] ) );
+			}
+			if ( isset( $update_image['caption'] ) && is_scalar( $update_image['caption'] ) ) {
+				$gallery_data['gallery'][ $attach_id ]['caption'] = trim( wp_kses_post( (string) $update_image['caption'] ) );
 			}
 		}
 
 		if ( isset( $value['gallery'] ) ) {
 
 			foreach ( (array) $value['gallery'] as $i => $image ) {
-				$gallery_data = envira_gallery_ajax_prepare_gallery_data( $gallery_data, $image['id'] );
+
+				// Same reasoning as $attach_id above: this id becomes a gallery array key.
+				if ( ! is_array( $image ) || ! isset( $image['id'] ) || ! is_scalar( $image['id'] ) ) {
+					continue;
+				}
+
+				$image_id = absint( $image['id'] );
+
+				if ( ! $image_id ) {
+					continue;
+				}
+
+				$gallery_data = envira_gallery_ajax_prepare_gallery_data( $gallery_data, $image_id );
 			}
 		}
 
@@ -244,6 +614,122 @@ class Envira_Rest {
 
 		return update_post_meta( $post_object->ID, '_eg_gallery_data', $gallery_data );
 	}
+	/**
+	 * Helper method to accept a cached dimension pair only when it is really a size.
+	 *
+	 * Stored image metadata is not trustworthy on the sites this class has to cope
+	 * with. A zero pair is common after a bulk offload migration, and a naive SQL
+	 * search-replace against a serialized array leaves the literal string "Array"
+	 * in place of the numbers (nextgen-gallery#882). Both are truthy, so an
+	 * ! empty() test copies them straight out, skips the rescue, the measurement and
+	 * the error_log, and publishes 0x0 once intval() finally sees them - which
+	 * downstream layout divides by (envira-gallery-plugin#5588).
+	 *
+	 * @since 1.16.0
+	 *
+	 * @param mixed $width  Candidate width from stored metadata.
+	 * @param mixed $height Candidate height from stored metadata.
+	 * @return array{0:int,1:int}|null [ width, height ] when both are positive numbers, else null.
+	 */
+	private function usable_dimensions( $width, $height ) {
+
+		if ( ! is_numeric( $width ) || ! is_numeric( $height ) ) {
+			return null;
+		}
+
+		$width  = (int) $width;
+		$height = (int) $height;
+
+		if ( $width < 1 || $height < 1 ) {
+			return null;
+		}
+
+		return [ $width, $height ];
+	}
+
+	/**
+	 * Read image dimensions out of a resized file's own name.
+	 *
+	 * Both WordPress's registered sizes and Envira_Gallery_Common::resize_image()
+	 * encode the result in the filename - "photo-640x480.jpg", or
+	 * "photo-640x480_c.jpg" / "photo-640x480_tl.jpg" once a crop or alignment
+	 * marker is appended. Reading it back costs nothing and is authoritative for
+	 * the file get_image_src() actually returned, which cached attachment
+	 * metadata is not once cropping is involved.
+	 *
+	 * LiteEquiv of: envira_get_dimensions_from_filename()
+	 *
+	 * @since 1.16.0
+	 *
+	 * @param string     $src             Image URL or file path.
+	 * @param array|null $attachment_meta The attachment's _wp_attachment_metadata, used to
+	 *                                    tell a derivative from an original so an original
+	 *                                    whose own name ends "-WxH" is not misread.
+	 * @return array{0:int,1:int}|null [ width, height ], or null when there is no usable suffix.
+	 */
+	private function get_dimensions_from_filename( $src, $attachment_meta = null ) {
+
+		if ( empty( $src ) || ! is_string( $src ) || ! preg_match( '/-(\d+)x(\d+)(?:_[a-zA-Z0-9]+)?\.[a-zA-Z0-9]+$/', basename( $src ), $matches ) ) {
+			return null;
+		}
+
+		// A "-WxH" in the name only describes the file when the file is a derivative.
+		// An ORIGINAL upload can carry the same shape - "hero-1600x900.jpg" that is
+		// really 800x450 - and trusting it there publishes the filename's numbers over
+		// correct cached metadata, which the pre-guard code got right by measuring the
+		// file. Compare against the attachment's own stored filenames: if this IS one
+		// of them, the suffix is part of the user's name, not a size.
+		//
+		// 'original_image' is checked as well as 'file' for parity with Pro, where
+		// envira_get_image_src() returns the pre-scale original for full/random sizes
+		// so only that key matches on an attachment above big_image_size_threshold.
+		// Lite asks for wp_get_attachment_image_src( $id, 'full' ), which returns the
+		// "-scaled" file, so 'file' is the one that matches here - both are kept so
+		// the two products stay comparable. Lite is the stricter of the two: Pro's
+		// envira_get_dimensions_from_filename() has no derivative check at all and no
+		// zero-axis rejection, so it carries both defects this method fixes. Pro needs
+		// the guard added, not loosened; until then the rule is not identical.
+		//
+		// The guard is unconditional. It used to run only when cached top-level
+		// dimensions existed, to avoid pushing an un-answerable attachment into the
+		// per-image getimagesize() block #5544 exists to avoid - but that turned it
+		// off for precisely the attachments this PR is about. An offloaded attachment
+		// with no cached dimensions took the filename's numbers on trust, so
+		// "hero-1600x900.jpg" that is really 800x450 published 1600x900, and because
+		// those are truthy the measurement, the rescue, the log and the terminal
+		// fallback were all skipped: wrong dimensions, no signal. Returning null costs
+		// at most one local stat, and on a stream-wrapped path the remote guard below
+		// still refuses to stat at all.
+		// With no metadata at all - wp_get_attachment_metadata() returns false when
+		// _wp_attachment_metadata is missing, which is the regenerate-me case this whole
+		// cascade exists for - there is nothing to compare the basename against, so the
+		// suffix cannot be shown to describe a derivative. Refuse it rather than trust
+		// it: returning the filename's numbers here is a confident wrong answer that
+		// skips the measurement, the rescue, the terminal fallback and the log, which is
+		// the same defect removing the gate above was meant to close.
+		if ( ! is_array( $attachment_meta ) ) {
+			return null;
+		}
+
+		foreach ( [ 'file', 'original_image' ] as $meta_key ) {
+
+			if ( ! empty( $attachment_meta[ $meta_key ] ) && is_string( $attachment_meta[ $meta_key ] )
+				&& basename( $src ) === basename( $attachment_meta[ $meta_key ] ) ) {
+				return null;
+			}
+		}
+
+		// A zero in either axis is not a usable answer, and it is worse than none: the
+		// array is truthy, so it short-circuits the cascade past the measurement, the
+		// rescue and the only error_log, and then publishes 0x0. A file named
+		// "spacer-0x0.png" or "banner-1920x0.jpg" is all it takes.
+		if ( (int) $matches[1] < 1 || (int) $matches[2] < 1 ) {
+			return null;
+		}
+
+		return [ (int) $matches[1], (int) $matches[2] ];
+	}
+
 	/**
 	 * Helper method to retrieve the proper image src attribute based on gallery settings.
 	 *
@@ -399,14 +885,61 @@ class Envira_Rest {
 
 			$resized_image = $this->common->resize_image( $image_to_crop, $args['width'], $args['height'], true, $this->get_config( 'crop_position', $data ), $args['quality'], $args['retina'], $data );
 
-			// If there is an error, possibly output error message and return the default image src.
+			// If there is an error, fall back to the un-cropped source rather than false.
+			// Returning false here blanked $item['src'] outright, so the block editor and
+			// the front end rendered nothing at all. That path is now routinely reached on
+			// offloaded media: get_image_info() refuses to crop a stream-wrapped file
+			// (s3://, iu://) instead of stalling on it, so an offloaded site would lose
+			// every image in every gallery. An un-cropped image is a visible degradation;
+			// no image is a broken gallery. See envira-gallery-plugin#5544.
 			if ( is_wp_error( $resized_image ) ) {
-				return false;
-			} else {
 
-				return apply_filters( 'envira_gallery_image_src', $resized_image, $id, $item, $data );
+				// Only the offload codes are expected here. Anything else - a server that
+				// lost GD/Imagick ('envira-gallery-error-no-editor'), unset crop dimensions
+				// ('envira-gallery-error-no-size'), or a failed $editor->save() - is a real
+				// fault that would otherwise serve full-size originals in place of thumbs
+				// indefinitely with no signal anywhere. Log those, throttled per attachment
+				// the way get_gallery_data() is, and un-gated on WP_DEBUG for the same
+				// reason: these are production sites.
+				$expected_codes = $this->common->get_routine_resize_error_codes();
+				$error_code     = $resized_image->get_error_code();
 
+				if ( ! in_array( $error_code, $expected_codes, true ) ) {
+
+					// Keyed per attachment AND per error code: resize_image() can fail on the
+					// same image for materially different reasons, and an id-only key silenced
+					// every later fault on that image for a day - including the recurrence
+					// after an operator fixed the first one. The code is already reduced to
+					// [A-Za-z0-9_.-], so it is safe inside a transient name.
+					$error_slug = preg_replace( '/[^A-Za-z0-9_.\-]/', '', (string) $error_code );
+					$throttle   = (int) $id . '-' . $error_slug;
+
+					// Same three bounds as the missing-dimensions log above, and for the same
+					// reason: this runs once per image per render, so a store that drops
+					// transient writes must not restore per-image logging.
+					static $logged_resize_errors = [];
+					static $resize_error_budget  = 0;
+
+					if ( $resize_error_budget < 10 && ! isset( $logged_resize_errors[ $throttle ] ) ) {
+
+						$logged_resize_errors[ $throttle ] = true;
+						++$resize_error_budget;
+
+						// Only the attachment ID and the error code are interpolated, and the
+						// code is stripped of newlines so a filtered WP_Error cannot forge
+						// log entries.
+						$this->common->log_once_per_day(
+							'rest_resize_error',
+							$throttle,
+							sprintf( 'Envira Gallery Lite: could not resize attachment %d (%s); serving the un-cropped image.', (int) $id, $error_slug )
+						);
+					}
+				}
+
+				return apply_filters( 'envira_gallery_image_src', $image, $id, $item, $data );
 			}
+
+			return apply_filters( 'envira_gallery_image_src', $resized_image, $id, $item, $data );
 		}
 		// return full image.
 		return apply_filters( 'envira_gallery_image_src', $image, $id, $item, $data );
@@ -435,6 +968,15 @@ class Envira_Rest {
 	 * @return array Sanitized config array.
 	 */
 	public function sanitize_config_values( $config ) {
+
+		// Every check below is an isset() on an array key. Given a string, they are all
+		// string-offset tests that return false, so the method would return its input
+		// untouched and look like it had sanitized it. This is a public method - keep the
+		// guard here so any caller gets it, not only update_gallery_data().
+		if ( ! is_array( $config ) ) {
+			return [];
+		}
+
 		// Sanitize description to prevent stored XSS via the REST API.
 		if ( isset( $config['description'] ) ) {
 			$description = $config['description'];
@@ -485,6 +1027,50 @@ class Envira_Rest {
 				$v              = absint( $config[ $key ] ); // Enforce integer; eliminates injection risk in bare JS numeric context.
 				$config[ $key ] = $v > 0 ? $v : $this->common->get_config_default( $key );
 			}
+		}
+
+		// Same treatment for the crop dimensions. shortcode.php emits these into
+		// width="" / height="" and data-envira-width="" with no escaping, so a value
+		// carrying a quote breaks out of the attribute. The classic metabox writer
+		// absint()s them; this REST writer merged them raw, and it has no schema to
+		// coerce types upstream either.
+		foreach ( [ 'crop_width', 'crop_height' ] as $key ) {
+			if ( isset( $config[ $key ] ) ) {
+				$v              = absint( $config[ $key ] );
+				$config[ $key ] = $v > 0 ? $v : $this->common->get_config_default( $key );
+			}
+		}
+
+		// crop_position lands in a filename this plugin writes, so it is allowlisted
+		// here as well as at the sink in get_image_info(). image_size is used as an
+		// array key on stored metadata, where a non-string raises a PHP 8 TypeError,
+		// and the metabox writer already validates it against registered sizes -
+		// apply the same policy to the REST writer.
+		if ( isset( $config['crop_position'] ) ) {
+			$valid_positions  = [ 'c', 't', 'b', 'l', 'r', 'tl', 'tr', 'bl', 'br' ];
+			$default_position = $this->common->get_config_default( 'crop_position' );
+
+			// get_config_defaults() has no crop_position entry, so the default is false -
+			// store the centre crop the sink falls back to rather than a bare false.
+			if ( ! is_string( $default_position ) || ! in_array( $default_position, $valid_positions, true ) ) {
+				$default_position = 'c';
+			}
+
+			$config['crop_position'] = ( is_string( $config['crop_position'] ) && in_array( $config['crop_position'], $valid_positions, true ) )
+				? $config['crop_position']
+				: $default_position;
+		}
+
+		if ( isset( $config['image_size'] ) ) {
+			$valid_image_sizes    = array_column( $this->common->get_image_sizes(), 'value' );
+			$config['image_size'] = ( is_string( $config['image_size'] ) && in_array( $config['image_size'], $valid_image_sizes, true ) )
+				? $config['image_size']
+				: $this->common->get_config_default( 'image_size' );
+		}
+
+		// 'dimensions' only ever gates whether those two attributes are printed.
+		if ( isset( $config['dimensions'] ) ) {
+			$config['dimensions'] = filter_var( $config['dimensions'], FILTER_VALIDATE_BOOLEAN ) ? 1 : 0;
 		}
 
 		return $config;

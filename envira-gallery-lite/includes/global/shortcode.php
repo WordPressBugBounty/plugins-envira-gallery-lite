@@ -474,7 +474,9 @@ class Envira_Gallery_Shortcode {
 
 		$output = apply_filters( 'envira_gallery_output_before_image', $output, $id, $item, $data, $i );
 
-		$gallery_theme = intval( $this->get_config( 'columns', $data ) ) === 0 ? ' envira-' . $this->get_config( 'justified_gallery_theme', $data ) : '';
+		// Sanitized the same way the wrapper div does with this key, rather than
+		// concatenated raw into class="". get_config() reads stored gallery data.
+		$gallery_theme = intval( $this->get_config( 'columns', $data ) ) === 0 ? ' envira-' . sanitize_html_class( $this->sanitize_justified_gallery_theme( $this->get_config( 'justified_gallery_theme', $data ) ) ) : '';
 
 		// Build the image and allow filtering.
 		// How we build the html depends on the lazy load script.
@@ -525,7 +527,7 @@ class Envira_Gallery_Shortcode {
 
 			// Automatic.
 
-			$output_item = '<img id="envira-gallery-image-' . sanitize_html_class( $id ) . '" class="envira-gallery-image envira-gallery-image-' . $i . $gallery_theme . ' ' . $envira_lazy_load . '" data-envira-index="' . $i . '" src="' . esc_url( $output_src ) . '"' . ( $this->get_config( 'dimensions', $data ) ? ' width="' . $this->get_config( 'crop_width', $data ) . '" height="' . $this->get_config( 'crop_height', $data ) . '"' : '' ) . ' data-envira-src="' . esc_url( $output_src ) . '" data-envira-gallery-id="' . $data['id'] . '" data-envira-item-id="' . $id . '" data-envira-caption="' . $caption . '" alt="' . esc_attr( $item['alt'] ) . '" title="' . wp_strip_all_tags( htmlspecialchars( $item['title'] ) ) . '" ' . apply_filters( 'envira_gallery_output_image_attr', '', $id, $item, $data, $i ) . ' itemprop="thumbnailUrl" data-envira-srcset="' . esc_url( $output_src ) . ' 400w,' . esc_url( $output_src ) . ' 2x" data-envira-width="' . $output_width . '" data-envira-height="' . $output_height . '" srcset="' . ( ( $envira_lazy_load ) ? 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' : esc_url( $image_src_retina ) . ' 2x' ) . '" data-safe-src="' . ( ( $envira_lazy_load ) ? 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' : esc_url( $output_src ) ) . '" />';
+			$output_item = '<img id="envira-gallery-image-' . sanitize_html_class( $id ) . '" class="envira-gallery-image envira-gallery-image-' . $i . $gallery_theme . ' ' . $envira_lazy_load . '" data-envira-index="' . $i . '" src="' . esc_url( $output_src ) . '"' . ( $this->get_config( 'dimensions', $data ) ? ' width="' . absint( $this->get_config( 'crop_width', $data ) ) . '" height="' . absint( $this->get_config( 'crop_height', $data ) ) . '"' : '' ) . ' data-envira-src="' . esc_url( $output_src ) . '" data-envira-gallery-id="' . absint( $data['id'] ) . '" data-envira-item-id="' . esc_attr( $id ) . '" data-envira-caption="' . $caption . '" alt="' . esc_attr( $item['alt'] ) . '" title="' . wp_strip_all_tags( htmlspecialchars( $item['title'] ) ) . '" ' . apply_filters( 'envira_gallery_output_image_attr', '', $id, $item, $data, $i ) . ' itemprop="thumbnailUrl" data-envira-srcset="' . esc_url( $output_src ) . ' 400w,' . esc_url( $output_src ) . ' 2x" data-envira-width="' . absint( $output_width ) . '" data-envira-height="' . absint( $output_height ) . '" srcset="' . ( ( $envira_lazy_load ) ? 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' : esc_url( $image_src_retina ) . ' 2x' ) . '" data-safe-src="' . ( ( $envira_lazy_load ) ? 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' : esc_url( $output_src ) ) . '" />';
 		} else {
 
 			// Legacy.
@@ -540,10 +542,10 @@ class Envira_Gallery_Shortcode {
 					// this shouldn't be happening, but this avoids a debug message.
 					$padding_bottom = 100;
 				}
-				$output_item .= '<div class="envira-lazy" data-test-width="' . $output_width . '" data-test-height="' . $output_height . '" style="padding-bottom:' . $padding_bottom . '%;">';
+				$output_item .= '<div class="envira-lazy" data-test-width="' . absint( $output_width ) . '" data-test-height="' . absint( $output_height ) . '" style="padding-bottom:' . (float) $padding_bottom . '%;">';
 			}
 
-			$output_item .= '<img id="envira-gallery-image-' . sanitize_html_class( $id ) . '" class="envira-gallery-image envira-gallery-image-' . $i . $gallery_theme . '" data-envira-index="' . $i . '" src="' . esc_url( $output_src ) . '"' . ( $this->get_config( 'dimensions', $data ) ? ' width="' . $this->get_config( 'crop_width', $data ) . '" height="' . $this->get_config( 'crop_height', $data ) . '"' : '' ) . ' data-envira-src="' . esc_url( $output_src ) . '" data-envira-gallery-id="' . $data['id'] . '" data-envira-item-id="' . $id . '" data-envira-caption="' . $caption . '" alt="' . esc_attr( $item['alt'] ) . '" title="' . wp_strip_all_tags( htmlspecialchars( $title ) ) . '" ' . apply_filters( 'envira_gallery_output_image_attr', '', $id, $item, $data, $i ) . ' itemprop="thumbnailUrl" data-envira-srcset="' . esc_url( $output_src ) . ' 400w,' . esc_url( $output_src ) . ' 2x" srcset="' . ( ( $envira_lazy_load ) ? 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' : esc_url( $image_src_retina ) . ' 2x' ) . '" />';
+			$output_item .= '<img id="envira-gallery-image-' . sanitize_html_class( $id ) . '" class="envira-gallery-image envira-gallery-image-' . $i . $gallery_theme . '" data-envira-index="' . $i . '" src="' . esc_url( $output_src ) . '"' . ( $this->get_config( 'dimensions', $data ) ? ' width="' . absint( $this->get_config( 'crop_width', $data ) ) . '" height="' . absint( $this->get_config( 'crop_height', $data ) ) . '"' : '' ) . ' data-envira-src="' . esc_url( $output_src ) . '" data-envira-gallery-id="' . absint( $data['id'] ) . '" data-envira-item-id="' . esc_attr( $id ) . '" data-envira-caption="' . $caption . '" alt="' . esc_attr( $item['alt'] ) . '" title="' . wp_strip_all_tags( htmlspecialchars( $title ) ) . '" ' . apply_filters( 'envira_gallery_output_image_attr', '', $id, $item, $data, $i ) . ' itemprop="thumbnailUrl" data-envira-srcset="' . esc_url( $output_src ) . ' 400w,' . esc_url( $output_src ) . ' 2x" srcset="' . ( ( $envira_lazy_load ) ? 'data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' : esc_url( $image_src_retina ) . ' 2x' ) . '" />';
 
 			if ( $envira_lazy_load ) {
 
@@ -889,7 +891,7 @@ class Envira_Gallery_Shortcode {
 						?>
 
 						$('#envira-gallery-<?php echo intval( $data['id'] ); ?>').enviraJustifiedGallery({
-							rowHeight: <?php echo esc_js( $justified_row_height ); ?>,
+							rowHeight: <?php echo absint( $justified_row_height ); /* absint(), not esc_js(): emitted unquoted inside an options object, and esc_js() neutralizes quotes and backslashes but not commas, colons or parentheses - so "0,margins:(alert(1))" would render verbatim and run. Same reasoning as thumbnails_width/height. */ ?>,
 							maxRowHeight: -1,
 							waitThumbnailsLoad: true,
 							selector: '> div > div',
@@ -1754,12 +1756,88 @@ class Envira_Gallery_Shortcode {
 
 		// If there is an error, possibly output error message and return the default image src.
 		if ( is_wp_error( $resized_image ) ) {
-			// If WP_DEBUG is enabled, and we're logged in, output an error to the user.
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG && is_user_logged_in() ) {
-				echo '<pre>Envira: Error occured resizing image (these messages are only displayed to logged in WordPress users):<br />';
-				echo 'Error: ' . esc_html( $resized_image->get_error_message() ) . '<br />';
-				echo 'Image: ' . esc_html( $image ) . '<br />';
-				echo 'Args: ' . var_export($args, true) . '</pre>'; // @codingStandardsIgnoreLine
+			// Stay quiet when the image simply lives on remote/stream-wrapped storage and
+			// therefore cannot be cropped (envira-gallery-plugin#5544). That is expected and
+			// not actionable, it is true of every image on an offloaded site, and this method
+			// runs twice per item (src + retina) while the caller is still building $output -
+			// so the dump below would print ~20 unbuffered <pre> blocks above a 10-image
+			// gallery for every logged-in visitor. The un-cropped fallback still applies.
+			//
+			// 'uploads-unresolved' belongs here as well. rest.php deliberately logs that
+			// code, but this arm decides whether to print into the page, and the condition
+			// is site-wide rather than per-image, so it would dump above every gallery for
+			// every logged-in visitor. Its signal belongs in the log, not the markup.
+			$routine  = $this->common->get_routine_resize_error_codes();
+			$undumped = $this->common->get_undumped_resize_error_codes();
+
+			// Keyed per attachment AND per error code, matching rest.php: keyed on the id
+			// alone, a second, different fault on the same image was silenced for the rest
+			// of the request. The code is stripped to [A-Za-z0-9_.-] before it is
+			// interpolated, so a filtered WP_Error cannot forge log entries.
+			$error_slug = preg_replace( '/[^A-Za-z0-9_.\-]/', '', (string) $resized_image->get_error_code() );
+			$throttle   = (int) $id . '-' . $error_slug;
+
+			// Throttled per attachment and code, and bounded per request. This method runs
+			// twice per item (src plus retina) on every render, so an un-throttled line
+			// meant ~20 entries per page view for a ten-image gallery - the same multiplier
+			// the on-page dump had, just moved to disk.
+			// A budget per arm, not one shared. rest.php scopes its budget to non-routine
+			// codes only, and sharing it here meant routine offload chatter - true of
+			// every image on an offloaded site - could spend all ten lines and starve the
+			// un-gated fault log this arm exists to guarantee.
+			static $logged_resize_failures = [];
+			static $routine_failure_budget = 0;
+			static $fault_failure_budget   = 0;
+
+			if ( in_array( $resized_image->get_error_code(), $routine, true ) ) {
+
+				// 'no-file' is also what an ordinary missing or unreadable LOCAL file
+				// returns, so suppressing the on-page dump would otherwise remove the last
+				// signal a developer gets for a plainly broken gallery. Keep a log line so
+				// the diagnostic moves rather than disappears. WP_DEBUG-gated: on an
+				// offloaded site this is true of every image, and it is expected there.
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG && $routine_failure_budget < 10 && ! isset( $logged_resize_failures[ $throttle ] ) ) {
+
+					$logged_resize_failures[ $throttle ] = true;
+					++$routine_failure_budget;
+
+					$this->common->log_once_per_day(
+						'resize_routine',
+						$throttle,
+						sprintf( 'Envira Gallery Lite: could not resize attachment %d (%s); serving the un-cropped image.', (int) $id, $error_slug )
+					);
+				}
+			} else {
+
+				// Every other code is a real fault - a server that lost GD/Imagick, crop
+				// dimensions that are unset or could not be read, a failed $editor->save().
+				// Log those un-gated, matching rest.php and for the same reason: the
+				// alternative is a production site serving full-size originals in place of
+				// thumbnails indefinitely with nothing recorded anywhere. This is the path
+				// every visitor takes, so it is the one that most needs the signal.
+				// Bounded across requests too, not just within one. get_image_src() runs
+				// twice per item on every uncached render, so a server that lost its image
+				// library spent the full budget on every page view forever - the sibling in
+				// rest.php carries the same 24h transient for exactly that reason.
+				if ( $fault_failure_budget < 10 && ! isset( $logged_resize_failures[ $throttle ] ) ) {
+
+					$logged_resize_failures[ $throttle ] = true;
+					++$fault_failure_budget;
+
+					$this->common->log_once_per_day(
+						'shortcode_resize_fault',
+						$throttle,
+						sprintf( 'Envira Gallery Lite: could not resize attachment %d (%s); serving the un-cropped image. This is not an offloaded-media condition and needs attention.', (int) $id, $error_slug )
+					);
+				}
+
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG && is_user_logged_in()
+					&& ! in_array( $resized_image->get_error_code(), $undumped, true ) ) {
+					echo '<pre>Envira: Error occured resizing image (these messages are only displayed to logged in WordPress users):<br />';
+					echo 'Error: ' . esc_html( $resized_image->get_error_message() ) . '<br />';
+					echo 'Image: ' . esc_html( $image ) . '<br />';
+					echo 'Args: ' . esc_html( var_export( $args, true ) ) . '</pre>'; // @codingStandardsIgnoreLine -- Not run in production; escaped because $args carries stored config values.
+				}
 			}
 
 			// Return the non-cropped image as a fallback.

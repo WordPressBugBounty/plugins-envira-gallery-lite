@@ -4,7 +4,7 @@ Tags: photo gallery, image gallery, gallery, lightbox, albums
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.0
-Stable tag: 1.16.0
+Stable tag: 1.16.1
 License: GNU General Public License v2.0 or later
 
 The fastest drag & drop photo gallery plugin. Create stunning image galleries, albums, video galleries & lightbox displays in minutes — no coding!
@@ -268,7 +268,17 @@ Lite support is available on the [WordPress.org support forum](https://wordpress
 
 == Changelog ==
 
-= 1.16.0 - 09.03.2026 =
+= 1.16.1 - 10.01.2026 =
+* Fixed: The block editor no longer stalls or times out on sites that serve media from remote storage, such as Infinite Uploads or WP Offload Media.
+* Fixed: Saving a gallery no longer breaks when an image cannot be cropped, and lightbox thumbnails are kept instead of being cleared.
+* Fixed: Working cropped thumbnails are no longer replaced with the full-size original each time a gallery is saved.
+* Fixed: Images with non-ASCII filenames, and images served from a CDN or external host, are no longer given a duplicated site address.
+* Fixed: Galleries with unusable stored crop dimensions no longer cause a fatal error on the front end, and images are no longer output at 0x0.
+* Fixed: Searching for a gallery in the block editor now finds titles containing characters such as & or #.
+* Improved: Gallery image dimensions now come from the data WordPress already stores, removing a filesystem check for every image and speeding up editor screens.
+* Updated: General security improvements and hardening.
+
+= 1.16.0 - 09.08.2026 =
 * Added: Submissions tab in the gallery editor, showing how visitor photo submissions work with Envira Pro.
 
 = 1.15.1 - 08.18.2026 =

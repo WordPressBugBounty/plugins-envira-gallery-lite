@@ -177,8 +177,15 @@ class Envira_Gallery_Common {
 		$valid_themes       = $this->get_justified_gallery_themes();
 		$valid_theme_values = wp_list_pluck( $valid_themes, 'value' );
 
+		// Anything non-scalar cannot be a theme slug, and trim() raises an uncaught
+		// TypeError on an array under PHP 8 - a 500 on the REST write that reaches here
+		// with a client-supplied config value.
+		if ( ! is_scalar( $theme ) ) {
+			return $this->get_config_default( 'justified_gallery_theme' );
+		}
+
 		// Sanitize the input - remove any HTML tags and trim whitespace
-		$theme = sanitize_text_field( trim( $theme ) );
+		$theme = sanitize_text_field( trim( (string) $theme ) );
 
 		// Check if theme is in the list of valid themes
 		if ( in_array( $theme, $valid_theme_values, true ) ) {
@@ -795,6 +802,34 @@ class Envira_Gallery_Common {
 		// Filter args.
 		$args = apply_filters( 'envira_gallery_resize_image_args', $args );
 
+		// Coerce the dimensions before any arithmetic. These come from gallery config,
+		// and the REST writer used to merge crop_width/crop_height without sanitizing,
+		// so a stored non-numeric value reached "$width * $retina" in get_image_info()
+		// and raised an uncaught TypeError on PHP 8 - a fatal on the front end, not a
+		// bad thumbnail. Sanitizing the writer stops new poisoned values; this stops the
+		// ones already stored. absint() is a no-op for every legitimate value. Note it
+		// does not necessarily end in the no-size WP_Error: get_image_info() tests
+		// "$width && ! $height" before the both-empty bail, so ONE poisoned axis is
+		// recomputed from the original's aspect ratio and the resize succeeds at a
+		// size nobody asked for. That is the aspect-preserving behaviour the function
+		// already had for a caller passing a single dimension; only a poisoned pair
+		// reaches the error.
+		//
+		// Coerced on $args, AFTER the filter, because $args is what get_image_info()
+		// unpacks. Coercing the function parameters and writing those back would
+		// overwrite whatever envira_gallery_resize_image_args set, silently discarding
+		// the only dimension effect that filter has. The local $width/$height are left
+		// alone because nothing reads them again on this path - get_image_info() does
+		// the dimension arithmetic on $args, and the keys extract( $common ) brings
+		// into scope below are dir/name/ext/orig_*/dest_*/file_path, not width/height.
+		if ( isset( $args[1] ) ) {
+			$args[1] = ( null === $args[1] ) ? null : absint( $args[1] );
+		}
+
+		if ( isset( $args[2] ) ) {
+			$args[2] = ( null === $args[2] ) ? null : absint( $args[2] );
+		}
+
 		// Don't resize images that don't belong to this site's URL.
 		// Strip ?lang=fr from blog's URL - WPML adds this on.
 		// and means our next statement fails.
@@ -929,6 +964,119 @@ class Envira_Gallery_Common {
 	}
 
 	/**
+	 * Write a diagnostic at most once per key per day, using one aggregate transient.
+	 *
+	 * Keyed-per-attachment transients were two wp_options rows each - the value plus
+	 * its timeout - and the callers walk every image of every gallery, so on a site
+	 * whose media library lost its stored sizes the table grew by two rows per
+	 * affected image, then again every 24 hours, with nothing cleaning them up
+	 * (flush_gallery_caches() only clears _eg_cache_*). nextgen-gallery#476 came off
+	 * a report of ~1.5M such rows. One bucket holds the whole set instead, so the
+	 * cost is two rows per bucket no matter how large the library is.
+	 *
+	 * The map is capped, and when it fills the oldest half is evicted so recording
+	 * continues. Logging a key without recording it would drop the 24h bound for
+	 * every key past the cap - on the bulk-migration population these callers exist
+	 * for, more than 200 affected attachments in one bucket is the expected case,
+	 * not an edge one - leaving only the per-request budgets to hold back an
+	 * anonymously-reachable path. Evicting keeps both bounds in force; the cost is
+	 * that a long-tail attachment can be reported again sooner than 24h.
+	 *
+	 * @since 1.16.0
+	 *
+	 * @param string $bucket  Short bucket name, e.g. 'missing_dims'.
+	 * @param string $key     Identifier for the thing being reported, e.g. an attachment id.
+	 * @param string $message The line to write. Callers must sanitize anything interpolated.
+	 * @return bool Whether a line was written.
+	 */
+	public function log_once_per_day( $bucket, $key, $message ) {
+
+		$transient = 'envira_log_' . $bucket;
+		$seen      = get_transient( $transient );
+
+		if ( ! is_array( $seen ) ) {
+			$seen = [];
+		}
+
+		if ( isset( $seen[ $key ] ) ) {
+			return false;
+		}
+
+		if ( count( $seen ) >= 200 ) {
+			$seen = array_slice( $seen, 100, null, true );
+		}
+
+		$seen[ $key ] = 1;
+
+		set_transient( $transient, $seen, DAY_IN_SECONDS );
+
+		error_log( $message ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+
+		return true;
+	}
+
+	/**
+	 * The resize_image() error codes that are routine rather than faults.
+	 *
+	 * These two mean "this image cannot be cropped here, and that is expected": the
+	 * source lives on stream-wrapped/remote storage, or the file is absent. On an
+	 * offloaded site they are true of every image on every render, so callers serve
+	 * the un-cropped source and stay quiet. Any code NOT in this list is a real
+	 * fault - a lost image editor, unusable crop dimensions, a failed save, a path
+	 * that resolved outside uploads - and every caller logs those.
+	 *
+	 * 'envira-gallery-error-invalid-path' is deliberately NOT here. By the time it
+	 * can be returned, the stream-wrapper and unresolvable-basedir bails have
+	 * already claimed the offload cases, and file_exists() has not yet run - so it
+	 * means a file that exists locally resolved outside the uploads directory. That
+	 * is either the traversal-shaped src the containment check exists to stop or a
+	 * real misconfiguration, and a security control tripping should not be silent.
+	 * It stays in get_undumped_resize_error_codes() so it is logged, never printed.
+	 *
+	 * One accessor rather than a copy per caller. Three hand-maintained copies of
+	 * this list, two of them suppression lists and one an inverted expected list,
+	 * drifted twice on consecutive changes: a code added to one file and not the
+	 * others silently flipped a fault between "logged", "dumped into the page" and
+	 * "swallowed". Add a code here and every caller agrees by construction.
+	 *
+	 * @since 1.16.0
+	 *
+	 * @return array Error codes that need no diagnostic.
+	 */
+	public function get_routine_resize_error_codes() {
+
+		return [
+			'envira-gallery-error-remote-file',
+			'envira-gallery-error-no-file',
+		];
+	}
+
+	/**
+	 * Resize error codes that must never be printed into a page or an admin screen.
+	 *
+	 * The routine codes above, plus the two faults that must be logged but never
+	 * shown: an unresolvable uploads directory, and a path that resolved outside
+	 * uploads. Both are real problems, and both are true of many images at once, so
+	 * dumping them inline would print a block per image (twice per item on the
+	 * front end, where src and retina both resize) rather than telling anyone
+	 * something new. Their signal belongs in the log.
+	 *
+	 * @since 1.16.0
+	 *
+	 * @return array Error codes that must not produce on-screen output.
+	 */
+	public function get_undumped_resize_error_codes() {
+
+		return array_merge(
+			$this->get_routine_resize_error_codes(),
+			[
+				'envira-gallery-error-invalid-path',
+				'envira-gallery-error-uploads-unresolved',
+			]
+		);
+	}
+
+	/**
 	 * Helper method to return common information about an image.
 	 *
 	 * @since 1.0.0
@@ -969,14 +1117,50 @@ class Envira_Gallery_Common {
 
 		}
 
+		// Never run file_exists()/getimagesize() against a stream-wrapped path (s3://,
+		// iu://, etc.) - a slow or unhealthy remote blocks the request until
+		// max_execution_time is hit, and this runs once per gallery image, so a
+		// gallery-heavy block-editor request dies with nothing logged. Bail before any
+		// stat instead; callers fall back to the un-cropped source. Checked before the
+		// "//" collapse above would matter, since collapsing "scheme://" into "scheme:/"
+		// hides the wrapper. See envira-gallery-plugin#5544.
+		if ( $file_path && preg_match( '#^[a-z][a-z0-9+.\-]*://#i', $file_path ) ) {
+			return new WP_Error( 'envira-gallery-error-remote-file', __( 'Cannot crop an image stored on a remote/stream-wrapped filesystem.', 'envira-gallery-lite' ) );
+		}
+
 		// Resolve the canonical path and reject anything that escapes the uploads directory.
 		// $url is a function argument that ultimately traces back to gallery image data which can be
 		// attacker-influenced (e.g. via edit_posts); the regex .+ above captures ../ sequences,
 		// allowing traversal to files like wp-config.php that getimagesize() would then read.
+		//
+		// wp_normalize_path() after realpath() matters on Windows: realpath() returns
+		// backslash-separated paths there while trailingslashit() always appends a forward
+		// slash, so without normalizing, the strpos() comparison never matches and every
+		// image on a Windows-hosted site is rejected as out-of-bounds.
 		$real_uploads_base = realpath( $wp_upload_dir['basedir'] );
+		$real_uploads_base = $real_uploads_base ? wp_normalize_path( $real_uploads_base ) : $real_uploads_base;
 		if ( $file_path ) {
 			$real_file_path = realpath( $file_path );
-			if ( $real_file_path && $real_uploads_base && 0 !== strpos( $real_file_path, trailingslashit( $real_uploads_base ) ) ) {
+			$real_file_path = $real_file_path ? wp_normalize_path( $real_file_path ) : $real_file_path;
+			// Fail CLOSED. Requiring $real_uploads_base to be truthy before rejecting meant
+			// the check was skipped outright whenever realpath() could not resolve the
+			// uploads dir - which is exactly what happens when basedir is a stream wrapper
+			// (iu://, s3://). A crafted gallery src taking the ABSPATH-rooted branch above
+			// carries no scheme, so the stream-wrapper bail does not catch it, and it could
+			// then be stat'd, read, and have a derivative written beside it outside uploads.
+			// If containment cannot be established, refuse rather than proceed.
+			//
+			// Its own error code, deliberately NOT 'envira-gallery-error-invalid-path':
+			// that code means "this src tried to escape uploads", which every caller
+			// suppresses because it is routine on offloaded media. An unresolvable
+			// basedir is a site-wide fault (open_basedir, a missing or unreadable
+			// wp-content/uploads) that un-crops every image everywhere, so it has to
+			// stay loud.
+			if ( ! $real_uploads_base ) {
+				return new WP_Error( 'envira-gallery-error-uploads-unresolved', __( 'The uploads directory could not be resolved, so the image path cannot be verified.', 'envira-gallery-lite' ) );
+			}
+
+			if ( $real_file_path && 0 !== strpos( $real_file_path, trailingslashit( $real_uploads_base ) ) ) {
 				return new WP_Error( 'envira-gallery-error-invalid-path', __( 'The image path is outside the allowed uploads directory.', 'envira-gallery-lite' ) );
 			}
 			if ( $real_file_path ) {
@@ -1027,7 +1211,17 @@ class Envira_Gallery_Common {
 
 		// Set alignment information on the file.
 		if ( $crop ) {
-			$suffix .= ( $align ) ? "_$align" : '_c';
+
+			// Allowlisted, because $suffix goes straight into $dest_file_name below and
+			// that path is what $editor->save() writes after core calls
+			// wp_mkdir_p( dirname( $filename ) ). $align traces back to the gallery's
+			// crop_position, which the REST writer stores verbatim from client JSON, so
+			// "../" segments in it reached the destination path. Anything unrecognised
+			// falls back to the default centre crop rather than being interpolated.
+			$valid_aligns = [ 'c', 't', 'b', 'l', 'r', 'tl', 'tr', 'bl', 'br' ];
+			$align        = ( is_string( $align ) && in_array( $align, $valid_aligns, true ) ) ? $align : 'c';
+
+			$suffix .= "_$align";
 		}
 
 		// Get the destination file name.

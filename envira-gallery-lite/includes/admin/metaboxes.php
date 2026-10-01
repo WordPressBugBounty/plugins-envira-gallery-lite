@@ -2202,8 +2202,26 @@ class Envira_Gallery_Metaboxes {
 
 				// Check the image is a valid URL.
 				// Some plugins decide to strip the blog's URL from the start of the URL, which can cause issues for Envira.
-				if ( strpos( $image[0], get_bloginfo( 'url' ) ) === false ) {
-					$image[0] = get_bloginfo( 'url' ) . '/' . $image[0];
+				//
+				// Prefix only when the src has no scheme at all. Two wrong tests were tried
+				// here before this one:
+				//
+				//   strpos( $image[0], get_bloginfo('url') ) === false  -  double-prefixed any
+				//   legitimately off-host URL, so an S3/CloudFront/iu-cdn.com src became
+				//   "https://site.com/https://cdn.example.com/...".
+				//
+				//   ! filter_var( $image[0], FILTER_VALIDATE_URL )  -  FILTER_VALIDATE_URL
+				//   returns false for any URL carrying non-ASCII bytes, and
+				//   sanitize_file_name() preserves those, so every Chinese/Japanese/Korean
+				//   filename got double-prefixed instead. That is envira-gallery-plugin#5189,
+				//   still open, and shortcode.php already carries a front-end workaround for
+				//   the damage it caused. crop_images() below carried that same test - do not
+				//   treat it as the model; it has been converted to this one too.
+				//
+				// A scheme test has neither failure mode, and also accepts protocol-relative
+				// "//host/path", which both earlier forms mangled.
+				if ( ! preg_match( '#^(?:[a-z][a-z0-9+.\-]*:)?//#i', $image[0] ) ) {
+					$image[0] = trailingslashit( get_bloginfo( 'url' ) ) . ltrim( $image[0], '/' );
 				}
 
 				// Generate the cropped image.
@@ -2211,13 +2229,108 @@ class Envira_Gallery_Metaboxes {
 
 				// If there is an error, possibly output error message, otherwise woot!
 				if ( is_wp_error( $cropped_image ) ) {
-					// If WP_DEBUG is enabled, and we're logged in, output an error to the user.
-					if ( defined( 'WP_DEBUG' ) && WP_DEBUG && is_user_logged_in() ) {
+					// An image on remote/stream-wrapped storage cannot be cropped at all -
+					// get_image_info() refuses to read it rather than stalling the request
+					// (see envira-gallery-plugin#5544). That is an expected condition, not a
+					// fault, and it applies to every image on an offloaded site.
+					//
+					// Record the un-cropped image as the thumb rather than leaving 'thumb'
+					// unset: an unset thumb still gets persisted below as '', which the
+					// shortcode passes straight through to data-thumbnail="", losing lightbox
+					// thumbnails entirely. And the die() below would abort save_meta_boxes()
+					// mid-flight - skipping crop_images(), the envira_gallery_saved_settings
+					// hook and flush_gallery_caches() - so a routine condition would break
+					// saving a gallery outright for any logged-in user with WP_DEBUG on.
+					// Fall back for ANY resize failure, not just the stream-wrapper one. Keying
+					// this on 'envira-gallery-error-remote-file' alone missed the most common
+					// offload setup: get_image_info() builds a local path whose file was
+					// deleted after upload and returns 'envira-gallery-error-no-file'
+					// instead. WP Offload Media with "remove local files" hits exactly that.
+					//
+					// Only fill an EMPTY thumb. resize_image() calls get_image_info() before
+					// its own file_exists( $dest_file_name ) early-return, so a missing
+					// SOURCE now errors even when the cropped derivative is still sitting on
+					// disk and still referenced. Assigning unconditionally overwrote that
+					// working thumbnail with the full-size original on every save, and
+					// update_post_meta() persisted it - unrecoverable from meta, and silent.
+					// Fill an empty thumb, and also replace one whose local derivative has
+					// since been deleted - otherwise a site that cropped locally and later
+					// enabled an offload plugin's "remove local files" keeps a 404 forever,
+					// because Envira's derivative is not an attachment and the offload
+					// plugin neither uploads nor rewrites it. Bounded: one file_exists() per
+					// image, on admin save only, and only for a thumb that is a local
+					// uploads URL - never a stream-wrapped or off-host one.
+					$existing_thumb = isset( $gallery_data['gallery'][ $id ]['thumb'] ) ? $gallery_data['gallery'][ $id ]['thumb'] : '';
+					$thumb_is_stale = false;
+
+					if ( ! empty( $existing_thumb ) ) {
+
+						$thumb_upload_dir = wp_upload_dir();
+
+						// wp_upload_dir()['error'] is checked, and the basedir must be
+						// readable, before a false from file_exists() is believed. Without
+						// that, "could not stat it" - an open_basedir restriction, a
+						// permissions change, a container path that no longer matches -
+						// reads as "the derivative was deleted", and the branch below then
+						// overwrites a working cropped thumb with the full-size original and
+						// persists it. Unknown must not mean stale.
+						if ( empty( $thumb_upload_dir['error'] ) && ! empty( $thumb_upload_dir['baseurl'] ) && ! empty( $thumb_upload_dir['basedir'] )
+							&& ! preg_match( '#^[a-z][a-z0-9+.\-]*://#i', $thumb_upload_dir['basedir'] )
+							&& is_readable( $thumb_upload_dir['basedir'] )
+							&& 0 === strpos( $existing_thumb, $thumb_upload_dir['baseurl'] ) ) {
+
+							$thumb_is_stale = ! file_exists( $thumb_upload_dir['basedir'] . substr( $existing_thumb, strlen( $thumb_upload_dir['baseurl'] ) ) );
+						}
+					}
+
+					if ( empty( $existing_thumb ) || $thumb_is_stale ) {
+						$gallery_data['gallery'][ $id ]['thumb'] = $image[0];
+					}
+
+					// Report unexpected failures, but never die() here. This runs inside
+					// save_meta_boxes(), so dying abandoned crop_images(), the
+					// envira_gallery_saved_settings hook and flush_gallery_caches() - turning a
+					// per-image resize failure into a half-saved gallery still serving stale
+					// output. A missing or unreadable source file is a routine condition on
+					// offloaded media, not a reason to abort a save.
+					$thumb_error_code = $cropped_image->get_error_code();
+
+					// Log every non-routine fault, un-gated, the way rest.php and
+					// shortcode.php do. This file had no logging at all, so an unresolvable
+					// uploads directory - which un-crops every image on the site - left an
+					// administrator saving a gallery with no dump and no log line, only
+					// quietly un-cropped thumbs.
+					if ( ! in_array( $thumb_error_code, $common->get_routine_resize_error_codes(), true ) ) {
+
+						$thumb_slug = preg_replace( '/[^A-Za-z0-9_.\-]/', '', (string) $thumb_error_code );
+
+						// Bounded per request like both sibling logs. The codes that reach
+						// here un-gated are site-wide by construction, and this is the only
+						// one of the three call sites that loops every image in the gallery -
+						// so without a budget a 300-image save wrote 300 lines, every save.
+						static $logged_thumb_failures = [];
+						static $thumb_failure_budget  = 0;
+
+						if ( $thumb_failure_budget < 10 && ! isset( $logged_thumb_failures[ (int) $id . '-' . $thumb_slug ] ) ) {
+
+							$logged_thumb_failures[ (int) $id . '-' . $thumb_slug ] = true;
+							++$thumb_failure_budget;
+
+							$common->log_once_per_day(
+								'thumb_crop',
+								(int) $id . '-' . $thumb_slug,
+								sprintf( 'Envira Gallery Lite: could not crop a thumbnail for attachment %d (%s); the full-size image is stored as the thumb.', (int) $id, $thumb_slug )
+							);
+						}
+					}
+
+					if ( defined( 'WP_DEBUG' ) && WP_DEBUG && is_user_logged_in()
+						&& ! in_array( $thumb_error_code, $common->get_undumped_resize_error_codes(), true ) ) {
+						// If WP_DEBUG is enabled, and we're logged in, output an error to the user.
 						echo '<pre>Envira: Error occured resizing image (these messages are only displayed to logged in WordPress users):<br />';
 						echo 'Error: ' . esc_html( $cropped_image->get_error_message() ) . '<br />';
 						echo 'Image: ' . esc_html(var_export($image, true)) . '<br />'; //@codingStandardsIgnoreLine -- Not run in production
 						echo 'Args: ' . esc_html(var_export($args, true)) . '</pre>'; //@codingStandardsIgnoreLine -- Not run in production
-						die();
 					}
 				} else {
 					$gallery_data['gallery'][ $id ]['thumb'] = $cropped_image;
@@ -2275,7 +2388,9 @@ class Envira_Gallery_Metaboxes {
 
 				// Check the image is a valid URL.
 				// Some plugins decide to strip the blog's URL.
-				if ( ! filter_var( $image[0], FILTER_VALIDATE_URL ) ) {
+				// Scheme test, not FILTER_VALIDATE_URL: the latter rejects non-ASCII
+				// filenames and double-prefixes them (envira-gallery-plugin#5189).
+				if ( ! preg_match( '#^(?:[a-z][a-z0-9+.\-]*:)?//#i', $image[0] ) ) {
 					$image[0] = get_bloginfo( 'url' ) . '/' . $image[0];
 				}
 
