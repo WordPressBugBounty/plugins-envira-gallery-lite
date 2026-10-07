@@ -689,6 +689,17 @@ jQuery(document).ready(function ($) {
 					images: JSON.stringify(images)
 				},
 				function (response) {
+					// Always stop the spinner, including when nothing was added.
+					$(document).find('.envira-progress-adding-images').css('display', 'none');
+
+					// Refused request (wp_send_json_error): nothing was added.
+					if (response && response.success === false) {
+						if (response.data && response.data.message) {
+							alert(response.data.message);
+						}
+						return;
+					}
+
 					// Response should be a JSON success with the HTML for the image grid
 					if (response && response.success) {
 						// Set the image grid to the HTML we received
@@ -696,8 +707,11 @@ jQuery(document).ready(function ($) {
 
 						// Repopulate the Envira Gallery Image Collection
 						EnviraGalleryImagesUpdate(false);
+					}
 
-						$(document).find('.envira-progress-adding-images').css('display', 'none');
+					// Some picks were refused; the rest were added.
+					if (response && response.skipped && response.message) {
+						alert(response.message);
 					}
 				},
 				'json'

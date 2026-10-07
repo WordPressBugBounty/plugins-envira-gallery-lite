@@ -38,6 +38,16 @@ class Envira_Rest {
 	 * @var object
 	 */
 	public $common;
+
+	/**
+	 * Images refused by the last gallery_data update in this request.
+	 *
+	 * @since 1.16.2
+	 *
+	 * @var int
+	 */
+	private $gallery_skipped = 0;
+
 	/**
 	 * Class Constructor
 	 *
@@ -50,6 +60,68 @@ class Envira_Rest {
 		$this->common = Envira_Gallery_Common::get_instance();
 
 		add_action( 'rest_api_init', [ $this, 'register_post_meta' ] );
+		add_filter( 'rest_pre_insert_envira', [ $this, 'reject_refused_gallery_items' ], 10, 2 );
+		add_filter( 'rest_prepare_envira', [ $this, 'add_gallery_skipped' ], 10, 1 );
+	}
+
+	/**
+	 * Reports how many images the gallery_data update refused, so the block can say so.
+	 *
+	 * Core runs field update callbacks before preparing the response, so the count is
+	 * already set when this filter runs. Only added when something was refused.
+	 *
+	 * @since 1.16.2
+	 *
+	 * @param WP_REST_Response $response Response object.
+	 * @return WP_REST_Response
+	 */
+	public function add_gallery_skipped( $response ) {
+		if ( $this->gallery_skipped > 0 && $response instanceof WP_REST_Response ) {
+			$data                    = $response->get_data();
+			$data['gallery_skipped'] = $this->gallery_skipped;
+			$response->set_data( $data );
+		}
+
+		// Consumed: a later item in the same request (e.g. /batch/v1) starts from zero.
+		$this->gallery_skipped = 0;
+
+		return $response;
+	}
+
+	/**
+	 * Refuses a gallery create/update whose images are all ones the user may not add.
+	 *
+	 * The gallery_data field callback runs after the post is saved, so refusing there
+	 * would still leave a new, empty, published gallery behind on create. Checking here
+	 * stops the request before anything is written.
+	 *
+	 * @since 1.16.2
+	 *
+	 * @param stdClass|WP_Error $prepared_post Post about to be inserted.
+	 * @param WP_REST_Request   $request       Request object.
+	 * @return stdClass|WP_Error
+	 */
+	public function reject_refused_gallery_items( $prepared_post, $request ) {
+
+		if ( is_wp_error( $prepared_post ) ) {
+			return $prepared_post;
+		}
+
+		$value = $request->get_param( 'gallery_data' );
+
+		if ( ! is_array( $value ) || empty( $value['gallery'] ) || ! is_array( $value['gallery'] ) ) {
+			return $prepared_post;
+		}
+
+		$gallery_id = isset( $prepared_post->ID ) ? (int) $prepared_post->ID : 0;
+
+		foreach ( $value['gallery'] as $image ) {
+			if ( is_array( $image ) && isset( $image['id'] ) && is_scalar( $image['id'] ) && envira_gallery_user_can_insert_attachment( $image['id'], $gallery_id ) ) {
+				return $prepared_post;
+			}
+		}
+
+		return new WP_Error( 'rest_forbidden', esc_html__( 'You are not allowed to add the selected images to this gallery.', 'envira-gallery-lite' ), [ 'status' => 403 ] );
 	}
 
 	/**
@@ -85,6 +157,16 @@ class Envira_Rest {
 
 		if ( ! is_array( $data ) ) {
 			$data = [];
+		}
+
+		// A password-protected gallery keeps its images behind the password, as core does for
+		// post content: editors, or a request carrying the right ?password=. Config stays, so
+		// the block editor's reads of gallery_data.config keep working.
+		$post     = get_post( $object_data['id'] );
+		$password = $request instanceof WP_REST_Request ? (string) $request->get_param( 'password' ) : '';
+
+		if ( $post && '' !== $post->post_password && ! current_user_can( 'edit_post', $post->ID ) && ! hash_equals( $post->post_password, $password ) ) {
+			$data['gallery'] = [];
 		}
 
 		$i      = 0;
@@ -470,6 +552,8 @@ class Envira_Rest {
 	 */
 	public function update_gallery_data( $value, $post_object, $field_name ) {
 
+		$this->gallery_skipped = 0;
+
 		// Enforce capability check — register_rest_field() has no permission_callback,
 		// so authorization must be checked here to prevent any authenticated user from writing gallery data.
 		if ( ! current_user_can( 'edit_post', $post_object->ID ) ) { // High06: deny if caller lacks edit_post capability — the ! negation is required and must not be removed.
@@ -591,6 +675,8 @@ class Envira_Rest {
 		}
 
 		if ( isset( $value['gallery'] ) ) {
+			$requested = count( (array) $value['gallery'] );
+			$accepted  = 0;
 
 			foreach ( (array) $value['gallery'] as $i => $image ) {
 
@@ -605,8 +691,19 @@ class Envira_Rest {
 					continue;
 				}
 
+				// Only attachments the caller may use, matching the AJAX image writers.
+				// Without this, any post id was read back here, exposing the title and
+				// excerpt of posts the caller cannot otherwise read. An image already in
+				// this gallery stays allowed, so re-saving a legacy gallery keeps working.
+				if ( ! envira_gallery_user_can_insert_attachment( $image_id, $post_object->ID ) ) {
+					continue;
+				}
+
 				$gallery_data = envira_gallery_ajax_prepare_gallery_data( $gallery_data, $image_id );
+				++$accepted;
 			}
+
+			$this->gallery_skipped = $requested - $accepted;
 		}
 
 		// Flush gallery cache.

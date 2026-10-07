@@ -4,7 +4,7 @@ Tags: photo gallery, image gallery, gallery, lightbox, albums
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.0
-Stable tag: 1.16.1
+Stable tag: 1.16.2
 License: GNU General Public License v2.0 or later
 
 The fastest drag & drop photo gallery plugin. Create stunning image galleries, albums, video galleries & lightbox displays in minutes — no coding!
@@ -267,6 +267,16 @@ For documentation, tutorials, and videos visit: [Envira Gallery Documentation](h
 Lite support is available on the [WordPress.org support forum](https://wordpress.org/support/plugin/envira-gallery-lite/). For priority support, [upgrade to Envira Gallery Pro](https://enviragallery.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion).
 
 == Changelog ==
+
+= 1.16.2 - 10.08.2026 =
+* Fixed: The setup wizard's plugin installer now requires permission to install plugins and installs only plugins from Envira's recommended list.
+* Fixed: Saving a gallery through the REST API now accepts only images the user is allowed to use, so other users' private post titles and excerpts can no longer be read back from gallery data.
+* Fixed: Converting WordPress galleries to Envira galleries now requires permission to publish galleries, and the bulk converter reports refused conversions instead of reporting success.
+* Fixed: New installs now apply Envira's default gallery permissions straight away, instead of leaving contributors with gallery access until Envira Settings is opened.
+* Fixed: The gallery shortcode now renders a gallery by ID or slug only when the visitor is allowed to see it, so private, draft and pending galleries are no longer exposed to other visitors.
+* Fixed: Images a user is not allowed to use are now refused everywhere a gallery is saved — the media picker, the REST API and the gallery converter — and skipped images are reported instead of silently dropped.
+* Fixed: A gallery that cannot be converted no longer stops the remaining galleries in the same post from converting; it is skipped and counted instead.
+* Updated: General security improvements and hardening.
 
 = 1.16.1 - 10.01.2026 =
 * Fixed: The block editor no longer stalls or times out on sites that serve media from remote storage, such as Infinite Uploads or WP Offload Media.

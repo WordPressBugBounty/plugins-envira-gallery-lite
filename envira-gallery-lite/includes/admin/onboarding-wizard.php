@@ -509,8 +509,8 @@ class OnboardingWizard {
 	 */
 	public function install_selected_addons( string $key ) {
 
-		// check if the current user can manage options.
-		if ( ! current_user_can( 'manage_options' ) ) {
+		// check if the current user can install plugins.
+		if ( ! current_user_can( 'install_plugins' ) ) {
 			wp_send_json_error( 'You do not have permission to install plugins' );
 			wp_die();
 		}
@@ -563,8 +563,8 @@ class OnboardingWizard {
 			wp_die();
 		}
 
-		// check if the current user can manage options.
-		if ( ! current_user_can( 'manage_options' ) ) {
+		// check if the current user can install plugins.
+		if ( ! current_user_can( 'install_plugins' ) ) {
 			wp_send_json_error( 'You do not have permission to install plugins' );
 			wp_die();
 		}
@@ -573,6 +573,10 @@ class OnboardingWizard {
 			// Sanitize data, plugins is a string delimited by comma.
 
 			$plugins = explode( ',', sanitize_text_field( wp_unslash( $_POST['plugins'] ) ) );
+
+			// Only allow slugs from the recommended plugins list.
+			$plugins = array_intersect( $plugins, array_keys( $this->get_recommended_plugins() ) );
+
 			// Install the plugins.
 			foreach ( $plugins as $plugin ) {
 				if ( '' !== $this->is_recommended_plugin_installed( $plugin ) ) {

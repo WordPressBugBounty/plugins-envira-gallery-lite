@@ -171,6 +171,36 @@ class Envira_Gallery_Shortcode {
 	}
 
 	/**
+	 * Checks whether the current visitor may see a gallery post.
+	 *
+	 * @since 1.16.2
+	 *
+	 * @param int|string $gallery_id The gallery post ID.
+	 * @return bool
+	 */
+	private function can_view_gallery( $gallery_id ) {
+
+		$gallery_id = absint( $gallery_id );
+
+		// get_post( 0 ) returns the global post, which would check the host page instead.
+		if ( ! $gallery_id ) {
+			return false;
+		}
+
+		$gallery = get_post( $gallery_id );
+
+		if ( ! $gallery ) {
+			return false;
+		}
+
+		if ( 'publish' === get_post_status( $gallery ) ) {
+			return true;
+		}
+
+		return current_user_can( 'read_post', $gallery->ID );
+	}
+
+	/**
 	 * Creates the shortcode for the plugin.
 	 *
 	 * @since 1.0.0
@@ -194,14 +224,28 @@ class Envira_Gallery_Shortcode {
 			$data       = is_preview() ? $this->base->_get_gallery( $gallery_id ) : $this->base->get_gallery( $gallery_id );
 		} elseif ( isset( $atts['id'] ) ) {
 			$gallery_id = (int) $atts['id'];
-			$data       = is_preview() ? $this->base->_get_gallery( $gallery_id ) : $this->base->get_gallery( $gallery_id );
+			$lookup_id  = $gallery_id;
+			$data       = is_preview() ? $this->base->_get_gallery( $lookup_id ) : $this->base->get_gallery( $lookup_id );
 		} elseif ( isset( $atts['slug'] ) ) {
 			$gallery_id = $atts['slug'];
-			$data       = is_preview() ? $this->base->_get_gallery_by_slug( $gallery_id ) : $this->base->get_gallery_by_slug( $gallery_id );
+
+			// Resolve the slug to a post first and load by that ID, so the data rendered is the data
+			// of the post checked below. The slug cache shares keys with the ID cache, and the old-slug
+			// lookup depends on the viewer, so loading by slug could render a different gallery.
+			$lookup_id = $this->base->get_gallery_post_id_by_slug( $gallery_id );
+			$data      = ! $lookup_id ? false : ( is_preview() ? $this->base->_get_gallery( $lookup_id ) : $this->base->get_gallery( $lookup_id ) );
 		} else {
 			// A custom attribute must have been passed. Allow it to be filtered to grab data from a custom source.
 			$data       = apply_filters( 'envira_gallery_custom_gallery_data', false, $atts, $post );
 			$gallery_id = $data['config']['id'];
+		}
+
+		// A gallery requested by id or slug must be one the visitor may see. Without this, any
+		// post could embed another user's private, draft or pending gallery.
+		// The post checked is the one _get_gallery() reads the data from, not the id stored in the
+		// data: duplicated and translated galleries keep the original gallery's ID there.
+		if ( ( isset( $atts['id'] ) || isset( $atts['slug'] ) ) && $data && ! $this->can_view_gallery( $this->base->get_gallery_post_id( $lookup_id ) ) ) {
+			return;
 		}
 
 		// Change the gallery order, if specified.

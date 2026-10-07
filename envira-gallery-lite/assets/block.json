@@ -5,11 +5,7 @@
 	"title": "Envira Gallery",
 	"category": "common",
 	"description": "Select a gallery below to add it to your page.",
-	"keywords": [
-		"Envira Gallery",
-		"Photo",
-		"Image"
-	],
+	"keywords": ["Envira Gallery", "Photo", "Image"],
 	"textdomain": "envira-gallery-lite",
 	"attributes": {
 		"galleryId": {
@@ -82,10 +78,7 @@
 		}
 	},
 	"supports": {
-		"align": [
-			"wide",
-			"full"
-		]
+		"align": ["wide", "full"]
 	},
 	"editorStyle": "file:./css/envira-gutenberg-editor.css"
 }

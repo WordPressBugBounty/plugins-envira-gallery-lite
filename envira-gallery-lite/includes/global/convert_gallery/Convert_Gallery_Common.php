@@ -18,6 +18,88 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Convert_Gallery_Common {
 	/**
+	 * Galleries skipped in the current run because none of their images could be used.
+	 *
+	 * @since 1.16.2
+	 *
+	 * @var int
+	 */
+	protected $convert_refused = 0;
+
+	/**
+	 * Keeps only images the user may put into a gallery, with src taken from the attachment.
+	 *
+	 * An image passes if the user can add the attachment, or the source post (which the
+	 * user can edit) already shows it: it is referenced in the saved content or attached
+	 * to the post. Core's own gallery block and shortcode already render those, so
+	 * converting them exposes nothing new. The client-supplied URL is never stored.
+	 *
+	 * @since 1.16.2
+	 *
+	 * @param array    $images     Images as [ id, url, title, alt ].
+	 * @param int|null $post_id    Source post ID.
+	 * @param int[]    $source_ids Other posts the gallery pulls attachments from, e.g. [gallery id=X].
+	 * @return array
+	 */
+	public function filter_convertible_images( $images, $post_id, $source_ids = [] ) {
+		$post_id    = absint( $post_id );
+		$referenced = [];
+
+		if ( $post_id ) {
+			$content = (string) get_post_field( 'post_content', $post_id );
+
+			preg_match_all( '/wp-image-(\d+)|"id":(\d+)/', $content, $matches );
+			$referenced = array_merge( $matches[1], $matches[2] );
+
+			preg_match_all( '/\[gallery[^\]]*\b(?:ids|include)\s*=\s*["\']?([\d,\s]+)/', $content, $shortcodes );
+			foreach ( $shortcodes[1] as $list ) {
+				$referenced = array_merge( $referenced, explode( ',', $list ) );
+			}
+
+			$referenced = array_filter( array_map( 'absint', $referenced ) );
+		}
+
+		$sources = array_filter( array_map( 'absint', array_merge( [ $post_id ], (array) $source_ids ) ) );
+
+		$allowed = [];
+
+		foreach ( (array) $images as $image ) {
+			if ( ! is_array( $image ) || ! isset( $image['id'] ) || ! is_scalar( $image['id'] ) ) {
+				continue;
+			}
+
+			$image_id = absint( $image['id'] );
+			$url      = $image_id ? wp_get_attachment_url( $image_id ) : false;
+
+			if ( ! $url ) {
+				continue;
+			}
+
+			// Only a live attachment counts as already shown by the post; not trashed or private.
+			// Its parent must also be public or editable by the user: the converted gallery is
+			// published, and the content (ids, [gallery id=X]) is written by the user.
+			$parent  = (int) wp_get_post_parent_id( $image_id );
+			$in_post = $post_id
+				&& 'inherit' === get_post_field( 'post_status', $image_id )
+				&& ( in_array( $image_id, $referenced, true ) || in_array( $parent, $sources, true ) )
+				&& ( ! $parent || current_user_can( 'edit_post', $parent )
+					|| ( 'publish' === get_post_status( $parent ) && '' === get_post_field( 'post_password', $parent ) ) );
+
+			if ( ! $in_post && ! envira_gallery_user_can_insert_attachment( $image_id ) ) {
+				continue;
+			}
+
+			$image['id']    = $image_id;
+			$image['url']   = $url;
+			$image['title'] = isset( $image['title'] ) && is_scalar( $image['title'] ) ? sanitize_text_field( $image['title'] ) : '';
+			$image['alt']   = isset( $image['alt'] ) && is_scalar( $image['alt'] ) ? sanitize_text_field( $image['alt'] ) : '';
+			$allowed[]      = $image;
+		}
+
+		return $allowed;
+	}
+
+	/**
 	 * Create an Envira Gallery using the WordPress Gallery block data.
 	 *
 	 * @param  array $passed_data wp gallery passed data array.
@@ -30,6 +112,24 @@ class Convert_Gallery_Common {
 		$link_target   = $passed_data['link_target'] ?? '';
 		$images        = $passed_data['images'] ?? [];
 		$block_content = $passed_data['block_content'] ?? '';
+
+		// Only attachments the caller may use, matching the REST and AJAX image writers. The
+		// converted gallery is published, so without this an Author could publish another
+		// user's attachment, e.g. one belonging to a private post. WP-CLI runs as no user.
+		$skipped = 0;
+
+		if ( ! ( defined( 'WP_CLI' ) && WP_CLI ) ) {
+			$requested = is_array( $images ) ? count( $images ) : 0;
+			$images    = $this->filter_convertible_images( $images, $post_id, $passed_data['source_ids'] ?? [] );
+			$skipped   = $requested - count( $images );
+
+			if ( empty( $images ) ) {
+				return [
+					'error'   => __( 'You are not allowed to add the selected images to a gallery.', 'envira-gallery-lite' ),
+					'refused' => true,
+				];
+			}
+		}
 
 		$date_now      = wp_date( 'Y-m-d H:i:s' );
 		$gallery_title = sprintf( 'Converted-%s', $date_now );
@@ -132,6 +232,12 @@ class Convert_Gallery_Common {
 				'message'        => __( 'Converted successfully. Don\'t forget to save your changes!', 'envira-gallery-lite' ),
 			];
 
+			// Some images were refused or could not be resolved: say so instead of a plain success.
+			if ( $skipped > 0 ) {
+				$response_data['skipped']         = $skipped;
+				$response_data['skipped_message'] = __( 'Some images were not converted because you are not allowed to use them.', 'envira-gallery-lite' );
+			}
+
 			return $response_data;
 		}
 	}
@@ -207,9 +313,16 @@ class Convert_Gallery_Common {
 						'link_target'   => '_self',
 						'images'        => $images,
 						'block_content' => $shortcode_string,
+						'source_ids'    => $gallery_id ? [ $gallery_id ] : [],
 					];
 
 					$created_result = $this->create_envira_gallery_using_wp_gallery( $passed_data );
+
+					// None of this gallery's images can be used: leave it as is and carry on with the rest.
+					if ( ! empty( $created_result['refused'] ) ) {
+						++$this->convert_refused;
+						continue;
+					}
 
 					if ( isset( $created_result['error'] ) && ! empty( $created_result['error'] ) ) {
 						return new WP_REST_Response( [ 'error' => $created_result['error'] ], 400 );
@@ -229,7 +342,7 @@ class Convert_Gallery_Common {
 	 * @param array $blocks       Blocks.
 	 * @param int   $post_id      Post ID.
 	 * @param bool  $needs_update Needs update.
-	 * @return void
+	 * @return WP_REST_Response|void
 	 */
 	public function process_gallery_blocks( &$blocks, $post_id, &$needs_update ) {
 		foreach ( $blocks as &$block ) {
@@ -283,8 +396,9 @@ class Convert_Gallery_Common {
 					}
 				}
 
+				// Nothing to convert in this block; later blocks still get their turn.
 				if ( empty( $images ) || ! is_array( $images ) ) {
-					return;
+					continue;
 				}
 
 				$passed_data = [
@@ -297,6 +411,12 @@ class Convert_Gallery_Common {
 				];
 
 				$created_result = $this->create_envira_gallery_using_wp_gallery( $passed_data );
+
+				// None of this gallery's images can be used: leave the block as is and carry on.
+				if ( ! empty( $created_result['refused'] ) ) {
+					++$this->convert_refused;
+					continue;
+				}
 
 				if ( isset( $created_result['error'] ) && ! empty( $created_result['error'] ) ) {
 					return new WP_REST_Response( [ 'error' => $created_result['error'] ], 400 );

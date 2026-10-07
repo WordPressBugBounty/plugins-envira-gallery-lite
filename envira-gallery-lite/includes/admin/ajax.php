@@ -142,6 +142,56 @@ function envira_gallery_ajax_set_user_setting() {
 	die();
 }
 
+/**
+ * Checks whether the current user may add an attachment to a gallery.
+ *
+ * Gallery items derive their src, title and caption from the attachment id, so an
+ * attachment the user may not use must not be added. The rule is the one the AJAX
+ * image writers already apply: an attachment the user uploaded, or any attachment
+ * for a user who can edit others' posts.
+ *
+ * An id already in the gallery is always allowed: re-sending it adds nothing, and
+ * refusing it would break re-saving a gallery that already holds someone else's
+ * image (added by an Editor, or before this check existed). "Already in" means a real
+ * item with a src, so a key that only carries status or meta does not count.
+ *
+ * @since 1.16.2
+ *
+ * @param int $attachment_id Attachment ID.
+ * @param int $gallery_id    Optional. Gallery the attachment is being added to.
+ * @return bool True if the user may use the attachment, or it is already in the gallery.
+ */
+function envira_gallery_user_can_insert_attachment( $attachment_id, $gallery_id = 0 ) {
+
+	if ( ! is_scalar( $attachment_id ) ) {
+		return false;
+	}
+
+	$attachment_id = absint( $attachment_id );
+	$gallery_id    = absint( $gallery_id );
+
+	if ( ! $attachment_id ) {
+		return false;
+	}
+
+	// Always an attachment: membership below only waives the ownership rule.
+	$attachment = get_post( $attachment_id );
+
+	if ( ! $attachment || 'attachment' !== $attachment->post_type ) {
+		return false;
+	}
+
+	if ( $gallery_id ) {
+		$gallery_data = get_post_meta( $gallery_id, '_eg_gallery_data', true );
+
+		if ( is_array( $gallery_data ) && ! empty( $gallery_data['gallery'][ $attachment_id ]['src'] ) ) {
+			return true;
+		}
+	}
+
+	return (int) $attachment->post_author === get_current_user_id() || current_user_can( 'edit_others_posts' );
+}
+
 add_action( 'wp_ajax_envira_gallery_load_image', 'envira_gallery_ajax_load_image' );
 /**
  * Loads an image into a gallery.
@@ -262,6 +312,24 @@ function envira_gallery_ajax_insert_images() {
 		}
 	}
 
+	// Drop items the user may not add. Their URL is never stored, and the hooks
+	// below never see them.
+	$requested = count( $images );
+	$images    = array_values(
+		array_filter(
+			$images,
+			function ( $image ) use ( $post_id ) {
+				return envira_gallery_user_can_insert_attachment( $image['id'], $post_id );
+			}
+		)
+	);
+	$skipped   = $requested - count( $images );
+
+	// Every pick was refused: say so, rather than report success with nothing added.
+	if ( $requested > 0 && 0 === count( $images ) ) {
+		wp_send_json_error( [ 'message' => esc_html__( 'You are not allowed to add the selected images to this gallery.', 'envira-gallery-lite' ) ] );
+	}
+
 	// Grab and update any gallery data if necessary.
 	$in_gallery = get_post_meta( $post_id, '_eg_in_gallery', true );
 	if ( empty( $in_gallery ) ) {
@@ -284,14 +352,6 @@ function envira_gallery_ajax_insert_images() {
 
 		// If the image is already in the gallery, lets skip it since we don't want to override the image metadata settings.
 		if ( in_array( $image['id'], $in_gallery, true ) ) {
-			continue;
-		}
-
-		$att = get_post( $image['id'] );
-		if (
-			! $att || 'attachment' !== $att->post_type
-			|| ( (int) $att->post_author !== get_current_user_id() && ! current_user_can( 'edit_others_posts' ) )
-		) {
 			continue;
 		}
 
@@ -325,8 +385,22 @@ function envira_gallery_ajax_insert_images() {
 		$html .= Envira_Gallery_Metaboxes::get_instance()->get_gallery_item( $id, $data, $post_id );
 	}
 
+	$output = [ 'success' => $html ];
+
+	// Some picks were refused: tell the UI so the user knows why they are missing.
+	if ( $skipped > 0 ) {
+		$output['skipped'] = $skipped;
+		$output['message'] = esc_html(
+			sprintf(
+				/* translators: %d: number of images that were not added. */
+				_n( '%d selected image was not added because you are not allowed to use it.', '%d selected images were not added because you are not allowed to use them.', $skipped, 'envira-gallery-lite' ),
+				$skipped
+			)
+		);
+	}
+
 	// Output JSON and exit.
-	echo wp_json_encode( [ 'success' => $html ] );
+	echo wp_json_encode( $output );
 	die;
 }
 
@@ -532,6 +606,12 @@ function envira_gallery_ajax_save_meta() {
 	// Prevent invalid data from being saved.
 	if ( ! $post_id || ! $attach_id || empty( $meta['src'] ) ) {
 		wp_send_json_error( 'Unable to save' );
+	}
+
+	// Only edit an item already in the gallery. Adding one goes through insert_images,
+	// which checks the user against the attachment.
+	if ( ! is_array( $gallery_data ) || ! isset( $gallery_data['gallery'][ $attach_id ] ) ) {
+		wp_send_json_error( [ 'message' => esc_html__( 'That image is not in this gallery.', 'envira-gallery-lite' ) ] );
 	}
 
 	$wp_kses_allowed_html = [
@@ -1197,8 +1277,22 @@ function envira_gallery_editor_get_galleries() {
 
 		// Get each Gallery.
 		foreach ( $prepend_ids as $gallery_id ) {
+			$gallery_id   = is_scalar( $gallery_id ) ? absint( $gallery_id ) : 0;
+			$gallery_post = $gallery_id ? get_post( $gallery_id ) : null;
+			$thumbnail    = false;
+
+			// Only galleries the user may see, as the shortcode allows: without this any id
+			// returned another user's private or draft gallery title, slug and first image.
+			if ( ! $gallery_post || ( 'publish' !== get_post_status( $gallery_post ) && ! current_user_can( 'read_post', $gallery_post->ID ) ) ) {
+				continue;
+			}
+
 			// Get gallery.
 			$gallery = get_post_meta( $gallery_id, '_eg_gallery_data', true );
+
+			if ( ! is_array( $gallery ) || empty( $gallery['id'] ) ) {
+				continue;
+			}
 
 			// Get gallery first image.
 			if ( isset( $gallery['gallery'] ) && ! empty( $gallery['gallery'] ) ) {

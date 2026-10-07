@@ -172,5 +172,42 @@ class Envira_Capabilities {
 				$role->add_cap( $envira_cap );
 			}
 		}
+
+		// Apply the default permission policy now, rather than on the first Settings page load.
+		// The mapping above gives Contributor create, edit and delete gallery capabilities.
+		// The Envira_Permissions constructor calls set_default_permissions().
+		$permissions = new Envira_Permissions();
+
+		// The copy above also re-runs after a role reset (`wp role reset`, User Role Editor's
+		// Reset), when the policy was applied long ago and set_default_permissions() skips.
+		// Re-apply the saved policy to the roles the copy touched only, so custom roles keep
+		// whatever was granted to them elsewhere.
+		foreach ( $permissions->map_permissions() as $permission => $capabilities ) {
+			$allowed = get_option( $permission, false );
+
+			if ( false === $allowed ) {
+				continue;
+			}
+
+			$allowed = (array) maybe_unserialize( $allowed );
+
+			foreach ( $roles as $role_name ) {
+				$role = get_role( $role_name );
+
+				if ( 'administrator' === $role_name || ! is_object( $role ) ) {
+					continue;
+				}
+
+				$grant = in_array( $role_name, $allowed, true );
+
+				foreach ( $capabilities as $capability ) {
+					if ( $grant ) {
+						$role->add_cap( $capability );
+					} else {
+						$role->remove_cap( $capability );
+					}
+				}
+			}
+		}
 	}
 }

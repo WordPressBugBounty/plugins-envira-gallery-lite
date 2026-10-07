@@ -82,7 +82,8 @@ class Convert_Gallery_CLI extends Convert_Gallery_Common {
 			$updated_content  = $original_content; // Start with the current content.
 			$needs_update     = false;
 
-			$post_edit_url = admin_url( 'post.php?post=' . $post_id . '&action=edit' );
+			$post_edit_url         = admin_url( 'post.php?post=' . $post_id . '&action=edit' );
+			$this->convert_refused = 0;
 
 			// Processing gallery shortcodes.
 			$this->process_gallery_shortcodes( $updated_content, $post_id, $needs_update );
@@ -102,6 +103,13 @@ class Convert_Gallery_CLI extends Convert_Gallery_Common {
 					]
 				);
 				++$converted;
+
+				if ( $this->convert_refused > 0 ) {
+					$logs_array[] = "Post ID {$post_id}: {$this->convert_refused} gallery(s) skipped, their images cannot be used by the current user (run with --user=<admin>). [Edit Post]({$post_edit_url})";
+				}
+			} elseif ( $this->convert_refused > 0 ) {
+				++$failed;
+				$logs_array[] = "Post ID {$post_id}: {$this->convert_refused} gallery(s) skipped, their images cannot be used by the current user (run with --user=<admin>). [Edit Post]({$post_edit_url})";
 			} else {
 				++$failed;
 				$logs_array[] = "Post ID {$post_id}: No convertible gallery content found. [Edit Post]({$post_edit_url})";

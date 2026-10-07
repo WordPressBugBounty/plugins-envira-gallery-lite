@@ -103,6 +103,11 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 			return new WP_Error( 'rest_forbidden', __( 'You do not have permission to edit this post.', 'envira-gallery-lite' ), [ 'status' => 403 ] );
 		}
 
+		// Conversion creates and publishes Envira galleries, so the caller must be able to do both.
+		if ( ! $this->can_publish_galleries() ) {
+			return new WP_Error( 'rest_forbidden', __( 'You do not have permission to publish galleries.', 'envira-gallery-lite' ), [ 'status' => 403 ] );
+		}
+
 		return true;
 	}
 
@@ -122,6 +127,11 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 		$capability = apply_filters( 'envira_convert_bulk_galleries_cap', 'manage_options' );
 		if ( ! current_user_can( $capability ) ) {
 			return new WP_Error( 'rest_forbidden', __( 'You do not have permission to access this feature.', 'envira-gallery-lite' ), [ 'status' => 403 ] );
+		}
+
+		// Refuse up front: /process-gallery would reject every post, and the bulk UI reports that as success.
+		if ( ! $this->can_publish_galleries() ) {
+			return new WP_Error( 'rest_forbidden', __( 'You do not have permission to publish galleries.', 'envira-gallery-lite' ), [ 'status' => 403 ] );
 		}
 
 		// Get post type from request.
@@ -177,6 +187,11 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 		// Check if user can edit the post.
 		if ( ! $this->can_edit_post( $post_id ) ) {
 			return new WP_Error( 'rest_forbidden', __( 'You do not have permission to edit this post.', 'envira-gallery-lite' ), [ 'status' => 403 ] );
+		}
+
+		// Conversion creates and publishes Envira galleries, so the caller must be able to do both.
+		if ( ! $this->can_publish_galleries() ) {
+			return new WP_Error( 'rest_forbidden', __( 'You do not have permission to publish galleries.', 'envira-gallery-lite' ), [ 'status' => 403 ] );
 		}
 
 		return true;
@@ -330,8 +345,9 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 		// Get the post.
 		$post = get_post( $post_id );
 
-		$updated_content = $post->post_content; // Start with the current content.
-		$needs_update    = false;
+		$updated_content       = $post->post_content; // Start with the current content.
+		$needs_update          = false;
+		$this->convert_refused = 0;
 
 		// Process gallery shortcodes.
 		$this->process_gallery_shortcodes( $updated_content, $post_id, $needs_update );
@@ -351,15 +367,25 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 					'post_content' => $updated_content,
 				]
 			);
-			return new WP_REST_Response( [ 'success' => __( 'Galleries converted to Envira Galleries.', 'envira-gallery-lite' ) ], 200 );
+			$data = [ 'success' => __( 'Galleries converted to Envira Galleries.', 'envira-gallery-lite' ) ];
+
+			if ( $this->convert_refused > 0 ) {
+				$data['skipped_galleries'] = $this->convert_refused;
+			}
+
+			return new WP_REST_Response( $data, 200 );
 		} else {
-			return new WP_REST_Response(
-				[
-					'error'    => __( 'This post contains gallery content that is not compatible with the conversion process.', 'envira-gallery-lite' ),
-					'edit_url' => admin_url( 'post.php?post=' . $post_id . '&action=edit' ),
-				],
-				400
-			);
+			$data = [
+				'error'    => __( 'This post contains gallery content that is not compatible with the conversion process.', 'envira-gallery-lite' ),
+				'edit_url' => admin_url( 'post.php?post=' . $post_id . '&action=edit' ),
+			];
+
+			if ( $this->convert_refused > 0 ) {
+				$data['error']             = __( 'This post\'s galleries use images you are not allowed to use, so they were not converted.', 'envira-gallery-lite' );
+				$data['skipped_galleries'] = $this->convert_refused;
+			}
+
+			return new WP_REST_Response( $data, 400 );
 		}
 	}
 
@@ -371,5 +397,20 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 	 */
 	public function can_edit_post( $post_id ) {
 		return current_user_can( 'edit_post', $post_id );
+	}
+
+	/**
+	 * Check if the current user can create and publish Envira galleries.
+	 *
+	 * @return bool
+	 */
+	public function can_publish_galleries() {
+		$post_type_object = get_post_type_object( 'envira' );
+
+		if ( ! $post_type_object ) {
+			return false;
+		}
+
+		return current_user_can( $post_type_object->cap->create_posts ) && current_user_can( $post_type_object->cap->publish_posts );
 	}
 }

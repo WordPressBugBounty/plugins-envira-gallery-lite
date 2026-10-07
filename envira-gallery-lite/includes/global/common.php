@@ -1255,12 +1255,14 @@ class Envira_Gallery_Common {
 	 */
 	public function flush_gallery_caches( $post_id, $slug = '' ) {
 
-		// Delete known gallery caches.
+		// Delete known gallery caches. '_eg_cache_<id>' is the pre-1.16.2 key.
+		delete_transient( '_eg_cache_id_' . $post_id );
 		delete_transient( '_eg_cache_' . $post_id );
 		delete_transient( '_eg_cache_all' );
 
 		// Possibly delete slug gallery cache if available.
 		if ( ! empty( $slug ) ) {
+			delete_transient( '_eg_cache_slug_' . $slug );
 			delete_transient( '_eg_cache_' . $slug );
 		}
 

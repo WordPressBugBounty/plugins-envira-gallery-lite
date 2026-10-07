@@ -5,7 +5,7 @@
  * Description: Envira Gallery is a fast, easy and powerful gallery builder with lightbox, masonry and grid layouts, albums, videos, and responsive displays and more
  * Author:      Envira Gallery Team
  * Author URI:  http://enviragallery.com
- * Version:     1.16.1
+ * Version:     1.16.2
  * Requires at least: 6.3
  * Requires PHP: 7.0
  * Text Domain: envira-gallery-lite
@@ -59,7 +59,7 @@ class Envira_Gallery_Lite {
 	 *
 	 * @var string
 	 */
-	public $version = '1.16.1';
+	public $version = '1.16.2';
 
 
 	/**
@@ -278,14 +278,14 @@ class Envira_Gallery_Lite {
 	 */
 	public function get_gallery( $id ) {
 
-		$gallery = get_transient( '_eg_cache_' . $id );
+		$gallery = get_transient( '_eg_cache_id_' . $id );
 
 		// Attempt to return the transient first, otherwise generate the new query to retrieve the data.
 		if ( false === $gallery ) {
 			$gallery = $this->_get_gallery( $id );
 			if ( $gallery ) {
 				$expiration = Envira_Gallery_Common::get_instance()->get_transient_expiration_time();
-				set_transient( '_eg_cache_' . $id, $gallery, $expiration );
+				set_transient( '_eg_cache_id_' . $id, $gallery, $expiration );
 			}
 		}
 
@@ -307,18 +307,28 @@ class Envira_Gallery_Lite {
 	public function _get_gallery( $id ) {
 		// phpcs:enable PSR2.Methods.MethodDeclaration.Underscore
 
-		$meta = get_post_meta( $id, '_eg_gallery_data', true );
+		return get_post_meta( $this->get_gallery_post_id( $id ), '_eg_gallery_data', true );
+	}
+
+	/**
+	 * Returns the ID of the post that holds a gallery's data.
+	 *
+	 * @since 1.16.2
+	 *
+	 * @param int $id The gallery ID used to retrieve a gallery.
+	 * @return int    The post ID, or 0 if none was found.
+	 */
+	public function get_gallery_post_id( $id ) {
 
 		/**
-		* Version 1.2.1+: Check if $meta has a value - if not, we may be using a Post ID but the gallery
+		* Version 1.2.1+: Check if the post has gallery data - if not, we may be using a Post ID but the gallery
 		* has moved into the Envira CPT
 		*/
-		if ( empty( $meta ) ) {
-			$gallery_id = get_post_meta( $id, '_eg_gallery_id', true );
-			$meta       = get_post_meta( $gallery_id, '_eg_gallery_data', true );
+		if ( empty( get_post_meta( $id, '_eg_gallery_data', true ) ) ) {
+			return absint( get_post_meta( $id, '_eg_gallery_id', true ) );
 		}
 
-		return $meta;
+		return absint( $id );
 	}
 
 	/**
@@ -345,14 +355,14 @@ class Envira_Gallery_Lite {
 	 */
 	public function get_gallery_by_slug( $slug ) {
 
-		$gallery = get_transient( '_eg_cache_' . $slug );
+		$gallery = get_transient( '_eg_cache_slug_' . $slug );
 
 		// Attempt to return the transient first, otherwise generate the new query to retrieve the data.
 		if ( false === $gallery ) {
 			$gallery = $this->_get_gallery_by_slug( $slug );
 			if ( $gallery ) {
 				$expiration = Envira_Gallery_Common::get_instance()->get_transient_expiration_time();
-				set_transient( '_eg_cache_' . $slug, $gallery, $expiration );
+				set_transient( '_eg_cache_slug_' . $slug, $gallery, $expiration );
 			}
 		}
 
@@ -373,6 +383,20 @@ class Envira_Gallery_Lite {
 	 */
 	public function _get_gallery_by_slug( $slug ) {
 		// phpcs:enable PSR2.Methods.MethodDeclaration.Underscore
+		$gallery_id = $this->get_gallery_post_id_by_slug( $slug );
+
+		return $gallery_id ? get_post_meta( $gallery_id, '_eg_gallery_data', true ) : false;
+	}
+
+	/**
+	 * Returns the ID of the gallery post a slug resolves to.
+	 *
+	 * @since 1.16.2
+	 *
+	 * @param string $slug The gallery slug used to retrieve a gallery.
+	 * @return int         The post ID, or 0 if none was found.
+	 */
+	public function get_gallery_post_id_by_slug( $slug ) {
 		// Get Envira CPT by slug.
 		$galleries = new WP_Query(
 			[
@@ -383,7 +407,7 @@ class Envira_Gallery_Lite {
 			]
 		);
 		if ( $galleries->posts ) {
-			return get_post_meta( $galleries->posts[0], '_eg_gallery_data', true );
+			return absint( $galleries->posts[0] );
 		}
 
 		// If nothing found, get Envira CPT by _eg_gallery_old_slug.
@@ -404,11 +428,11 @@ class Envira_Gallery_Lite {
 			]
 		);
 		if ( $galleries->posts ) {
-			return get_post_meta( $galleries->posts[0], '_eg_gallery_data', true );
+			return absint( $galleries->posts[0] );
 		}
 
 		// No galleries found.
-		return false;
+		return 0;
 	}
 
 	/**
