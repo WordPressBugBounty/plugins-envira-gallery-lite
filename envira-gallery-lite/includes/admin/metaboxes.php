@@ -354,7 +354,7 @@ class Envira_Gallery_Metaboxes {
 		$screen = get_current_screen();
 
 		// Bail if we're not on the Envira Post Type screen.
-		if ( 'envira' !== $screen->post_type ) {
+		if ( ! $screen || 'envira' !== $screen->post_type ) {
 			return;
 		}
 
@@ -2091,7 +2091,7 @@ class Envira_Gallery_Metaboxes {
 
 		// Allow addons to populate the item's data - for example, tags which are stored against the attachment.
 		$item               = apply_filters( 'envira_gallery_get_gallery_item', $item, $id, $post_id );
-		$item['alt']        = str_replace( '&quot;', '\"', $item['alt'] );
+		$item['alt']        = isset( $item['alt'] ) ? str_replace( '&quot;', '\"', $item['alt'] ) : '';
 		$item['_thumbnail'] = ( ! empty( $thumbnail[0] ) ) ? $thumbnail[0] : $item['src'];
 		// Never saved against the gallery item, just used for the thumbnail output in the Edit Gallery screen.
 
@@ -2186,7 +2186,8 @@ class Envira_Gallery_Metaboxes {
 		// Loop through the images and crop them.
 		if ( $images ) {
 			// Increase the time limit to account for large image sets and suspend cache invalidations.
-			if ( ! $is_using_old_php ) {
+			// Hosts can disable set_time_limit(), and since PHP 8 calling a disabled function is a fatal error.
+			if ( ! $is_using_old_php && function_exists( 'set_time_limit' ) ) {
 				set_time_limit( Envira_Gallery_Common::get_instance()->get_max_execution_time() );
 			}
 
@@ -2374,7 +2375,8 @@ class Envira_Gallery_Metaboxes {
 		// Loop through the images and crop them.
 		if ( $images ) {
 			// Increase the time limit to account for large image sets and suspend cache invalidations.
-			if ( ! $is_using_old_php ) {
+			// Hosts can disable set_time_limit(), and since PHP 8 calling a disabled function is a fatal error.
+			if ( ! $is_using_old_php && function_exists( 'set_time_limit' ) ) {
 				set_time_limit( Envira_Gallery_Common::get_instance()->get_max_execution_time() );
 			}
 			wp_suspend_cache_invalidation( true );

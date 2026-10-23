@@ -66,6 +66,13 @@ class Envira_Lite_Support {
 	 * On load page actions.
 	 */
 	public function on_load_page() {
+		global $title;
+
+		// Registered without a parent, so WordPress cannot find the page title (null in strip_tags() since PHP 8.1).
+		if ( empty( $title ) ) {
+			$title = __( 'Support General', 'envira-gallery-lite' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- WordPress cannot find the title of a hidden page.
+		}
+
 		$this->all_galleries = $this->get_all_galleries();
 		$this->notice        = '';
 
@@ -161,7 +168,9 @@ class Envira_Lite_Support {
 
 		foreach ( $all_galleries as $gallery_id => $data ) {
 			$updated = 0;
-			foreach ( $data['gallery'] as $item_id => $item ) {
+			// A gallery saved without images has no 'gallery' key, and one without gallery data has '' meta.
+			$items = isset( $data['gallery'] ) && is_array( $data['gallery'] ) ? $data['gallery'] : [];
+			foreach ( $items as $item_id => $item ) {
 				if ( empty( $item['src'] ) || empty( $item['link'] ) ) {
 					++$updated;
 				}
@@ -170,7 +179,7 @@ class Envira_Lite_Support {
 					$src = wp_get_attachment_url( $item_id );
 					if ( false === $src ) {
 						// Item does not exist on db, remove.
-						unset( $item );
+						unset( $data['gallery'][ $item_id ] );
 						continue;
 					}
 					$item['src'] = $src;
@@ -183,6 +192,9 @@ class Envira_Lite_Support {
 					$item['link'] = $item['src'];
 					$notice      .= "<p>Updated <strong>link</strong> of image #$item_id to {$item['src']}</p>";
 				}
+
+				// $item is a copy: write the fixed src and link back, or update_post_meta() saves the old data.
+				$data['gallery'][ $item_id ] = $item;
 			}
 
 			if ( $updated > 0 ) {
@@ -208,17 +220,20 @@ class Envira_Lite_Support {
 		$debug_const  = defined( 'ENVIRA_DEBUG' ) && filter_var( ENVIRA_DEBUG, FILTER_VALIDATE_BOOL );
 		$debug_option = filter_var( get_option( 'envira_debug' ), FILTER_VALIDATE_BOOL );
 		$options      = '<option value="-1">ALL</option>';
-		foreach ( $galleries as $gallery ) {
-			$post        = get_post( $gallery['id'] );
+		foreach ( $galleries as $post_id => $gallery ) {
+			// A gallery saved without images has no 'gallery' key, and one without gallery data has '' meta.
+			$gallery     = is_array( $gallery ) ? $gallery : [];
+			$gallery_id  = isset( $gallery['id'] ) ? $gallery['id'] : $post_id;
+			$post        = get_post( $gallery_id );
 			$option_name = sprintf(
 				'%s -- %s Images (ID: %s)',
-				$post->post_title,
-				count( $gallery['gallery'] ),
-				$gallery['id']
+				$post ? $post->post_title : '',
+				isset( $gallery['gallery'] ) && is_array( $gallery['gallery'] ) ? count( $gallery['gallery'] ) : 0,
+				$gallery_id
 			);
 			$options    .= sprintf(
 				'<option value="%s">%s</option>',
-				esc_attr( $gallery['id'] ),
+				esc_attr( $gallery_id ),
 				esc_html( $option_name )
 			);
 		}

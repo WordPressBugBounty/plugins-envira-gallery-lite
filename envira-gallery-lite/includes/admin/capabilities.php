@@ -60,8 +60,9 @@ class Envira_Capabilities {
 		}
 
 		$gallery = get_post( $gallery_id );
+		$author  = $gallery ? (int) $gallery->post_author : 0;
 
-		if ( get_current_user_id() === (int) $gallery->post_author ) {
+		if ( get_current_user_id() === $author ) {
 			return;
 		}
 

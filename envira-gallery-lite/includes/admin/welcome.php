@@ -462,8 +462,6 @@ class Envira_Welcome {
 	 */
 	public function admin_menu() {
 
-		global $submenu;
-
 		$whitelabel = apply_filters( 'envira_whitelabel', false ) ? '' : esc_html__( 'Envira Gallery ', 'envira-gallery-lite' );
 
 		// Register the submenus.
@@ -494,10 +492,28 @@ class Envira_Welcome {
 			[ $this, 'lite_vs_pro_page' ]
 		);
 
-		unset( $submenu['edit.php?post_type=envira'][15] );
-		unset( $submenu['edit.php?post_type=envira'][16] );
-		unset( $submenu['edit.php?post_type=envira'][17] );
-		unset( $submenu['edit.php?post_type=envira'][18] );
+		// Hide by slug: a taxonomy another plugin adds to the gallery post type shifts the menu positions.
+		foreach ( [ 'addons', 'about-us', 'get-started', 'litevspro' ] as $page ) {
+			$item = remove_submenu_page( 'edit.php?post_type=envira', ENVIRA_LITE_SLUG . '-' . $page );
+
+			// Not added when the user lacks the filtered envira_gallery_menu_cap.
+			if ( ! $item ) {
+				continue;
+			}
+
+			// get_admin_page_title() reads the title from $submenu, so a hidden page needs it set on its load hook.
+			// Without it WordPress passes null to strip_tags() (deprecated since PHP 8.1) and the tab has no title.
+			$page_title = $item[3];
+			add_action(
+				'load-' . get_plugin_page_hookname( $item[2], 'edit.php?post_type=envira' ),
+				function () use ( $page_title ) {
+					global $title;
+					if ( empty( $title ) ) {
+						$title = $page_title; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- WordPress cannot find the title of a hidden page.
+					}
+				}
+			);
+		}
 	}
 
 	/**

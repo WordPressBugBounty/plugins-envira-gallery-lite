@@ -612,7 +612,7 @@ class Envira_Notifications {
 		];
 		?>
 		<li>
-			<div class="envira-notification-icon"><?php echo wp_kses( $this->get_icon( $notification['icon'] ), $allowed_html ); ?></div>
+			<div class="envira-notification-icon"><?php echo wp_kses( $this->get_icon( $type ), $allowed_html ); ?></div>
 			<div class="envira-notification-content">
 				<h4><?php echo esc_html( $notification['title'] ); ?></h4>
 				<p><?php echo wp_kses_post( wp_strip_all_tags( $notification['content'] ) ); ?></p>

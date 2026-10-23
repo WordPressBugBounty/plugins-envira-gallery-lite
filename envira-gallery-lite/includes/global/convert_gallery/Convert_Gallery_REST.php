@@ -220,7 +220,7 @@ class Convert_Gallery_REST extends Convert_Gallery_Common {
 			function ( $image ) {
 				return [
 					'id'    => isset( $image['id'] ) ? absint( $image['id'] ) : 0,
-					'url'   => isset( $image['url'] ) ? esc_url_raw( $image['url'] ) : '',
+					'url'   => isset( $image['url'] ) && is_scalar( $image['url'] ) ? esc_url_raw( (string) $image['url'] ) : '',
 					'title' => isset( $image['title'] ) ? sanitize_text_field( $image['title'] ) : '',
 					'alt'   => isset( $image['alt'] ) ? sanitize_text_field( $image['alt'] ) : '',
 				];

@@ -168,23 +168,28 @@ class Envira_Gallery_Common_Admin {
 
 		global $submenu;
 
-		add_submenu_page(
+		$upgrade_url = esc_url( $this->get_upgrade_link( 'http://enviragallery.com/lite/', 'adminsidebar', 'unlockprosidebar' ) );
+
+		$hook = add_submenu_page(
 			'edit.php?post_type=envira',
 			esc_html__( 'Upgrade to Pro', 'envira-gallery-lite' ),
 			esc_html__( 'Upgrade to Pro', 'envira-gallery-lite' ),
 			apply_filters( 'envira_gallery_menu_cap', 'manage_options' ),
-			esc_url( $this->get_upgrade_link( 'http://enviragallery.com/lite/', 'adminsidebar', 'unlockprosidebar' ) )
+			$upgrade_url
 		);
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		// Not added when the user lacks the filtered envira_gallery_menu_cap.
+		if ( ! $hook || ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
+		// Match the slug add_submenu_page() stored: with a ShareASale ID the link is not on enviragallery.com.
+		$upgrade_slug          = plugin_basename( $upgrade_url );
 		$upgrade_link_position = key(
 			array_filter(
 				$submenu['edit.php?post_type=envira'],
-				static function ( $item ) {
-					return strpos( $item[2], 'http://enviragallery.com/lite/' ) !== false;
+				static function ( $item ) use ( $upgrade_slug ) {
+					return $upgrade_slug === $item[2];
 				}
 			)
 		);

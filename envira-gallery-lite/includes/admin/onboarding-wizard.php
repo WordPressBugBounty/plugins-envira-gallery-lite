@@ -416,7 +416,7 @@ class OnboardingWizard {
 
 		$url = 'https://enviragallery.com/wp-json/envira/v1/get_opt_in_data';
 
-		$email = sanitize_email( $onboarding_data['_email_address'] );
+		$email = isset( $onboarding_data['_email_address'] ) ? sanitize_email( $onboarding_data['_email_address'] ) : '';
 
 		if ( empty( $email ) ) {
 			return;

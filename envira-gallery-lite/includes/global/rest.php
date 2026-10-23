@@ -163,7 +163,8 @@ class Envira_Rest {
 		// post content: editors, or a request carrying the right ?password=. Config stays, so
 		// the block editor's reads of gallery_data.config keep working.
 		$post     = get_post( $object_data['id'] );
-		$password = $request instanceof WP_REST_Request ? (string) $request->get_param( 'password' ) : '';
+		$password = $request instanceof WP_REST_Request ? $request->get_param( 'password' ) : '';
+		$password = is_scalar( $password ) ? (string) $password : '';
 
 		if ( $post && '' !== $post->post_password && ! current_user_can( 'edit_post', $post->ID ) && ! hash_equals( $post->post_password, $password ) ) {
 			$data['gallery'] = [];

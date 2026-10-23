@@ -119,7 +119,7 @@ class Envira_Gutenberg {
 
 		global $wp_version;
 
-		if ( ! is_null( $current_screen ) && method_exists( $current_screen, 'is_block_editor' ) && ( $current_screen->is_block_editor() || ( version_compare( $wp_version, '5.8.0', '>' ) && 'widgets' === $current_screen->base || 'customize' === $current_screen->base ) ) ) {
+		if ( ! is_null( $current_screen ) && method_exists( $current_screen, 'is_block_editor' ) && ( $current_screen->is_block_editor() || ( ( version_compare( $wp_version, '5.8.0', '>' ) && 'widgets' === $current_screen->base ) || 'customize' === $current_screen->base ) ) ) {
 			$request = new \WP_REST_Request( 'GET', '/wp/v2/envira-gallery' ); // request.
 
 			// Ask for only the two fields the block editor reads off this preload

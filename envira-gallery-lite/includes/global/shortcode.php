@@ -220,7 +220,7 @@ class Envira_Gallery_Shortcode {
 		// If no attributes have been passed, the gallery should be pulled from the current post.
 		$gallery_id = false;
 		if ( empty( $atts ) ) {
-			$gallery_id = $post->ID;
+			$gallery_id = isset( $post->ID ) ? $post->ID : null;
 			$data       = is_preview() ? $this->base->_get_gallery( $gallery_id ) : $this->base->get_gallery( $gallery_id );
 		} elseif ( isset( $atts['id'] ) ) {
 			$gallery_id = (int) $atts['id'];
@@ -237,7 +237,7 @@ class Envira_Gallery_Shortcode {
 		} else {
 			// A custom attribute must have been passed. Allow it to be filtered to grab data from a custom source.
 			$data       = apply_filters( 'envira_gallery_custom_gallery_data', false, $atts, $post );
-			$gallery_id = $data['config']['id'];
+			$gallery_id = isset( $data['config']['id'] ) ? $data['config']['id'] : null;
 		}
 
 		// A gallery requested by id or slug must be one the visitor may see. Without this, any
@@ -253,17 +253,16 @@ class Envira_Gallery_Shortcode {
 
 		// Limit the number of images returned, if specified.
 		// [envira-gallery id="123" limit="10"] would only display 10 images.
-		if ( isset( $atts['limit'] ) && is_numeric( $atts['limit'] ) ) {
-			$images          = $data['gallery'];
-			$images          = array_slice( $data['gallery'], 0, absint( $atts['limit'] ), true );
-			$data['gallery'] = $images;
+		// A missing gallery has no data and an empty one has no 'gallery' key: array_slice() throws on those since PHP 8.
+		if ( isset( $atts['limit'] ) && is_numeric( $atts['limit'] ) && ! empty( $data['gallery'] ) && is_array( $data['gallery'] ) ) {
+			$data['gallery'] = array_slice( $data['gallery'], 0, absint( $atts['limit'] ), true );
 		}
 
 		// Allow the data to be filtered before it is stored and used to create the gallery output.
 		$data = apply_filters( 'envira_gallery_pre_data', $data, $gallery_id );
 
 		// If there is no data to output or the gallery is inactive, do nothing.
-		if ( ! $data || empty( $data['gallery'] ) || isset( $data['status'] ) && 'inactive' === $data['status'] && ! is_preview() ) {
+		if ( ! $data || empty( $data['gallery'] ) || ( isset( $data['status'] ) && 'inactive' === $data['status'] && ! is_preview() ) ) {
 			return;
 		}
 
@@ -411,7 +410,7 @@ class Envira_Gallery_Shortcode {
 	public function generate_gallery_item_markup( $gallery, $data, $item, $id, $i ) {
 
 		// Get some config values that we'll reuse for each image.
-		$padding             = absint( round( $this->get_config( 'gutter', $data ) / 2 ) );
+		$padding             = absint( round( (float) $this->get_config( 'gutter', $data ) / 2 ) );
 		$html5_attribute     = ( ( $this->get_config( 'html5', $data ) === '1' ) ? 'data-envirabox-group' : 'rel' );
 		$thumbnail_start_url = get_bloginfo( 'url' ) . '/' . get_bloginfo( 'url' );
 
@@ -580,8 +579,9 @@ class Envira_Gallery_Shortcode {
 
 			if ( $envira_lazy_load ) {
 
-				if ( $output_height > 0 && $output_width > 0 ) {
-					$padding_bottom = ( $output_height / $output_width ) * 100;
+				// Cast first: since PHP 8 a non-numeric size passes the > 0 check as a string and the division throws.
+				if ( (float) $output_height > 0 && (float) $output_width > 0 ) {
+					$padding_bottom = ( (float) $output_height / (float) $output_width ) * 100;
 				} else {
 					// this shouldn't be happening, but this avoids a debug message.
 					$padding_bottom = 100;
@@ -717,6 +717,11 @@ class Envira_Gallery_Shortcode {
 		// Get sorting method.
 		$sorting_method    = (string) $this->get_config( 'random', $data );
 		$sorting_direction = $this->get_config( 'sorting_direction', $data );
+
+		// A missing or empty gallery has nothing to sort, and the built-in sorts pass its null images to array functions.
+		if ( ( empty( $data['gallery'] ) || ! is_array( $data['gallery'] ) ) && in_array( $sorting_method, [ '1', 'src', 'title', 'caption', 'alt', 'link', 'date' ], true ) ) {
+			return $data;
+		}
 
 		// Sort images based on method.
 		switch ( $sorting_method ) {
