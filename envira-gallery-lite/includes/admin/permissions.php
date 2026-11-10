@@ -136,6 +136,22 @@ class Envira_Permissions {
 			return;
 		}
 
+		foreach ( self::get_default_roles() as $permission => $roles ) {
+			update_option( $permission, maybe_serialize( $roles ) );
+			$this->add_capabilities_by_permissions( $permission, $roles );
+		}
+
+		update_option( 'envira_permissions_default', 'yes' );
+	}
+
+	/**
+	 * Get the roles each permission is granted to by default.
+	 *
+	 * @since 1.16.3
+	 *
+	 * @return array
+	 */
+	public static function get_default_roles(): array {
 		$all    = [ 'administrator', 'editor', 'author' ];
 		$editor = [ 'administrator', 'editor' ];
 
@@ -146,14 +162,7 @@ class Envira_Permissions {
 			'envira_permissions_edit_others' => $editor,
 		];
 
-		$permissions = apply_filters( 'envira_permissions_default_roles', $permissions );
-
-		foreach ( $permissions as $permission => $roles ) {
-			update_option( $permission, maybe_serialize( $roles ) );
-			$this->add_capabilities_by_permissions( $permission, $roles );
-		}
-
-		update_option( 'envira_permissions_default', 'yes' );
+		return apply_filters( 'envira_permissions_default_roles', $permissions );
 	}
 
 	/**

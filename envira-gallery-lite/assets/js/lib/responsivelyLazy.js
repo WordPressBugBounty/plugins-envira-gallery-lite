@@ -46,26 +46,112 @@ window.responsivelyLazy = (function () {
 
     jQuery.fn.exists = function(){return this.length>0;}
 
+    /**
+     * Split a srcset attribute into its candidate strings.
+     *
+     * A plain comma split breaks any URL that contains a comma, which is how CDN
+     * transform parameters are written (/w=2048,format=auto). That produced
+     * fragments such as "format=auto" and "fit=crop", which were then requested as
+     * relative URLs and failed to load. Candidate boundaries follow the HTML
+     * srcset rules instead: only a comma that comes after the URL separates
+     * candidates, so commas inside a URL stay part of it.
+     *
+     * Each candidate is returned whole, still carrying its descriptor. Splitting
+     * url from descriptor is left to the caller, which does it at the last
+     * whitespace exactly as before, so a URL containing a raw space keeps working.
+     *
+     * @param {string} value Raw srcset attribute value.
+     * @return {Array} Array of candidate strings.
+     */
+    var parseSrcsetCandidates = function (value) {
+        var isWhitespace = function (character) {
+            return character === ' ' || character === '\t' || character === '\n' || character === '\r' || character === '\f';
+        };
+
+        var candidates = [];
+        var length = value.length;
+        var index = 0;
+
+        while (index < length) {
+            // Skip whitespace and empty candidates.
+            while (index < length && (isWhitespace(value.charAt(index)) || value.charAt(index) === ',')) {
+                index++;
+            }
+
+            if (index >= length) {
+                break;
+            }
+
+            // The URL is everything up to the next whitespace.
+            var urlStart = index;
+            while (index < length && !isWhitespace(value.charAt(index))) {
+                index++;
+            }
+
+            var url = value.slice(urlStart, index);
+            var descriptor = '';
+
+            if (url.charAt(url.length - 1) === ',') {
+                // A comma attached to the URL ends the candidate, so it carries no
+                // descriptor. Matches the old behaviour for "a.jpg, b.jpg".
+                url = url.replace(/,+$/, '');
+            } else {
+                // Everything up to the next comma describes this candidate.
+                var descriptorStart = index;
+                while (index < length && value.charAt(index) !== ',') {
+                    index++;
+                }
+                descriptor = value.slice(descriptorStart, index).trim();
+
+                if (index < length) {
+                    index++;
+                }
+            }
+
+            if (url.length > 0) {
+                candidates.push(descriptor.length > 0 ? url + ' ' + descriptor : url);
+            }
+        }
+
+        return candidates;
+    };
+
     var updateElement = function (container, element) {
         var options = element.getAttribute('data-envira-srcset');
         if (options !== null) {
             options = options.trim();
             if (options.length > 0) {
-                options = options.split(',');
+                var candidates = parseSrcsetCandidates(options);
                 var temp = [];
-                var optionsCount = options.length;
+                var optionsCount = candidates.length;
                 for (var j = 0; j < optionsCount; j++) {
-                    var option = options[j].trim();
-                    if (option.length === 0) {
-                        continue;
-                    }
+                    var option = candidates[j];
+                    // Split url from descriptor at the LAST whitespace, unchanged from
+                    // the original implementation, so a URL containing a raw space
+                    // still parses.
                     var spaceIndex = option.lastIndexOf(' ');
                     if (spaceIndex === -1) {
                         var optionImage = option;
                         var optionWidth = 999998;
                     } else {
                         var optionImage = option.substr(0, spaceIndex);
-                        var optionWidth = parseInt(option.substr(spaceIndex + 1, option.length - spaceIndex - 2), 10);
+                        var descriptor = option.substr(spaceIndex + 1);
+                        var widthMatch = /^(\d+)w$/i.exec(descriptor);
+
+                        if (widthMatch === null) {
+                            // Only width descriptors can be compared with the container.
+                            // A density descriptor ("2x", which Lite itself writes on every
+                            // image) used to lose its unit and read as a 2px width, so a
+                            // hidden container picked the retina file. Density is not
+                            // supported here (envira-gallery-plugin#5624), so skip it
+                            // quietly; anything else is malformed and worth a warning.
+                            if (!/^\d+(\.\d+)?x$/i.test(descriptor) && typeof console !== 'undefined' && console.warn) {
+                                console.warn('Envira: could not read the srcset descriptor in "' + option + '", skipping this candidate.');
+                            }
+                            continue;
+                        }
+
+                        var optionWidth = parseInt(widthMatch[1], 10);
                     }
                     var add = false;
                     if (optionImage.indexOf('.webp', optionImage.length - 5) !== -1) {
@@ -78,6 +164,9 @@ window.responsivelyLazy = (function () {
                     if (add) {
                         temp.push([optionImage, optionWidth]);
                     }
+                }
+                if (temp.length === 0 && optionsCount > 0 && typeof console !== 'undefined' && console.warn) {
+                    console.warn('Envira: no usable srcset candidate in "' + options + '", loading the full-size image.');
                 }
                 temp.sort(function (a, b) {
                     if (a[1] < b[1]) {
@@ -106,11 +195,16 @@ window.responsivelyLazy = (function () {
 
         var containerWidth = container.offsetWidth * window.devicePixelRatio;
 
+        // URLs that already failed for this element. Without this the error listener
+        // below re-armed the same request on every scroll and resize, and logged it
+        // each time, with nothing to stop it.
+        var failedUrls = container.enviraFailedUrls || {};
+
         var bestSelectedOption = null;
         var optionsCount = options.length;
         for (var j = 0; j < optionsCount; j++) {
             var optionData = options[j];
-            if (optionData[1] >= containerWidth) {
+            if (optionData[1] >= containerWidth && !failedUrls[optionData[0]]) {
                 bestSelectedOption = optionData;
                 break;
             }
@@ -118,6 +212,10 @@ window.responsivelyLazy = (function () {
 
         if (bestSelectedOption === null) {
             bestSelectedOption = [element.getAttribute('data-envira-src'), 999999];
+        }
+
+        if (failedUrls[bestSelectedOption[0]]) {
+            return;
         }
 
         if (typeof container.lastSetOption === 'undefined') {
@@ -138,7 +236,26 @@ window.responsivelyLazy = (function () {
                 }
             }, false);
             image.addEventListener('error', function () {
+                // Remember the failure so the next candidate (or the full-size
+                // original) is tried instead of retrying this one forever.
+                container.enviraFailedUrls = container.enviraFailedUrls || {};
+                container.enviraFailedUrls[url] = true;
+
+                // A late error from an older request must not reset or replace the
+                // one that is now current.
+                if (container.lastSetOption[0] !== url) {
+                    return;
+                }
                 container.lastSetOption = ['', 0];
+
+                // And try it now. Nothing else re-runs selection for an image that is
+                // already in view (resize and load call run() without a gallery, which
+                // returns at once), so it would sit on its placeholder until scrolled
+                // out and back. This terminates: every failed URL is skipped, and when
+                // the full-size original has failed too updateElement() returns early.
+                setTimeout(function () {
+                    updateElement(container, element);
+                }, 0);
             }, false);
 
             image.onload = function () {
@@ -187,11 +304,20 @@ window.responsivelyLazy = (function () {
 
 			}
             image.onerror = function () {
-               /* console.error("Cannot load image"); */
-               //do something else...
+                // Match Pro: log the failure. This was commented out here, so a
+                // candidate that failed to load was silent on Lite. The error listener
+                // above now records the URL, so this fires once per failed URL rather
+                // than on every scroll and resize.
+                console.error('Cannot load image: ' + url);
+                //do something else...
             }
 
-            image.src = null;
+            // Null assignment could have been for IE, but shows as 404 in Safari web
+            // console (although everything else is fine). Pro already dropped it after
+            // verifying Chrome/Firefox are clean without it; Lite still ran it, which
+            // logged a console error of its own - the very thing
+            // awesomemotive/envira-image-cdn#38 asks to be rid of.
+            // image.src = null;
             image.src = url;
 
             container.lastSetOption = bestSelectedOption;

@@ -5,7 +5,7 @@
  * Description: Envira Gallery is a fast, easy and powerful gallery builder with lightbox, masonry and grid layouts, albums, videos, and responsive displays and more
  * Author:      Envira Gallery Team
  * Author URI:  http://enviragallery.com
- * Version:     1.16.3
+ * Version:     1.16.4
  * Requires at least: 6.3
  * Requires PHP: 7.0
  * Text Domain: envira-gallery-lite
@@ -59,7 +59,7 @@ class Envira_Gallery_Lite {
 	 *
 	 * @var string
 	 */
-	public $version = '1.16.3';
+	public $version = '1.16.4';
 
 
 	/**
@@ -184,10 +184,12 @@ class Envira_Gallery_Lite {
 	 * @since 1.0.0
 	 */
 	public function require_admin() {
+		// require_once for the two files maybe_run_update() can load first, on a request that
+		// re-runs this (the Pest harness re-fires init): a plain require redeclared their classes.
 		require plugin_dir_path( __FILE__ ) . 'includes/admin/addons.php';
 		require plugin_dir_path( __FILE__ ) . 'includes/admin/common.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/capabilities.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/permissions.php';
+		require_once plugin_dir_path( __FILE__ ) . 'includes/admin/capabilities.php';
+		require_once plugin_dir_path( __FILE__ ) . 'includes/admin/permissions.php';
 		require plugin_dir_path( __FILE__ ) . 'includes/admin/editor.php';
 		require plugin_dir_path( __FILE__ ) . 'includes/admin/media.php';
 		require plugin_dir_path( __FILE__ ) . 'includes/admin/media-view.php';
@@ -587,6 +589,18 @@ class Envira_Gallery_Lite {
 
 			update_option( 'envira_lite_version', ENVIRA_LITE_VERSION, 'no' );
 
+		}
+
+		// Re-apply the gallery permission policy on any request, not only in wp-admin, so REST
+		// requests see it straight after an update. Once it has run, this is one autoloaded option read.
+		// Envira_Capabilities::maybe_upgrade_permissions() decides whether a newer policy applies.
+		if ( (int) get_option( 'envira_permissions_policy_version', 0 ) < 1 ) {
+			if ( ! class_exists( '\Envira\Admin\Envira_Capabilities' ) ) {
+				require_once plugin_dir_path( __FILE__ ) . 'includes/admin/capabilities.php';
+				require_once plugin_dir_path( __FILE__ ) . 'includes/admin/permissions.php';
+			}
+
+			( new \Envira\Admin\Envira_Capabilities() )->maybe_upgrade_permissions();
 		}
 	}
 
