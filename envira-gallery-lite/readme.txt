@@ -4,7 +4,7 @@ Tags: photo gallery, image gallery, gallery, lightbox, albums
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.0
-Stable tag: 1.16.4
+Stable tag: 1.17.0
 License: GNU General Public License v2.0 or later
 
 The fastest drag & drop photo gallery plugin. Create stunning image galleries, albums, video galleries & lightbox displays in minutes — no coding!
@@ -267,6 +267,10 @@ For documentation, tutorials, and videos visit: [Envira Gallery Documentation](h
 Lite support is available on the [WordPress.org support forum](https://wordpress.org/support/plugin/envira-gallery-lite/). For priority support, [upgrade to Envira Gallery Pro](https://enviragallery.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteversion).
 
 == Changelog ==
+
+= 1.17.0 - 11.17.2026 =
+* Added: Support for the WordPress Abilities API (WordPress 6.9+), so AI assistants and other tools can find, read and manage your galleries within each user's permissions. Changes stay off until you turn them on in Envira Gallery > Settings > AI & MCP.
+* Added: A notice ahead of the PHP 8.1 requirement coming in the next release. Sites running PHP 7.0 to 8.0 see it in wp-admin and keep working; sites below PHP 7.0 see the plugin stay inactive with an explanation on the Plugins screen.
 
 = 1.16.4 - 11.09.2026 =
 * Fixed: Security hardening on gallery permissions. We recommend updating.

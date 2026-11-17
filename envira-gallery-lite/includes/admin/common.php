@@ -111,7 +111,20 @@ class Envira_Gallery_Common_Admin {
 	 */
 	public function add_capabilities() {
 
-		( new \Envira\Admin\Envira_Capabilities() )->add_capabilities();
+		// Static, so this does not construct the deprecated class and emit its
+		// _deprecated_function() notice on every admin request. The constructor
+		// also hooked the list and edit-screen access guards, so register those
+		// here too.
+		\Envira\Admin\Envira_Capabilities::register_access_hooks();
+
+		// Same bail as Envira_Capabilities::add_capabilities(): the permissions
+		// settings save writes the capabilities itself.
+		// phpcs:ignore WordPress.Security.NonceVerification
+		if ( isset( $_POST['envira-permissions-nonce'] ) ) {
+			return;
+		}
+
+		\Envira\Admin\Envira_Capabilities::register_capabilities();
 	}
 
 	/**

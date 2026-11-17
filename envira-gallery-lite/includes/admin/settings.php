@@ -226,6 +226,11 @@ class Envira_Settings {
 			return;
 		}
 
+		// Other forms post to this page too (AI & MCP); leave those to their own handlers.
+		if ( ! isset( $_POST['envira-gallery-verify-submit'] ) && ! isset( $_POST['envira-permissions-nonce'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- only checks which form was posted; the nonce is verified below.
+			return;
+		}
+
 		// Verify nonce — do NOT sanitize before wp_verify_nonce; sanitize_key() can corrupt the hash and cause false failures.
 		if ( ! isset( $_POST['envira-permissions-nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['envira-permissions-nonce'] ), 'envira-permissions-nonce' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- nonces must not be sanitized before wp_verify_nonce.
 			add_action( 'envira_gallery_settings_permissions_tab_notice', [ $this, 'permissions_settings_nonce_notice' ] );

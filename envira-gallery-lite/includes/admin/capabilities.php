@@ -48,7 +48,7 @@ class Envira_Capabilities {
 	 *
 	 * @var array
 	 */
-	private $roles = [
+	private static $roles = [
 		'administrator',
 		'editor',
 		'author',
@@ -63,7 +63,7 @@ class Envira_Capabilities {
 	 *
 	 * @var array
 	 */
-	private $capabilities = [
+	private static $capabilities = [
 		'edit_envira_gallery',
 		'read_envira_gallery',
 		'delete_envira_gallery',
@@ -87,10 +87,33 @@ class Envira_Capabilities {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
+		_deprecated_function( __CLASS__ . '::__construct', '1.13.0 of Envira Gallery Lite', 'Envira\Access\Capabilities' );
+
 		// Register capabilities.
 		add_action( 'admin_init', [ $this, 'add_capabilities' ] );
-		add_filter( 'pre_get_posts', [ $this, 'show_only_user_envira_galleries' ] );
-		add_action( 'current_screen', [ $this,'restrict_envira_gallery_access' ] );
+		self::register_access_hooks();
+	}
+
+	/**
+	 * Registers the gallery list and edit-screen access guards.
+	 *
+	 * Static, so the plugin's own bootstrap can register them without
+	 * constructing this deprecated class. Before 1.13.0 the constructor was the
+	 * only place these were hooked, so dropping the construction also dropped
+	 * the author scoping of the galleries list.
+	 *
+	 * @since 1.13.0
+	 *
+	 * @return void
+	 */
+	public static function register_access_hooks() {
+		if ( false === has_filter( 'pre_get_posts', [ __CLASS__, 'show_only_user_envira_galleries' ] ) ) {
+			add_filter( 'pre_get_posts', [ __CLASS__, 'show_only_user_envira_galleries' ] );
+		}
+
+		if ( false === has_action( 'current_screen', [ __CLASS__, 'restrict_envira_gallery_access' ] ) ) {
+			add_action( 'current_screen', [ __CLASS__, 'restrict_envira_gallery_access' ] );
+		}
 	}
 
 	/**
@@ -101,9 +124,9 @@ class Envira_Capabilities {
 	 *
 	 * @return void
 	 */
-	public function restrict_envira_gallery_access() {
+	public static function restrict_envira_gallery_access() {
 		$screen = get_current_screen();
-		if ( 'envira' !== $screen->post_type ) {
+		if ( ! $screen || 'envira' !== $screen->post_type ) {
 			return;
 		}
 
@@ -138,7 +161,7 @@ class Envira_Capabilities {
 	 *
 	 * @return WP_Query
 	 */
-	public function show_only_user_envira_galleries( $query ) {
+	public static function show_only_user_envira_galleries( $query ) {
 		global $pagenow;
 
 		if ( 'edit.php' !== $pagenow || ! $query->is_admin ) {
@@ -172,15 +195,39 @@ class Envira_Capabilities {
 			return;
 		}
 
+		self::register_capabilities();
+	}
+
+	/**
+	 * Registers Envira Gallery Lite capabilities for each role, if absent.
+	 *
+	 * Static, and separate from add_capabilities(), so the plugin's own bootstrap
+	 * can register capabilities without constructing this class. The constructor
+	 * carries a _deprecated_function() notice, and the internal call site on
+	 * admin_init was tripping it on every admin request — including
+	 * admin-ajax.php, where the notice can print ahead of the JSON response.
+	 * Mirrors \Envira\Utils\Capabilities::register_capabilities() in Pro.
+	 *
+	 * @since 1.13.0
+	 *
+	 * @return void
+	 */
+	public static function register_capabilities() {
+
 		// Grab the administrator role, and if it already has an Envira capability key defined, bail
 		// as we only need to register our capabilities once.
 		$administrator = get_role( 'administrator' );
+		if ( ! $administrator instanceof \WP_Role ) {
+			// No administrator role to copy from: nothing sensible to register, and dereferencing
+			// null here fatals the request (Pro #5584). The activation hook now reaches this too.
+			return;
+		}
 		if ( $administrator->has_cap( 'edit_other_envira_galleries' ) ) {
 			return;
 		}
 
 		// If here, we need to assign capabilities.
-		foreach ( $this->roles as $role_name ) {
+		foreach ( self::$roles as $role_name ) {
 			// Properly get the role as WP_Role object.
 			$role = get_role( $role_name );
 			if ( ! is_object( $role ) ) {
@@ -220,7 +267,7 @@ class Envira_Capabilities {
 
 		// Apply the default permission policy now, rather than on the first Settings page load.
 		// The mapping above gives Contributor create, edit and delete gallery capabilities.
-		$this->apply_permission_policy();
+		self::apply_permission_policy();
 	}
 
 	/**
@@ -234,7 +281,7 @@ class Envira_Capabilities {
 	 *
 	 * @return void
 	 */
-	public function maybe_upgrade_permissions() {
+	public static function maybe_upgrade_permissions() {
 		if ( (int) get_option( self::POLICY_VERSION_OPTION, 0 ) >= self::POLICY_VERSION ) {
 			return;
 		}
@@ -248,11 +295,11 @@ class Envira_Capabilities {
 		// Record the run first, so requests arriving at the same time don't all rewrite the roles.
 		update_option( self::POLICY_VERSION_OPTION, self::POLICY_VERSION );
 
-		$this->save_default_permissions();
+		self::save_default_permissions();
 
 		// Remove only. A capability the policy grants but the role lacks was taken away on
 		// purpose, for example a Deny set with Members, so it is not added back.
-		$this->apply_permission_policy( false );
+		self::apply_permission_policy( false );
 
 		// The current user's capabilities were read from the roles before init. Re-read them so
 		// this request is not authorised with the removed ones.
@@ -274,7 +321,7 @@ class Envira_Capabilities {
 	 *
 	 * @return void
 	 */
-	private function save_default_permissions() {
+	private static function save_default_permissions() {
 		foreach ( Envira_Permissions::get_default_roles() as $permission => $allowed ) {
 			if ( false === get_option( $permission, false ) ) {
 				update_option( $permission, maybe_serialize( $allowed ) );
@@ -297,7 +344,7 @@ class Envira_Capabilities {
 	 *
 	 * @return void
 	 */
-	private function apply_permission_policy( $grant_missing = true ) {
+	private static function apply_permission_policy( $grant_missing = true ) {
 		// The Envira_Permissions constructor calls set_default_permissions().
 		$permissions = new Envira_Permissions();
 		$granted     = [];
@@ -312,7 +359,7 @@ class Envira_Capabilities {
 
 			$allowed = (array) maybe_unserialize( $allowed );
 
-			foreach ( $this->roles as $role_name ) {
+			foreach ( self::$roles as $role_name ) {
 				$role = get_role( $role_name );
 
 				if ( 'administrator' === $role_name || ! is_object( $role ) ) {
@@ -343,7 +390,7 @@ class Envira_Capabilities {
 		// grants nothing holds no gallery capabilities at all. No permission maps
 		// delete_others_envira_galleries or delete_private_envira_galleries: keep them only for
 		// roles allowed both to delete galleries and to edit others' galleries.
-		foreach ( $this->roles as $role_name ) {
+		foreach ( self::$roles as $role_name ) {
 			$role = get_role( $role_name );
 
 			if ( 'administrator' === $role_name || ! is_object( $role ) ) {
@@ -357,7 +404,7 @@ class Envira_Capabilities {
 				$keep[] = 'delete_private_envira_galleries';
 			}
 
-			foreach ( array_diff( $this->capabilities, $keep ) as $capability ) {
+			foreach ( array_diff( self::$capabilities, $keep ) as $capability ) {
 				if ( ! empty( $role->capabilities[ $capability ] ) ) {
 					$role->remove_cap( $capability );
 				}
@@ -365,5 +412,12 @@ class Envira_Capabilities {
 		}
 
 		update_option( self::POLICY_VERSION_OPTION, self::POLICY_VERSION );
+
+		// The signed-in user's capability list was resolved from their roles before this ran, so
+		// it lacks what was just granted; re-resolve it or this request is still refused (Pro #5584).
+		$current_user = wp_get_current_user();
+		if ( $current_user instanceof \WP_User && $current_user->exists() ) {
+			$current_user->for_site( get_current_blog_id() );
+		}
 	}
 }

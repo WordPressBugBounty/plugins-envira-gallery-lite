@@ -5,7 +5,7 @@
  * Description: Envira Gallery is a fast, easy and powerful gallery builder with lightbox, masonry and grid layouts, albums, videos, and responsive displays and more
  * Author:      Envira Gallery Team
  * Author URI:  http://enviragallery.com
- * Version:     1.16.4
+ * Version:     1.17.0
  * Requires at least: 6.3
  * Requires PHP: 7.0
  * Text Domain: envira-gallery-lite
@@ -33,622 +33,648 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Main plugin class.
- *
- * @since 1.0.0
- *
- * @package Envira_Gallery
- * @author  Envira Gallery Team
- */
-class Envira_Gallery_Lite {
+// Stop here on PHP older than the minimum: the plugin stays active but loads nothing, and the
+// Plugins screen explains why. Nothing below this block may run before the check. Between the
+// minimum and the version the next release will require, announce() adds a dismissible admin notice.
+require_once __DIR__ . '/includes/global/requirements-check.php';
+$envira_gallery_lite_requirements = new Envira\Lite\RequirementsCheck( __FILE__, 'Envira Gallery Lite' );
+if ( ! $envira_gallery_lite_requirements->met() ) {
+	$envira_gallery_lite_requirements->quit();
+	return;
+}
+$envira_gallery_lite_requirements->announce();
+unset( $envira_gallery_lite_requirements );
+
+if ( ! class_exists( 'Envira_Gallery_Lite' ) ) :
 
 	/**
-	 * Holds the class object.
+	 * Main plugin class.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var object
+	 * @package Envira_Gallery
+	 * @author  Envira Gallery Team
 	 */
-	public static $instance;
-
-	/**
-	 * Plugin version, used for cache-busting of style and script file references.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var string
-	 */
-	public $version = '1.16.4';
-
-
-	/**
-	 * The name of the plugin.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var string
-	 */
-	public $plugin_name = 'Envira Gallery Lite';
-
-	/**
-	 * Unique plugin slug identifier.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var string
-	 */
-	public $plugin_slug = 'envira-gallery-lite';
-
-	/**
-	 * Plugin file.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var string
-	 */
-	public $file = __FILE__;
-
-	/**
-	 * Notifications Object
-	 *
-	 * @var object
-	 */
-	public $notifications = null;
-
-	/**
-	 * Primary class constructor.
-	 *
-	 * @since 1.0.0
-	 */
-	public function __construct() {
-
-		if ( ! defined( 'ENVIRA_LITE_VERSION' ) ) {
-
-			define( 'ENVIRA_LITE_VERSION', $this->version );
-
-		}
-
-		if ( ! defined( 'ENVIRA_LITE_SLUG' ) ) {
-
-			define( 'ENVIRA_LITE_SLUG', $this->plugin_slug );
-
-		}
-
-		if ( ! defined( 'ENVIRA_LITE_FILE' ) ) {
-
-			define( 'ENVIRA_LITE_FILE', $this->file );
-
-		}
-
-		if ( ! defined( 'ENVIRA_LITE_DIR' ) ) {
-
-			define( 'ENVIRA_LITE_DIR', plugin_dir_path( __FILE__ ) );
-
-		}
-
-		if ( ! defined( 'ENVIRA_LITE_URL' ) ) {
-
-			define( 'ENVIRA_LITE_URL', plugin_dir_url( __FILE__ ) );
-
-		}
-
-		// Fire a hook before the class is setup.
-		do_action( 'envira_gallery_pre_init' );
-
-		// Load the plugin formally.
-		add_action( 'init', [ $this, 'init' ], 0 );
-	}
-
-	/**
-	 * Loads the plugin into WordPress.
-	 *
-	 * @since 1.0.0
-	 */
-	public function init() {
-
-		// Don't load Lite if Envira Gallery is already active.
-		// Envira Gallery will display a notice telling the user to deactivate Lite.
-		if ( class_exists( 'Envira_Gallery' ) ) {
-			return;
-		}
-
-		// Run hook once Envira has been initialized.
-		// This hook is deliberately different from the Pro version, to prevent the entire site breaking
-		// if a user activates Lite with Pro Addons.
-		do_action( 'envira_gallery_lite_init' );
-
-		// Redirect to wizard.
-		add_action( 'admin_init', [ $this, 'redirect_to_wizard' ], 9999 );
-
-		// Load global components.
-		$this->require_global();
-
-		// Load admin only components.
-		if ( is_admin() ) {
-			$this->require_admin();
-		}
-
-		// Check if we need to run a update routine.
-		$this->maybe_run_update();
-
-		// Add hook for when Envira has loaded.
-		// This hook is deliberately different from the Pro version, to prevent the entire site breaking
-		// if a user activates Lite with Pro Addons.
-		do_action( 'envira_gallery_lite_loaded' );
-	}
-
-	/**
-	 * Loads all admin related files into scope.
-	 *
-	 * @since 1.0.0
-	 */
-	public function require_admin() {
-		// require_once for the two files maybe_run_update() can load first, on a request that
-		// re-runs this (the Pest harness re-fires init): a plain require redeclared their classes.
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/addons.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/common.php';
-		require_once plugin_dir_path( __FILE__ ) . 'includes/admin/capabilities.php';
-		require_once plugin_dir_path( __FILE__ ) . 'includes/admin/permissions.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/editor.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/media.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/media-view.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/metaboxes.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/notice.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/posttype.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/table.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/review.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/settings.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/gutenberg.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/welcome.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/Envira_Lite_Support.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/albums.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/onboarding-wizard.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/menu-nudge.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/import-galleries.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/Deactivation_Survey.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/ai-image-assistant-upsell.php';
-
-		( new OnboardingWizard() )->hooks();
-		( new Envira_AI_Image_Assistant_Upsell() )->hooks();
-
-		( new Envira_Albums_Preview() )->hooks();
-		( new Envira_Settings() )->hooks();
-		( new Envira_Welcome() )->hooks();
-		( new Envira_Lite_Support() )->hooks();
-		( new Menu_Nudge() )->hooks();
-		( new Envira_Importer_Preview() )->hooks();
-
-		$deactivation_survey = new Deactivation_Survey();
-	}
-
-	/**
-	 * Loads a partial view for the Administration screen
-	 *
-	 * @since 1.5.0
-	 *
-	 * @param      string $template      PHP file at includes/admin/partials, excluding file extension.
-	 * @param      array  $data          Any data to pass to the view.
-	 * @return     boolean
-	 */
-	public function load_admin_partial( $template, $data = [] ) {
-
-		$dir = trailingslashit( plugin_dir_path( __FILE__ ) . 'includes/admin/partials' );
-
-		if ( file_exists( $dir . $template . '.php' ) ) {
-			require_once $dir . $template . '.php';
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Loads all global files into scope.
-	 *
-	 * @since 1.0.0
-	 */
-	public function require_global() {
-
-		require plugin_dir_path( __FILE__ ) . 'includes/global/common.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/global/posttype.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/global/shortcode.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/global/rest.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/global/convert_gallery/Convert_Gallery_Common.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/global/convert_gallery/Convert_Gallery_Main.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/global/convert_gallery/Convert_Gallery_CLI.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/global/convert_gallery/Convert_Gallery_REST.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/global/Envira_Tracking.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/ajax.php';
-		require plugin_dir_path( __FILE__ ) . 'includes/admin/notifications.php';
-
-		( new Envira_Tracking() )->hooks();
-
-		$this->notifications = new Envira_Notifications();
-		$this->notifications->hooks();
-
-		( new Convert_Gallery_Main() )->hooks();
-	}
-
-	/**
-	 * Returns a gallery based on ID.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param int $id     The gallery ID used to retrieve a gallery.
-	 * @return array|bool Array of gallery data or false if none found.
-	 */
-	public function get_gallery( $id ) {
-
-		$gallery = get_transient( '_eg_cache_id_' . $id );
-
-		// Attempt to return the transient first, otherwise generate the new query to retrieve the data.
-		if ( false === $gallery ) {
-			$gallery = $this->_get_gallery( $id );
-			if ( $gallery ) {
-				$expiration = Envira_Gallery_Common::get_instance()->get_transient_expiration_time();
-				set_transient( '_eg_cache_id_' . $id, $gallery, $expiration );
-			}
-		}
-
-		// Return the gallery data.
-		return $gallery;
-	}
-
-	// phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
-	/**
-	 * Internal method that returns a gallery based on ID.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @deprecated Should be removed in future versions.
-	 *
-	 * @param int $id     The gallery ID used to retrieve a gallery.
-	 * @return array|bool Array of gallery data or false if none found.
-	 */
-	public function _get_gallery( $id ) {
-		// phpcs:enable PSR2.Methods.MethodDeclaration.Underscore
-
-		return get_post_meta( $this->get_gallery_post_id( $id ), '_eg_gallery_data', true );
-	}
-
-	/**
-	 * Returns the ID of the post that holds a gallery's data.
-	 *
-	 * @since 1.16.2
-	 *
-	 * @param int $id The gallery ID used to retrieve a gallery.
-	 * @return int    The post ID, or 0 if none was found.
-	 */
-	public function get_gallery_post_id( $id ) {
+	class Envira_Gallery_Lite {
 
 		/**
-		* Version 1.2.1+: Check if the post has gallery data - if not, we may be using a Post ID but the gallery
-		* has moved into the Envira CPT
-		*/
-		if ( empty( get_post_meta( $id, '_eg_gallery_data', true ) ) ) {
-			return absint( get_post_meta( $id, '_eg_gallery_id', true ) );
-		}
+		 * Holds the class object.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @var object
+		 */
+		public static $instance;
 
-		return absint( $id );
-	}
+		/**
+		 * Plugin version, used for cache-busting of style and script file references.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @var string
+		 */
+		public $version = '1.17.0';
 
-	/**
-	 * Returns the number of images in a gallery.
-	 *
-	 * @since 1.2.1
-	 *
-	 * @param int $id The gallery ID used to retrieve a gallery.
-	 * @return int    The number of images in the gallery.
-	 */
-	public function get_gallery_image_count( $id ) {
 
-		$gallery = $this->get_gallery( $id );
-		return isset( $gallery['gallery'] ) ? count( $gallery['gallery'] ) : 0;
-	}
+		/**
+		 * The name of the plugin.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @var string
+		 */
+		public $plugin_name = 'Envira Gallery Lite';
 
-	/**
-	 * Returns a gallery based on slug.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $slug The gallery slug used to retrieve a gallery.
-	 * @return array|bool  Array of gallery data or false if none found.
-	 */
-	public function get_gallery_by_slug( $slug ) {
+		/**
+		 * Unique plugin slug identifier.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @var string
+		 */
+		public $plugin_slug = 'envira-gallery-lite';
 
-		$gallery = get_transient( '_eg_cache_slug_' . $slug );
+		/**
+		 * Plugin file.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @var string
+		 */
+		public $file = __FILE__;
 
-		// Attempt to return the transient first, otherwise generate the new query to retrieve the data.
-		if ( false === $gallery ) {
-			$gallery = $this->_get_gallery_by_slug( $slug );
-			if ( $gallery ) {
-				$expiration = Envira_Gallery_Common::get_instance()->get_transient_expiration_time();
-				set_transient( '_eg_cache_slug_' . $slug, $gallery, $expiration );
+		/**
+		 * Notifications Object
+		 *
+		 * @var object
+		 */
+		public $notifications = null;
+
+		/**
+		 * Primary class constructor.
+		 *
+		 * @since 1.0.0
+		 */
+		public function __construct() {
+
+			if ( ! defined( 'ENVIRA_LITE_VERSION' ) ) {
+
+				define( 'ENVIRA_LITE_VERSION', $this->version );
+
 			}
-		}
 
-		// Return the gallery data.
-		return $gallery;
-	}
+			if ( ! defined( 'ENVIRA_LITE_SLUG' ) ) {
 
-	// phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
-	/**
-	 * Internal method that returns a gallery based on slug.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @deprecated Should be removed in future versions.
-	 *
-	 * @param string $slug The gallery slug used to retrieve a gallery.
-	 * @return array|bool  Array of gallery data or false if none found.
-	 */
-	public function _get_gallery_by_slug( $slug ) {
-		// phpcs:enable PSR2.Methods.MethodDeclaration.Underscore
-		$gallery_id = $this->get_gallery_post_id_by_slug( $slug );
+				define( 'ENVIRA_LITE_SLUG', $this->plugin_slug );
 
-		return $gallery_id ? get_post_meta( $gallery_id, '_eg_gallery_data', true ) : false;
-	}
-
-	/**
-	 * Returns the ID of the gallery post a slug resolves to.
-	 *
-	 * @since 1.16.2
-	 *
-	 * @param string $slug The gallery slug used to retrieve a gallery.
-	 * @return int         The post ID, or 0 if none was found.
-	 */
-	public function get_gallery_post_id_by_slug( $slug ) {
-		// Get Envira CPT by slug.
-		$galleries = new WP_Query(
-			[
-				'post_type'      => 'envira',
-				'name'           => $slug,
-				'fields'         => 'ids',
-				'posts_per_page' => 1,
-			]
-		);
-		if ( $galleries->posts ) {
-			return absint( $galleries->posts[0] );
-		}
-
-		// If nothing found, get Envira CPT by _eg_gallery_old_slug.
-		// This covers Galleries migrated from Pages/Posts --> Envira CPTs.
-		$galleries = new WP_Query(
-			[
-				'post_type'      => 'envira',
-				'no_found_rows'  => true,
-				'cache_results'  => false,
-				'fields'         => 'ids',
-				'meta_query'     => [
-					[
-						'key'   => '_eg_gallery_old_slug',
-						'value' => $slug,
-					],
-				],
-				'posts_per_page' => 1,
-			]
-		);
-		if ( $galleries->posts ) {
-			return absint( $galleries->posts[0] );
-		}
-
-		// No galleries found.
-		return 0;
-	}
-
-	/**
-	 * Returns all galleries created on the site.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param bool   $skip_empty         Skip empty sliders.
-	 * @param bool   $ignore_cache       Ignore Transient cache.
-	 * @param string $search_terms       Search for specified Galleries by Title.
-	 *
-	 * @return array|bool                        Array of gallery data or false if none found.
-	 */
-	public function get_galleries( $skip_empty = true, $ignore_cache = false, $search_terms = '' ) {
-
-		$galleries = get_transient( '_eg_cache_all' );
-
-		// Attempt to return the transient first, otherwise generate the new query to retrieve the data.
-		if ( $ignore_cache || ! empty( $search_terms ) || false === $galleries ) {
-			$galleries = $this->_get_galleries( $skip_empty, $search_terms );
-
-			// Cache the results if we're not performing a search and we have some results.
-			if ( $galleries && empty( $search_terms ) ) {
-				$expiration = Envira_Gallery_Common::get_instance()->get_transient_expiration_time();
-				set_transient( '_eg_cache_all', $galleries, $expiration );
 			}
+
+			if ( ! defined( 'ENVIRA_LITE_FILE' ) ) {
+
+				define( 'ENVIRA_LITE_FILE', $this->file );
+
+			}
+
+			if ( ! defined( 'ENVIRA_LITE_DIR' ) ) {
+
+				define( 'ENVIRA_LITE_DIR', plugin_dir_path( __FILE__ ) );
+
+			}
+
+			if ( ! defined( 'ENVIRA_LITE_URL' ) ) {
+
+				define( 'ENVIRA_LITE_URL', plugin_dir_url( __FILE__ ) );
+
+			}
+
+			// Fire a hook before the class is setup.
+			do_action( 'envira_gallery_pre_init' );
+
+			// Load the plugin formally.
+			add_action( 'init', [ $this, 'init' ], 0 );
 		}
 
-		// Return the gallery data.
-		return $galleries;
-	}
+		/**
+		 * Loads the plugin into WordPress.
+		 *
+		 * @since 1.0.0
+		 */
+		public function init() {
 
-	// phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
-	/**
-	 * Internal method that returns all galleries created on the site.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @deprecated Should be removed in future versions.
-	 *
-	 * @param bool   $skip_empty    Skip Empty Galleries.
-	 * @param string $search_terms  Search for specified Galleries by Title.
-	 * @return mixed                        Array of gallery data or false if none found.
-	 */
-	public function _get_galleries( $skip_empty = true, $search_terms = '' ) {
-		// phpcs:enable PSR2.Methods.MethodDeclaration.Underscore
-		// Build WP_Query arguments.
-		$args = [
-			'post_type'      => 'envira',
-			'post_status'    => 'publish',
-			'posts_per_page' => 99,
-			'no_found_rows'  => true,
-			'fields'         => 'ids',
-			'meta_query'     => [
-				[
-					'key'     => '_eg_gallery_data',
-					'compare' => 'EXISTS',
-				],
-			],
-		];
+			// Don't load Lite if Envira Gallery is already active.
+			// Envira Gallery will display a notice telling the user to deactivate Lite.
+			if ( class_exists( 'Envira_Gallery' ) ) {
+				return;
+			}
 
-		// If search terms exist, add a search parameter to the arguments.
-		if ( ! empty( $search_terms ) ) {
-			$args['s'] = $search_terms;
+			// Run hook once Envira has been initialized.
+			// This hook is deliberately different from the Pro version, to prevent the entire site breaking
+			// if a user activates Lite with Pro Addons.
+			do_action( 'envira_gallery_lite_init' );
+
+			// Redirect to wizard.
+			add_action( 'admin_init', [ $this, 'redirect_to_wizard' ], 9999 );
+
+			// Load global components.
+			$this->require_global();
+
+			// Load admin only components.
+			if ( is_admin() ) {
+				$this->require_admin();
+			}
+
+			// Check if we need to run a update routine.
+			$this->maybe_run_update();
+
+			// Add hook for when Envira has loaded.
+			// This hook is deliberately different from the Pro version, to prevent the entire site breaking
+			// if a user activates Lite with Pro Addons.
+			do_action( 'envira_gallery_lite_loaded' );
 		}
 
-		// Run WP_Query.
-		$galleries = new WP_Query( $args );
-		if ( ! isset( $galleries->posts ) || empty( $galleries->posts ) ) {
+		/**
+		 * Loads all admin related files into scope.
+		 *
+		 * @since 1.0.0
+		 */
+		public function require_admin() {
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/addons.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/common.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/capabilities.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/permissions.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/editor.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/media.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/media-view.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/metaboxes.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/notice.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/posttype.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/table.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/review.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/settings.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/abilities-settings.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/gutenberg.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/welcome.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/Envira_Lite_Support.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/albums.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/onboarding-wizard.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/menu-nudge.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/import-galleries.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/Deactivation_Survey.php';
+			require_once plugin_dir_path( __FILE__ ) . 'includes/admin/ai-image-assistant-upsell.php';
+
+			( new OnboardingWizard() )->hooks();
+			( new Envira_AI_Image_Assistant_Upsell() )->hooks();
+
+			( new Envira_Albums_Preview() )->hooks();
+			( new Envira_Settings() )->hooks();
+			( new \Envira\Admin\Abilities_Settings() )->hooks();
+			( new Envira_Welcome() )->hooks();
+			( new Envira_Lite_Support() )->hooks();
+			( new Menu_Nudge() )->hooks();
+			( new Envira_Importer_Preview() )->hooks();
+
+			$deactivation_survey = new Deactivation_Survey();
+		}
+
+		/**
+		 * Loads a partial view for the Administration screen
+		 *
+		 * @since 1.5.0
+		 *
+		 * @param      string $template      PHP file at includes/admin/partials, excluding file extension.
+		 * @param      array  $data          Any data to pass to the view.
+		 * @return     boolean
+		 */
+		public function load_admin_partial( $template, $data = [] ) {
+
+			$dir = trailingslashit( plugin_dir_path( __FILE__ ) . 'includes/admin/partials' );
+
+			if ( file_exists( $dir . $template . '.php' ) ) {
+				require_once $dir . $template . '.php';
+				return true;
+			}
+
 			return false;
 		}
 
-		// Now loop through all the galleries found and only use galleries that have images in them.
-		$ret = [];
-		foreach ( $galleries->posts as $id ) {
-			$data = get_post_meta( $id, '_eg_gallery_data', true );
+		/**
+		 * Loads all global files into scope.
+		 *
+		 * @since 1.0.0
+		 */
+		public function require_global() {
 
-			// Skip empty galleries.
-			if ( $skip_empty && empty( $data['gallery'] ) ) {
-				continue;
+			require plugin_dir_path( __FILE__ ) . 'includes/global/common.php';
+			require plugin_dir_path( __FILE__ ) . 'includes/global/posttype.php';
+			require plugin_dir_path( __FILE__ ) . 'includes/global/shortcode.php';
+			require plugin_dir_path( __FILE__ ) . 'includes/global/rest.php';
+			require plugin_dir_path( __FILE__ ) . 'includes/global/convert_gallery/Convert_Gallery_Common.php';
+			require plugin_dir_path( __FILE__ ) . 'includes/global/convert_gallery/Convert_Gallery_Main.php';
+			require plugin_dir_path( __FILE__ ) . 'includes/global/convert_gallery/Convert_Gallery_CLI.php';
+			require plugin_dir_path( __FILE__ ) . 'includes/global/convert_gallery/Convert_Gallery_REST.php';
+			require plugin_dir_path( __FILE__ ) . 'includes/global/Envira_Tracking.php';
+			require plugin_dir_path( __FILE__ ) . 'includes/admin/ajax.php';
+			require plugin_dir_path( __FILE__ ) . 'includes/admin/notifications.php';
+			require plugin_dir_path( __FILE__ ) . 'includes/access/Capabilities.php';
+			require plugin_dir_path( __FILE__ ) . 'includes/services/GalleryService.php';
+			require plugin_dir_path( __FILE__ ) . 'includes/access/AbstractAbilities.php';
+			require plugin_dir_path( __FILE__ ) . 'includes/access/Abilities.php';
+			require plugin_dir_path( __FILE__ ) . 'includes/functions/access.php';
+			\Envira\Access\Capabilities::instance()->init();
+			\Envira\Access\Abilities::instance()->init();
+
+			// Clears a trashed gallery's inactive flag on untrash where the admin handler is not loaded.
+			add_action( 'untrashed_post', [ \Envira\Services\GalleryService::class, 'untrash_outside_admin' ] );
+
+			( new Envira_Tracking() )->hooks();
+
+			$this->notifications = new Envira_Notifications();
+			$this->notifications->hooks();
+
+			( new Convert_Gallery_Main() )->hooks();
+		}
+
+		/**
+		 * Returns a gallery based on ID.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param int $id     The gallery ID used to retrieve a gallery.
+		 * @return array|bool Array of gallery data or false if none found.
+		 */
+		public function get_gallery( $id ) {
+
+			$gallery = get_transient( '_eg_cache_id_' . $id );
+
+			// Attempt to return the transient first, otherwise generate the new query to retrieve the data.
+			if ( false === $gallery ) {
+				$gallery = $this->_get_gallery( $id );
+				if ( $gallery ) {
+					$expiration = Envira_Gallery_Common::get_instance()->get_transient_expiration_time();
+					set_transient( '_eg_cache_id_' . $id, $gallery, $expiration );
+				}
 			}
 
-			// Skip default/dynamic gallery types.
-			$type = Envira_Gallery_Shortcode::get_instance()->get_config( 'type', $data );
-			if ( 'defaults' === Envira_Gallery_Shortcode::get_instance()->get_config( 'type', $data ) || 'dynamic' === Envira_Gallery_Shortcode::get_instance()->get_config( 'type', $data ) ) {
-				continue;
+			// Return the gallery data.
+			return $gallery;
+		}
+
+		// phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
+		/**
+		 * Internal method that returns a gallery based on ID.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @deprecated Should be removed in future versions.
+		 *
+		 * @param int $id     The gallery ID used to retrieve a gallery.
+		 * @return array|bool Array of gallery data or false if none found.
+		 */
+		public function _get_gallery( $id ) {
+			// phpcs:enable PSR2.Methods.MethodDeclaration.Underscore
+
+			return get_post_meta( $this->get_gallery_post_id( $id ), '_eg_gallery_data', true );
+		}
+
+		/**
+		 * Returns the ID of the post that holds a gallery's data.
+		 *
+		 * @since 1.16.2
+		 *
+		 * @param int $id The gallery ID used to retrieve a gallery.
+		 * @return int    The post ID, or 0 if none was found.
+		 */
+		public function get_gallery_post_id( $id ) {
+
+			/**
+			* Version 1.2.1+: Check if the post has gallery data - if not, we may be using a Post ID but the gallery
+			* has moved into the Envira CPT
+			*/
+			if ( empty( get_post_meta( $id, '_eg_gallery_data', true ) ) ) {
+				return absint( get_post_meta( $id, '_eg_gallery_id', true ) );
 			}
 
-			// Add gallery to array of galleries.
-			$ret[] = $data;
+			return absint( $id );
 		}
 
-		// Return the gallery data.
-		return $ret;
-	}
+		/**
+		 * Returns the number of images in a gallery.
+		 *
+		 * @since 1.2.1
+		 *
+		 * @param int $id The gallery ID used to retrieve a gallery.
+		 * @return int    The number of images in the gallery.
+		 */
+		public function get_gallery_image_count( $id ) {
 
-	/**
-	 * Returns the license key for Envira.
-	 *
-	 * As Lite doesn't need a license key, but includes/admin/addons.php
-	 * expects something, we return an empty string.
-	 *
-	 * @since 1.5.0.3
-	 *
-	 * @return string Empty String
-	 */
-	public function get_license_key() {
-
-		return '';
-	}
-
-	/**
-	 * Returns the license key type for Envira.
-	 *
-	 * As Lite doesn't need a license key, but includes/admin/addons.php
-	 * expects something, we return an empty string.
-	 *
-	 * @since 1.5.0.3
-	 *
-	 * @return string Empty String
-	 */
-	public function get_license_key_type() {
-
-		return '';
-	}
-
-	/**
-	 * Returns the license key error(s) for Envira.
-	 *
-	 * As Lite doesn't need a license key, but includes/admin/addons.php
-	 * expects something, we return false
-	 *
-	 * @since 1.5.0.3
-	 *
-	 * @return bool false
-	 */
-	public function get_license_key_errors() {
-
-		return false;
-	}
-
-	/**
-	 * Determine if there needs to be an update based on Envira Lite version.
-	 *
-	 * @since 1.8.9
-	 */
-	public function maybe_run_update() {
-
-		$version = get_option( 'envira_lite_version' );
-
-		if ( version_compare( $version, ENVIRA_LITE_VERSION, '<' ) ) {
-
-			update_option( 'envira_lite_version', ENVIRA_LITE_VERSION, 'no' );
-
+			$gallery = $this->get_gallery( $id );
+			return isset( $gallery['gallery'] ) ? count( $gallery['gallery'] ) : 0;
 		}
 
-		// Re-apply the gallery permission policy on any request, not only in wp-admin, so REST
-		// requests see it straight after an update. Once it has run, this is one autoloaded option read.
-		// Envira_Capabilities::maybe_upgrade_permissions() decides whether a newer policy applies.
-		if ( (int) get_option( 'envira_permissions_policy_version', 0 ) < 1 ) {
-			if ( ! class_exists( '\Envira\Admin\Envira_Capabilities' ) ) {
-				require_once plugin_dir_path( __FILE__ ) . 'includes/admin/capabilities.php';
-				require_once plugin_dir_path( __FILE__ ) . 'includes/admin/permissions.php';
+		/**
+		 * Returns a gallery based on slug.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $slug The gallery slug used to retrieve a gallery.
+		 * @return array|bool  Array of gallery data or false if none found.
+		 */
+		public function get_gallery_by_slug( $slug ) {
+
+			$gallery = get_transient( '_eg_cache_slug_' . $slug );
+
+			// Attempt to return the transient first, otherwise generate the new query to retrieve the data.
+			if ( false === $gallery ) {
+				$gallery = $this->_get_gallery_by_slug( $slug );
+				if ( $gallery ) {
+					$expiration = Envira_Gallery_Common::get_instance()->get_transient_expiration_time();
+					set_transient( '_eg_cache_slug_' . $slug, $gallery, $expiration );
+				}
 			}
 
-			( new \Envira\Admin\Envira_Capabilities() )->maybe_upgrade_permissions();
+			// Return the gallery data.
+			return $gallery;
+		}
+
+		// phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
+		/**
+		 * Internal method that returns a gallery based on slug.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @deprecated Should be removed in future versions.
+		 *
+		 * @param string $slug The gallery slug used to retrieve a gallery.
+		 * @return array|bool  Array of gallery data or false if none found.
+		 */
+		public function _get_gallery_by_slug( $slug ) {
+			// phpcs:enable PSR2.Methods.MethodDeclaration.Underscore
+			$gallery_id = $this->get_gallery_post_id_by_slug( $slug );
+
+			return $gallery_id ? get_post_meta( $gallery_id, '_eg_gallery_data', true ) : false;
+		}
+
+		/**
+		 * Returns the ID of the gallery post a slug resolves to.
+		 *
+		 * @since 1.16.2
+		 *
+		 * @param string $slug The gallery slug used to retrieve a gallery.
+		 * @return int         The post ID, or 0 if none was found.
+		 */
+		public function get_gallery_post_id_by_slug( $slug ) {
+			// Get Envira CPT by slug.
+			$galleries = new WP_Query(
+				[
+					'post_type'      => 'envira',
+					'name'           => $slug,
+					'fields'         => 'ids',
+					'posts_per_page' => 1,
+				]
+			);
+			if ( $galleries->posts ) {
+				return absint( $galleries->posts[0] );
+			}
+
+			// If nothing found, get Envira CPT by _eg_gallery_old_slug.
+			// This covers Galleries migrated from Pages/Posts --> Envira CPTs.
+			$galleries = new WP_Query(
+				[
+					'post_type'      => 'envira',
+					'no_found_rows'  => true,
+					'cache_results'  => false,
+					'fields'         => 'ids',
+					'meta_query'     => [
+						[
+							'key'   => '_eg_gallery_old_slug',
+							'value' => $slug,
+						],
+					],
+					'posts_per_page' => 1,
+				]
+			);
+			if ( $galleries->posts ) {
+				return absint( $galleries->posts[0] );
+			}
+
+			// No galleries found.
+			return 0;
+		}
+
+		/**
+		 * Returns all galleries created on the site.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param bool   $skip_empty         Skip empty sliders.
+		 * @param bool   $ignore_cache       Ignore Transient cache.
+		 * @param string $search_terms       Search for specified Galleries by Title.
+		 *
+		 * @return array|bool                        Array of gallery data or false if none found.
+		 */
+		public function get_galleries( $skip_empty = true, $ignore_cache = false, $search_terms = '' ) {
+
+			$galleries = get_transient( '_eg_cache_all' );
+
+			// Attempt to return the transient first, otherwise generate the new query to retrieve the data.
+			if ( $ignore_cache || ! empty( $search_terms ) || false === $galleries ) {
+				$galleries = $this->_get_galleries( $skip_empty, $search_terms );
+
+				// Cache the results if we're not performing a search and we have some results.
+				if ( $galleries && empty( $search_terms ) ) {
+					$expiration = Envira_Gallery_Common::get_instance()->get_transient_expiration_time();
+					set_transient( '_eg_cache_all', $galleries, $expiration );
+				}
+			}
+
+			// Return the gallery data.
+			return $galleries;
+		}
+
+		// phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
+		/**
+		 * Internal method that returns all galleries created on the site.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @deprecated Should be removed in future versions.
+		 *
+		 * @param bool   $skip_empty    Skip Empty Galleries.
+		 * @param string $search_terms  Search for specified Galleries by Title.
+		 * @return mixed                        Array of gallery data or false if none found.
+		 */
+		public function _get_galleries( $skip_empty = true, $search_terms = '' ) {
+			// phpcs:enable PSR2.Methods.MethodDeclaration.Underscore
+			// Build WP_Query arguments.
+			$args = [
+				'post_type'      => 'envira',
+				'post_status'    => 'publish',
+				'posts_per_page' => 99,
+				'no_found_rows'  => true,
+				'fields'         => 'ids',
+				'meta_query'     => [
+					[
+						'key'     => '_eg_gallery_data',
+						'compare' => 'EXISTS',
+					],
+				],
+			];
+
+			// If search terms exist, add a search parameter to the arguments.
+			if ( ! empty( $search_terms ) ) {
+				$args['s'] = $search_terms;
+			}
+
+			// Run WP_Query.
+			$galleries = new WP_Query( $args );
+			if ( ! isset( $galleries->posts ) || empty( $galleries->posts ) ) {
+				return false;
+			}
+
+			// Now loop through all the galleries found and only use galleries that have images in them.
+			$ret = [];
+			foreach ( $galleries->posts as $id ) {
+				$data = get_post_meta( $id, '_eg_gallery_data', true );
+
+				// Skip empty galleries.
+				if ( $skip_empty && empty( $data['gallery'] ) ) {
+					continue;
+				}
+
+				// Skip default/dynamic gallery types.
+				$type = Envira_Gallery_Shortcode::get_instance()->get_config( 'type', $data );
+				if ( 'defaults' === Envira_Gallery_Shortcode::get_instance()->get_config( 'type', $data ) || 'dynamic' === Envira_Gallery_Shortcode::get_instance()->get_config( 'type', $data ) ) {
+					continue;
+				}
+
+				// Add gallery to array of galleries.
+				$ret[] = $data;
+			}
+
+			// Return the gallery data.
+			return $ret;
+		}
+
+		/**
+		 * Returns the license key for Envira.
+		 *
+		 * As Lite doesn't need a license key, but includes/admin/addons.php
+		 * expects something, we return an empty string.
+		 *
+		 * @since 1.5.0.3
+		 *
+		 * @return string Empty String
+		 */
+		public function get_license_key() {
+
+			return '';
+		}
+
+		/**
+		 * Returns the license key type for Envira.
+		 *
+		 * As Lite doesn't need a license key, but includes/admin/addons.php
+		 * expects something, we return an empty string.
+		 *
+		 * @since 1.5.0.3
+		 *
+		 * @return string Empty String
+		 */
+		public function get_license_key_type() {
+
+			return '';
+		}
+
+		/**
+		 * Returns the license key error(s) for Envira.
+		 *
+		 * As Lite doesn't need a license key, but includes/admin/addons.php
+		 * expects something, we return false
+		 *
+		 * @since 1.5.0.3
+		 *
+		 * @return bool false
+		 */
+		public function get_license_key_errors() {
+
+			return false;
+		}
+
+		/**
+		 * Determine if there needs to be an update based on Envira Lite version.
+		 *
+		 * @since 1.8.9
+		 */
+		public function maybe_run_update() {
+
+			$version = get_option( 'envira_lite_version' );
+
+			if ( version_compare( $version, ENVIRA_LITE_VERSION, '<' ) ) {
+
+				update_option( 'envira_lite_version', ENVIRA_LITE_VERSION, 'no' );
+
+			}
+
+			// Re-apply the gallery permission policy on any request, not only in wp-admin, so REST
+			// requests see it straight after an update. Once it has run, this is one autoloaded option read.
+			// Envira_Capabilities::maybe_upgrade_permissions() decides whether a newer policy applies.
+			if ( (int) get_option( 'envira_permissions_policy_version', 0 ) < 1 ) {
+				if ( ! class_exists( '\Envira\Admin\Envira_Capabilities' ) ) {
+					require_once plugin_dir_path( __FILE__ ) . 'includes/admin/capabilities.php';
+					require_once plugin_dir_path( __FILE__ ) . 'includes/admin/permissions.php';
+				}
+
+				\Envira\Admin\Envira_Capabilities::maybe_upgrade_permissions();
+			}
+		}
+
+		/**
+		 * Returns the singleton instance of the class.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @return object The Envira_Gallery object.
+		 */
+		public static function get_instance() {
+
+			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof Envira_Gallery_Lite ) ) {
+				self::$instance = new Envira_Gallery_Lite();
+			}
+
+			return self::$instance;
+		}
+
+		/**
+		 * Redirect to the wizard on activation.
+		 *
+		 * @since 1.9.14.
+		 *
+		 * @return void
+		 */
+		public function redirect_to_wizard() {
+			if ( ! get_transient( '_envira_lite_activation_redirect' ) ) {
+				return;
+			}
+
+			delete_transient( '_envira_lite_activation_redirect' );
+
+			// Only do this for single site installs.
+			if ( isset( $_GET['activate-multi'] ) || is_network_admin() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				return;
+			}
+
+			// Check if it is new install or not.
+			$envira_display_welcome = get_option( 'envira_lite_wizard' );
+
+			if ( ! $envira_display_welcome ) {
+				update_option( 'envira_lite_wizard', 'yes' );
+				wp_safe_redirect( admin_url( 'admin.php?page=envira-setup-wizard' ) );
+				exit;
+			}
 		}
 	}
 
-	/**
-	 * Returns the singleton instance of the class.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return object The Envira_Gallery object.
-	 */
-	public static function get_instance() {
-
-		if ( ! isset( self::$instance ) && ! ( self::$instance instanceof Envira_Gallery_Lite ) ) {
-			self::$instance = new Envira_Gallery_Lite();
-		}
-
-		return self::$instance;
-	}
-
-	/**
-	 * Redirect to the wizard on activation.
-	 *
-	 * @since 1.9.14.
-	 *
-	 * @return void
-	 */
-	public function redirect_to_wizard() {
-		if ( ! get_transient( '_envira_lite_activation_redirect' ) ) {
-			return;
-		}
-
-		delete_transient( '_envira_lite_activation_redirect' );
-
-		// Only do this for single site installs.
-		if ( isset( $_GET['activate-multi'] ) || is_network_admin() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			return;
-		}
-
-		// Check if it is new install or not.
-		$envira_display_welcome = get_option( 'envira_lite_wizard' );
-
-		if ( ! $envira_display_welcome ) {
-			update_option( 'envira_lite_wizard', 'yes' );
-			wp_safe_redirect( admin_url( 'admin.php?page=envira-setup-wizard' ) );
-			exit;
-		}
-	}
-}
+endif;
 
 register_activation_hook( __FILE__, 'envira_gallery_lite_activation_hook' );
 /**
@@ -682,6 +708,19 @@ function envira_gallery_lite_activation_hook( $network_wide ) {
 
 	// Make sure Envira Pro plugin, if activated is deactivated.
 	deactivate_plugins( 'envira-gallery/envira-gallery.php' );
+
+	// Register the gallery capabilities now rather than on the first wp-admin request:
+	// add_capabilities() runs on admin_init, so a site activated over WP-CLI would leave Editors
+	// and Authors without them until someone opened wp-admin, and the abilities would refuse
+	// them. Same as Pro (#5584). Both files only declare their class (register_capabilities()
+	// applies the default policy through Envira_Permissions), and are admin-only loads otherwise.
+	if ( ! class_exists( '\Envira\Admin\Envira_Permissions' ) ) {
+		require_once plugin_dir_path( __FILE__ ) . 'includes/admin/permissions.php';
+	}
+	if ( ! class_exists( '\Envira\Admin\Envira_Capabilities' ) ) {
+		require_once plugin_dir_path( __FILE__ ) . 'includes/admin/capabilities.php';
+	}
+	\Envira\Admin\Envira_Capabilities::register_capabilities();
 }
 
 // Load the main plugin class.

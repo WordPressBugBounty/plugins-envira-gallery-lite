@@ -2096,7 +2096,7 @@ class Envira_Gallery_Metaboxes {
 		// Never saved against the gallery item, just used for the thumbnail output in the Edit Gallery screen.
 
 		// JSON encode based on PHP version.
-		$json = version_compare( PHP_VERSION, '5.3.0' ) >= 0 ? wp_json_encode( $item, JSON_HEX_APOS ) : wp_json_encode( $item );
+		$json = wp_json_encode( $item, JSON_HEX_APOS );
 
 		// Buffer the output.
 		ob_start();
@@ -2174,20 +2174,11 @@ class Envira_Gallery_Metaboxes {
 		$images       = ! empty( $gallery_data['gallery'] ) ? $gallery_data['gallery'] : false;
 		$common       = Envira_Gallery_Common::get_instance();
 
-		// Populate variable if we are using <= PHP 5.3.
-		$php_version = explode( '.', phpversion() );
-
-		if ( $php_version[0] <= 5 && $php_version[1] <= 3 ) {
-			$is_using_old_php = true;
-		} else {
-			$is_using_old_php = false;
-		}
-
 		// Loop through the images and crop them.
 		if ( $images ) {
 			// Increase the time limit to account for large image sets and suspend cache invalidations.
 			// Hosts can disable set_time_limit(), and since PHP 8 calling a disabled function is a fatal error.
-			if ( ! $is_using_old_php && function_exists( 'set_time_limit' ) ) {
+			if ( function_exists( 'set_time_limit' ) ) {
 				set_time_limit( Envira_Gallery_Common::get_instance()->get_max_execution_time() );
 			}
 
@@ -2363,20 +2354,11 @@ class Envira_Gallery_Metaboxes {
 		$images       = ! empty( $gallery_data['gallery'] ) ? $gallery_data['gallery'] : false;
 		$common       = Envira_Gallery_Common::get_instance();
 
-		// Populate variable if we are using <= PHP 5.3.
-		$php_version = explode( '.', phpversion() );
-
-		if ( $php_version[0] <= 5 && $php_version[1] <= 3 ) {
-			$is_using_old_php = true;
-		} else {
-			$is_using_old_php = false;
-		}
-
 		// Loop through the images and crop them.
 		if ( $images ) {
 			// Increase the time limit to account for large image sets and suspend cache invalidations.
 			// Hosts can disable set_time_limit(), and since PHP 8 calling a disabled function is a fatal error.
-			if ( ! $is_using_old_php && function_exists( 'set_time_limit' ) ) {
+			if ( function_exists( 'set_time_limit' ) ) {
 				set_time_limit( Envira_Gallery_Common::get_instance()->get_max_execution_time() );
 			}
 			wp_suspend_cache_invalidation( true );
